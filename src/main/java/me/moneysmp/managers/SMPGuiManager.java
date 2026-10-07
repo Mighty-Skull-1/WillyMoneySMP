@@ -28,15 +28,18 @@ public class SMPGuiManager {
     private final TeamManager teamManager;
     private final EliminationManager eliminationManager;
     private final DataManager dataManager;
+    private final BannedItemManager bannedItemManager;
 
     public SMPGuiManager(JavaPlugin plugin, PhaseManager phaseManager, EventManager eventManager,
-                         TeamManager teamManager, EliminationManager eliminationManager, DataManager dataManager) {
+                         TeamManager teamManager, EliminationManager eliminationManager, DataManager dataManager,
+                         BannedItemManager bannedItemManager) {
         this.plugin = plugin;
         this.phaseManager = phaseManager;
         this.eventManager = eventManager;
         this.teamManager = teamManager;
         this.eliminationManager = eliminationManager;
         this.dataManager = dataManager;
+        this.bannedItemManager = bannedItemManager;
     }
 
     public void openControlPanel(Player player) {
@@ -81,6 +84,17 @@ public class SMPGuiManager {
                 "§7Final battle for victory with permadeath!",
                 currentPhase == SMPPhase.FINALE
         ));
+
+        // Slot 14: Banned Items Menu
+        List<String> bannedLore = Arrays.asList(
+                "§8-------------------------",
+                "§7View and manage banned tournament items.",
+                "§7Ender Pearls & restricted gear are locked.",
+                "§7Replaced by skilled Wind Charges!",
+                "§8-------------------------",
+                "§c▶ Click: §fOpen Banned Items GUI"
+        );
+        inv.setItem(14, createItem(Material.BARRIER, "§c§lBanned Items List", bannedLore, true));
 
         // Slot 16: Tournament Stats / Overview
         boolean kothOn = eventManager != null && eventManager.isKothActive();
@@ -127,7 +141,7 @@ public class SMPGuiManager {
         List<String> rareDropLore = Arrays.asList(
                 "§8-------------------------",
                 "§7Spawns a Rare supply drop near an active",
-                "§7player with diamonds, gapples & pearls.",
+                "§7player with diamonds, gapples & wind charges.",
                 "§7Reward: §a+5 Game Credits",
                 "§8-------------------------",
                 "§9▶ Click: §aSpawn Rare Airdrop"
@@ -224,7 +238,7 @@ public class SMPGuiManager {
                 meta.setLore(lore);
             }
             if (glowing) {
-                meta.addEnchant(Enchantment.DURABILITY, 1, true);
+                meta.addEnchant(Enchantment.UNBREAKING, 1, true);
                 meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             }
             item.setItemMeta(meta);
@@ -258,6 +272,13 @@ public class SMPGuiManager {
                 phaseManager.setPhase(SMPPhase.FINALE);
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, 1.5f);
                 openControlPanel(player);
+                break;
+
+            case 14: // Banned Items Menu
+                if (bannedItemManager != null) {
+                    player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.8f, 1.2f);
+                    bannedItemManager.openBannedItemsGUI(player);
+                }
                 break;
 
             case 16: // Status Overview Refresh

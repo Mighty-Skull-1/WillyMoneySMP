@@ -50,8 +50,8 @@ public class ShopManager {
         // Slot 11: Enchanted Golden Apple x1 (75 credits)
         addShopItem(11, new ItemStack(Material.ENCHANTED_GOLDEN_APPLE, 1), 75, "§6Enchanted Golden Apple");
 
-        // Slot 12: Ender Pearl x4 (20 credits)
-        addShopItem(12, new ItemStack(Material.ENDER_PEARL, 4), 20, "§3Ender Pearl x4");
+        // Slot 12: Wind Charge x4 (20 credits)
+        addShopItem(12, new ItemStack(Material.WIND_CHARGE, 4), 20, "§bWind Charge x4");
 
         // Slot 13: Totem of Undying (85 credits)
         addShopItem(13, new ItemStack(Material.TOTEM_OF_UNDYING, 1), 85, "§eTotem of Undying");
@@ -76,7 +76,7 @@ public class ShopManager {
         ItemStack healPot = new ItemStack(Material.SPLASH_POTION);
         PotionMeta healMeta = (PotionMeta) healPot.getItemMeta();
         if (healMeta != null) {
-            healMeta.setBasePotionData(new PotionData(PotionType.INSTANT_HEAL, false, true));
+            healMeta.setBasePotionType(PotionType.STRONG_HEALING);
             healPot.setItemMeta(healMeta);
         }
         addShopItem(19, healPot, 25, "§cSplash Potion of Healing II");
@@ -85,7 +85,7 @@ public class ShopManager {
         ItemStack speedPot = new ItemStack(Material.POTION);
         PotionMeta speedMeta = (PotionMeta) speedPot.getItemMeta();
         if (speedMeta != null) {
-            speedMeta.setBasePotionData(new PotionData(PotionType.SPEED, false, true));
+            speedMeta.setBasePotionType(PotionType.STRONG_SWIFTNESS);
             speedPot.setItemMeta(speedMeta);
         }
         addShopItem(20, speedPot, 20, "§bPotion of Swiftness II");
@@ -94,7 +94,7 @@ public class ShopManager {
         ItemStack strengthPot = new ItemStack(Material.POTION);
         PotionMeta strMeta = (PotionMeta) strengthPot.getItemMeta();
         if (strMeta != null) {
-            strMeta.setBasePotionData(new PotionData(PotionType.STRENGTH, false, false));
+            strMeta.setBasePotionType(PotionType.STRENGTH);
             strengthPot.setItemMeta(strMeta);
         }
         addShopItem(24, strengthPot, 35, "§4Potion of Strength");

@@ -15,8 +15,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
-import org.spigotmc.event.entity.EntityMountEvent;
-
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class BingoEventListener implements Listener {
@@ -111,8 +109,8 @@ public class BingoEventListener implements Listener {
 
     @EventHandler
     public void onProjectileLaunch(ProjectileLaunchEvent event) {
-        if (event.getEntity() instanceof EnderPearl && event.getEntity().getShooter() instanceof Player player) {
-            eventManager.claimBingo(player, "Throw Ender Pearl");
+        if (event.getEntity() instanceof AbstractWindCharge && event.getEntity().getShooter() instanceof Player player) {
+            eventManager.claimBingo(player, "Use Wind Charge");
         }
     }
 
@@ -142,7 +140,7 @@ public class BingoEventListener implements Listener {
         if (event.getEntity() instanceof Player player && event.getNewEffect() != null) {
             if (event.getNewEffect().getType() == PotionEffectType.INVISIBILITY) {
                 eventManager.claimBingo(player, "Brew Invisibility");
-            } else if (event.getNewEffect().getType() == PotionEffectType.INCREASE_DAMAGE && event.getNewEffect().getAmplifier() >= 1) {
+            } else if (event.getNewEffect().getType() == PotionEffectType.STRENGTH && event.getNewEffect().getAmplifier() >= 1) {
                 eventManager.claimBingo(player, "Brew Strength II");
             }
         }

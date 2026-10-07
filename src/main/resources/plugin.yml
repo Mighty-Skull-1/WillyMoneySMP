@@ -48,3 +48,6 @@ commands:
   leaderboard:
     description: View the tournament leaderboard
     aliases: [top]
+  banneditems:
+    description: View and manage banned tournament items and restrictions
+    aliases: [banned, banlist, bannedlist]

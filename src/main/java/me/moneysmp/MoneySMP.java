@@ -1,6 +1,7 @@
 package me.moneysmp;
 
 import me.moneysmp.commands.*;
+import me.moneysmp.listeners.BannedItemListener;
 import me.moneysmp.listeners.BingoEventListener;
 import me.moneysmp.listeners.KillEventListener;
 import me.moneysmp.managers.*;
@@ -27,6 +28,7 @@ public class MoneySMP extends JavaPlugin {
     private EliminationManager eliminationManager;
     private ShopManager shopManager;
     private DataManager dataManager;
+    private BannedItemManager bannedItemManager;
     private SMPGuiManager smpGuiManager;
 
     @Override
@@ -41,14 +43,15 @@ public class MoneySMP extends JavaPlugin {
         this.phaseManager = new PhaseManager();
         this.eliminationManager = new EliminationManager(this);
         this.shopManager = new ShopManager(creditManager);
+        this.bannedItemManager = new BannedItemManager(this);
         this.dataManager = new DataManager(this, teamManager, creditManager, tierManager, phaseManager, eliminationManager);
 
         this.draftManager = new DraftManager(this, teamManager, creditManager, tierManager);
         this.eventManager = new EventManager(this, teamManager, creditManager);
         this.displayManager = new DisplayManager(this, teamManager, creditManager, tierManager, phaseManager);
-        this.smpGuiManager = new SMPGuiManager(this, phaseManager, eventManager, teamManager, eliminationManager, dataManager);
+        this.smpGuiManager = new SMPGuiManager(this, phaseManager, eventManager, teamManager, eliminationManager, dataManager, bannedItemManager);
 
-        MoneySMPTabCompleter tabCompleter = new MoneySMPTabCompleter(tierManager, teamManager, eventManager);
+        MoneySMPTabCompleter tabCompleter = new MoneySMPTabCompleter(tierManager, teamManager, eventManager, bannedItemManager);
 
         // --- Commands Registration ---
         getCommand("smp").setExecutor(new SMPCommand(this, phaseManager, eventManager, dataManager, smpGuiManager));
@@ -91,10 +94,15 @@ public class MoneySMP extends JavaPlugin {
 
         getCommand("leaderboard").setExecutor(new LeaderboardCommand(teamManager, creditManager));
 
+        BannedItemsCommand bannedItemsCommand = new BannedItemsCommand(bannedItemManager);
+        getCommand("banneditems").setExecutor(bannedItemsCommand);
+        getCommand("banneditems").setTabCompleter(tabCompleter);
+
         // --- Listeners Registration ---
         getServer().getPluginManager().registerEvents(new KillEventListener(
                 this, teamManager, creditManager, tierManager, phaseManager, eventManager, eliminationManager, shopManager, smpGuiManager), this);
         getServer().getPluginManager().registerEvents(new BingoEventListener(this, eventManager), this);
+        getServer().getPluginManager().registerEvents(new BannedItemListener(bannedItemManager), this);
 
         // --- Schedulers ---
         Bukkit.getScheduler().runTaskTimer(this, () -> displayManager.updateAllDisplays(), 0L, 20L);
@@ -126,6 +134,7 @@ public class MoneySMP extends JavaPlugin {
     public EliminationManager getEliminationManager() { return eliminationManager; }
     public ShopManager getShopManager() { return shopManager; }
     public SMPGuiManager getSmpGuiManager() { return smpGuiManager; }
+    public BannedItemManager getBannedItemManager() { return bannedItemManager; }
 
     public void resetTournament(CommandSender sender) {
         // 1. Stop any ongoing draft auction or events

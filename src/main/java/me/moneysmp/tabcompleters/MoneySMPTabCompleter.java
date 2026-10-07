@@ -21,11 +21,14 @@ public class MoneySMPTabCompleter implements TabCompleter {
     private final TierManager tierManager;
     private final TeamManager teamManager;
     private final EventManager eventManager;
+    private final me.moneysmp.managers.BannedItemManager bannedItemManager;
 
-    public MoneySMPTabCompleter(TierManager tierManager, TeamManager teamManager, EventManager eventManager) {
+    public MoneySMPTabCompleter(TierManager tierManager, TeamManager teamManager, EventManager eventManager,
+                                me.moneysmp.managers.BannedItemManager bannedItemManager) {
         this.tierManager = tierManager;
         this.teamManager = teamManager;
         this.eventManager = eventManager;
+        this.bannedItemManager = bannedItemManager;
     }
 
     @Override
@@ -137,6 +140,25 @@ public class MoneySMPTabCompleter implements TabCompleter {
                 candidates.addAll(Arrays.asList("25", "50", "100", "250", "500"));
             } else if (args.length == 4 && !args[0].equalsIgnoreCase("balance")) {
                 candidates.addAll(Arrays.asList("game", "draft"));
+            }
+        } else if (command.getName().equalsIgnoreCase("banneditems")) {
+            if (args.length == 1) {
+                candidates.addAll(Arrays.asList("gui", "list"));
+                if (sender.hasPermission("moneysmp.admin")) {
+                    candidates.addAll(Arrays.asList("add", "remove", "hand"));
+                }
+            } else if (args.length == 2 && args[0].equalsIgnoreCase("add") && sender.hasPermission("moneysmp.admin")) {
+                for (org.bukkit.Material mat : org.bukkit.Material.values()) {
+                    if (mat.isItem()) {
+                        candidates.add(mat.name());
+                    }
+                }
+            } else if (args.length == 2 && args[0].equalsIgnoreCase("remove") && sender.hasPermission("moneysmp.admin")) {
+                if (bannedItemManager != null) {
+                    for (org.bukkit.Material mat : bannedItemManager.getBannedItems().keySet()) {
+                        candidates.add(mat.name());
+                    }
+                }
             }
         }
 

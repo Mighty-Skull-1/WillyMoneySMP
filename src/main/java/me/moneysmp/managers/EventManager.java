@@ -349,7 +349,7 @@ public class EventManager {
             list.add(new LootCandidate(Material.TOTEM_OF_UNDYING, 1, 1, 15));
             list.add(new LootCandidate(Material.DIAMOND, 3, 5, 35));
             list.add(new LootCandidate(Material.GOLDEN_APPLE, 2, 4, 35));
-            list.add(new LootCandidate(Material.ENDER_PEARL, 2, 4, 35));
+            list.add(new LootCandidate(Material.WIND_CHARGE, 3, 6, 35));
             list.add(new LootCandidate(Material.ENCHANTED_GOLDEN_APPLE, 1, 1, 10));
             list.add(new LootCandidate(Material.EXPERIENCE_BOTTLE, 12, 24, 40));
             list.add(new LootCandidate(Material.CROSSBOW, 1, 1, 25));
@@ -361,7 +361,7 @@ public class EventManager {
         } else if ("rare".equalsIgnoreCase(tier)) {
             list.add(new LootCandidate(Material.DIAMOND, 1, 3, 30));
             list.add(new LootCandidate(Material.GOLDEN_APPLE, 1, 2, 30));
-            list.add(new LootCandidate(Material.ENDER_PEARL, 1, 2, 30));
+            list.add(new LootCandidate(Material.WIND_CHARGE, 2, 4, 35));
             list.add(new LootCandidate(Material.EXPERIENCE_BOTTLE, 6, 12, 40));
             list.add(new LootCandidate(Material.BOW, 1, 1, 25));
             list.add(new LootCandidate(Material.IRON_INGOT, 6, 12, 45));
@@ -513,7 +513,7 @@ public class EventManager {
         addTask("Kill Blazes", Material.BLAZE_ROD);
         addTask("Mine 64 Coal", Material.COAL);
         addTask("Catch Enchanted Book", Material.ENCHANTED_BOOK);
-        addTask("Throw Ender Pearl", Material.ENDER_PEARL);
+        addTask("Use Wind Charge", Material.WIND_CHARGE);
     }
 
     private void addTask(String task, Material icon) {
@@ -651,7 +651,7 @@ public class EventManager {
             case "Kill Blazes": return "Slay a Blaze in a Nether Fortress";
             case "Mine 64 Coal": return "Gather a full stack of 64 Coal";
             case "Catch Enchanted Book": return "Reel in an Enchanted Book while fishing";
-            case "Throw Ender Pearl": return "Throw an Ender Pearl to teleport";
+            case "Use Wind Charge": return "Launch a Wind Charge in movement or combat";
             default: return "Complete the survival challenge";
         }
     }
@@ -700,7 +700,7 @@ public class EventManager {
                     "§7Complete any line (5 in a row) for §e+150 Credits§7!",
                     "§8--------------------------"
             ));
-            hMeta.addEnchant(Enchantment.DURABILITY, 1, true);
+            hMeta.addEnchant(Enchantment.UNBREAKING, 1, true);
             hMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             header.setItemMeta(hMeta);
         }
@@ -810,7 +810,7 @@ public class EventManager {
                     lore.add("§7Objective: §8" + getTaskDescription(task));
                     lore.add("§8--------------------------");
                     meta.setLore(lore);
-                    meta.addEnchant(Enchantment.DURABILITY, 1, true);
+                    meta.addEnchant(Enchantment.UNBREAKING, 1, true);
                     meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                     item.setItemMeta(meta);
                 }

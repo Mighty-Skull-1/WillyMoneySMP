@@ -169,7 +169,7 @@ public class KillEventListener implements Listener {
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
         String title = event.getView().getTitle();
-        if (title.contains("Bingo") || title.equals(ShopManager.SHOP_TITLE) || title.equals(SMPGuiManager.GUI_TITLE)) {
+        if (title.contains("Bingo") || title.equals(ShopManager.SHOP_TITLE) || title.equals(SMPGuiManager.GUI_TITLE) || title.equals(BannedItemManager.GUI_TITLE)) {
             event.setCancelled(true);
         }
     }
