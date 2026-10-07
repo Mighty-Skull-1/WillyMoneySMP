@@ -1,0 +1,10 @@
+target/
+*.jar
+.idea/
+*.iml
+.vscode/
+.settings/
+.project/
+.classpath/
+bin/
+data.yml

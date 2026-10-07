@@ -1,0 +1,89 @@
+common:
+  title: "§f§l[COMMON AIRDROP]"
+  credits-reward: 10
+  min-items: 4
+  max-items: 7
+  loot-pool:
+    # Helpful Survival Loot
+    - "IRON_INGOT:3-8:50"
+    - "GOLDEN_CARROT:4-10:45"
+    - "ARROW:12-28:50"
+    - "EXPERIENCE_BOTTLE:3-6:40"
+    - "GOLDEN_APPLE:1-2:25"
+    - "SHIELD:1-1:30"
+    - "CROSSBOW:1-1:20"
+    - "BOW:1-1:25"
+    - "COAL:8-16:45"
+    - "COOKED_BEEF:4-10:50"
+    - "BREAD:6-14:50"
+    - "BAKED_POTATO:6-12:45"
+    - "IRON_SWORD:1-1:25"
+    - "IRON_PICKAXE:1-1:25"
+    - "CHAINMAIL_CHESTPLATE:1-1:15"
+    - "COMPASS:1-1:30"
+    - "SPYGLASS:1-1:20"
+    # Trash / Filler Loot
+    - "ROTTEN_FLESH:3-10:45"
+    - "STICK:6-16:45"
+    - "COBWEB:1-4:35"
+    - "POISONOUS_POTATO:1-2:30"
+    - "FEATHER:4-10:40"
+    - "DIRT:8-16:30"
+    - "FLINT:2-6:40"
+    - "GRAVEL:6-14:35"
+    - "WHEAT_SEEDS:4-12:40"
+    - "STRING:2-6:40"
+    - "BONE:2-6:40"
+    - "LEATHER:2-5:40"
+    - "WOODEN_HOE:1-1:15"
+
+rare:
+  title: "§9§l[RARE AIRDROP]"
+  credits-reward: 20
+  min-items: 4
+  max-items: 6
+  loot-pool:
+    # Nerfed valuable loot
+    - "DIAMOND:1-3:30"
+    - "GOLDEN_APPLE:1-2:30"
+    - "ENDER_PEARL:1-2:30"
+    - "EXPERIENCE_BOTTLE:6-12:40"
+    - "BOW:1-1:25"
+    - "IRON_INGOT:6-12:45"
+    - "OBSIDIAN:2-5:30"
+    - "TNT:1-3:20"
+    - "GOLD_INGOT:3-8:35"
+    - "ENCHANTED_BOOK:1-1:20"
+    # Mid / filler loot
+    - "BONE:3-8:40"
+    - "STRING:3-8:40"
+    - "GRAVEL:6-12:35"
+    - "ROTTEN_FLESH:4-10:35"
+    - "LEATHER:2-5:35"
+    - "GLASS_BOTTLE:2-6:30"
+    - "ARROW:16-32:45"
+
+legendary:
+  title: "§6§l[LEGENDARY AIRDROP]"
+  credits-reward: 40
+  min-items: 4
+  max-items: 7
+  loot-pool:
+    # High-tier loot (Nerfed: NO netherite ingots, totems & scraps kept balanced)
+    - "NETHERITE_SCRAP:1-2:20"
+    - "TOTEM_OF_UNDYING:1-1:15"
+    - "DIAMOND:3-5:35"
+    - "GOLDEN_APPLE:2-4:35"
+    - "ENDER_PEARL:2-4:35"
+    - "ENCHANTED_GOLDEN_APPLE:1-1:10"
+    - "EXPERIENCE_BOTTLE:12-24:40"
+    - "CROSSBOW:1-1:25"
+    - "SPECTRAL_ARROW:8-16:30"
+    # Mid / filler loot
+    - "OBSIDIAN:4-8:35"
+    - "BLAZE_ROD:1-3:25"
+    - "FIREWORK_ROCKET:6-12:35"
+    - "COBWEB:2-6:25"
+    - "GUNPOWDER:3-8:30"
+    - "BONE:3-8:25"
+    - "GOLD_INGOT:6-12:35"

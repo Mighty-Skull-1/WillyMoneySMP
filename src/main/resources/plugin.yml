@@ -1,0 +1,50 @@
+name: WillyMoneySMP
+version: 2.5-SNAPSHOT
+main: me.moneysmp.MoneySMP
+api-version: 1.20
+authors: [Jelani, Willy]
+description: Full-featured tournament engine with Phase controls, Hologram KOTH, Flare Airdrops, Interactive GUI Bingo, and Draft Economy.
+website: https://willymoneysmp.net
+
+commands:
+  smp:
+    description: Open the SMP Admin Control Panel GUI or manage phases
+    permission: moneysmp.admin
+  team:
+    description: Manage Willy Money SMP Teams
+  tier:
+    description: Assign or remove player tiers
+    permission: moneysmp.admin
+  bid:
+    description: Nominate and bid on tier players during draft (Captains Only)
+  tc:
+    description: Send a private message to your team
+    aliases: [teamchat]
+  tracker:
+    description: Receive a Team Tracker compass
+  announce:
+    description: Broadcast a server announcement with sound
+    aliases: [broadcast, alert]
+    permission: moneysmp.admin
+  titleannounce:
+    description: Fullscreen title announcement
+    permission: moneysmp.admin
+  koth:
+    description: Start or stop King of the Hill events
+    permission: moneysmp.admin
+  airdrop:
+    description: Spawn supply drop crates
+    permission: moneysmp.admin
+  gladiator:
+    description: Manage 1v1 Gladiator Tier Tournaments
+    permission: moneysmp.admin
+  bingo:
+    description: Open the interactive 5x5 Lockout Bingo board GUI
+  shop:
+    description: Open the tournament Credit Shop
+  credits:
+    description: Admin commands to manage draft and game credits
+    permission: moneysmp.admin
+  leaderboard:
+    description: View the tournament leaderboard
+    aliases: [top]

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Willy Money SMP — Official Tournament Guide</title>
+    <style>
+        :root {
+            --primary: #f59e0b;
+            --primary-dark: #d97706;
+            --secondary: #3b82f6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 30px;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        h2 {
+            color: var(--primary);
+            border-left: 4px solid var(--primary);
+            padding-left: 12px;
+            margin-top: 40px;
+            font-size: 1.6rem;
+        }
+
+        h3 {
+            color: #e2e8f0;
+            margin-top: 25px;
+        }
+
+        p, li {
+            color: #cbd5e1;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .phase-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .badge-draft { background: #ca8a04; color: #fff; }
+        .badge-grace { background: #16a34a; color: #fff; }
+        .badge-pvp { background: #dc2626; color: #fff; }
+        .badge-finale { background: #991b1b; color: #fff; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: #1e293b;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        code {
+            background: #090d16;
+            color: #38bdf8;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 0.9em;
+        }
+
+        .callout {
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 15px 20px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+
+        .callout-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid var(--danger);
+        }
+
+        footer {
+            margin-top: 60px;
+            text-align: center;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        @media print {
+            body { background: #fff; color: #000; }
+            .card, table { background: #fff; border: 1px solid #ccc; color: #000; }
+            th { background: #f0f0f0; color: #000; }
+            code { background: #f0f0f0; color: #000; }
+            p, li { color: #333; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>🏆 Willy Money SMP</h1>
+        <div class="subtitle">Official Tournament Guide, Gameplay Mechanics & Administration Manual</div>
+    </header>
+
+    <h2>📖 Tournament Overview</h2>
+    <p><strong>Willy Money SMP</strong> is a high-stakes, team-based Minecraft competitive engine. Players are classified into skill tiers, auctioned in live Captains' draft bidding, build bases during a grace period, battle in custom events, and fight to the death with permadeath elimination in the Finale.</p>
+
+    <h2>🪙 The Two Currencies</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Currency</th>
+                <th>Who Uses It</th>
+                <th>Main Purpose</th>
+                <th>How to Obtain</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Draft Credits</strong></td>
+                <td>Team Captains</td>
+                <td>Used strictly during the Draft Phase to bid on tier players in auctions.</td>
+                <td>Given at start (<code>400</code> default) or set by admins via <code>/credits</code>.</td>
+            </tr>
+            <tr>
+                <td><strong>Game Credits</strong></td>
+                <td>All Players</td>
+                <td>Used in the in-game <code>/shop</code> and to <strong>revive eliminated teammates</strong>.</td>
+                <td>Earned via <strong>Kills</strong>, winning <strong>KOTH</strong>, looting <strong>Airdrops</strong>, and completing <strong>Bingo lines</strong>.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>⏳ Tournament Phases</h2>
+    <div class="grid">
+        <div class="card">
+            <span class="phase-badge badge-draft">Phase 1</span>
+            <h3>📋 Draft Phase</h3>
+            <p><strong>PvP Status:</strong> Disabled.</p>
+            <p>Team Captains bid on nominated players during live 30-second auctions using Draft Credits. Won players are automatically added to the winning Captain's team.</p>
+            <code>/smp phase draft</code>
+        </div>
+        <div class="card">
+            <span class="phase-badge badge-grace">Phase 2</span>
+            <h3>🛡️ Grace Period</h3>
+            <p><strong>PvP Status:</strong> Strictly Blocked.</p>
+            <p>Friendly fire and player combat are disabled. Teams explore the world, mine resources, craft weapons and armor, and build fortified bases.</p>
+            <code>/smp phase grace</code>
+        </div>
+        <div class="card">
+            <span class="phase-badge badge-pvp">Phase 3</span>
+            <h3>⚔️ PvP Enabled</h3>
+            <p><strong>PvP Status:</strong> Active (Friendly Fire Disabled).</p>
+            <p>Combat is turned on! Eliminated players drop into <strong>Spectator mode</strong> upon death. Kills award Game Credits. Captains can buy back teammates for 150 credits.</p>
+            <code>/smp phase pvp</code>
+        </div>
+        <div class="card">
+            <span class="phase-badge badge-finale">Phase 4</span>
+            <h3>👑 Finale Showdown</h3>
+            <p><strong>PvP Status:</strong> Full Combat.</p>
+            <p>The endgame battle for tournament victory. Surviving teams converge with shop buffs and remaining members until one team stands alone!</p>
+            <code>/smp phase finale</code>
+        </div>
+    </div>
+
+    <h2>☠️ Elimination & Buyback System</h2>
+    <div class="card">
+        <p>When PvP is active (Phase 3 & 4), player deaths are permanent:</p>
+        <ul>
+            <li><strong>Spectator Mode:</strong> Upon dying, a player is struck with lightning, a global Wither sound echoes, and they are placed into Spectator mode.</li>
+            <li><strong>Kill Credit Rewards:</strong>
+                <ul>
+                    <li>Eliminating a <strong>Captain</strong>: <code>+25 Game Credits</code></li>
+                    <li>Eliminating a <strong>Tier A</strong> player: <code>+15 Game Credits</code></li>
+                    <li>Eliminating a <strong>Tier B / C</strong> player: <code>+10 Game Credits</code></li>
+                </ul>
+            </li>
+            <li><strong>Captain Buyback / Revive:</strong>
+                <p>Team Captains can revive fallen teammates at any time by running:</p>
+                <code>/team revive &lt;player&gt;</code>
+                <p><strong>Cost:</strong> <code>150 Game Credits</code>. The revived player is restored to Survival mode and instantly teleports to their Captain's side!</p>
+            </li>
+        </ul>
+    </div>
+
+    <h2>🛍️ The Credit Shop (<code>/shop</code>)</h2>
+    <p>Type <code>/shop</code> at any time to open the 27-slot chest shop:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Price (Game Credits)</th>
+                <th>Tactical Advantage</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>Golden Apples (x2)</td><td>15</td><td>Quick health absorption and regeneration.</td></tr>
+            <tr><td>Enchanted Golden Apple</td><td>75</td><td>Ultimate damage absorption, resistance, and fire immunity.</td></tr>
+            <tr><td>Totem of Undying</td><td>85</td><td>Saves you from lethal blows.</td></tr>
+            <tr><td>Ender Pearls (x4)</td><td>20</td><td>Escape traps or rush opponents.</td></tr>
+            <tr><td>Team Tracker Compass</td><td>25</td><td>Right-click to locate teammates or track enemy captains.</td></tr>
+            <tr><td>Splash Potion of Healing II</td><td>25</td><td>Instant area-of-effect emergency healing.</td></tr>
+            <tr><td>Potion of Swiftness II</td><td>20</td><td>Sprint and flank faster than enemies.</td></tr>
+            <tr><td>Potion of Strength</td><td>35</td><td>Boosts melee attack power.</td></tr>
+            <tr><td>Diamonds (x4)</td><td>30</td><td>Essential armor & weapon crafting material.</td></tr>
+            <tr><td>Arrows (x32)</td><td>10</td><td>Ammunition for bows and crossbows.</td></tr>
+            <tr><td>Firework Rockets (x16)</td><td>15</td><td>Elytra flight fuel.</td></tr>
+        </tbody>
+    </table>
+
+    <h2>🎯 Live Tournament Events</h2>
+
+    <h3>1. 🏰 King of the Hill (KOTH)</h3>
+    <div class="card">
+        <p><strong>How to Start:</strong> <code>/koth start</code> or via <code>/smp</code> Control Panel.</p>
+        <p>A 5-block particle flame ring appears with a floating 180-second holographic timer. Teams holding the zone without enemies inside score capture points. If rival teams enter, the hill is marked <strong>CONTESTED</strong>. The team with the most points at 0s wins <strong>+50 Game Credits</strong> awarded to their Captain!</p>
+    </div>
+
+    <h3>2. 🪂 Proximity Airdrops</h3>
+    <div class="card">
+        <p><strong>How to Summon:</strong> <code>/airdrop random &lt;common|rare|legendary&gt;</code> or click airdrop buttons in <code>/smp</code>.</p>
+        <p>Supply crates parachute from the sky 50–130m near an active player, leaving a smoke beacon signal on impact. Chests are filled with randomized distinct gear and grant instant credits on claim:</p>
+        <ul>
+            <li><strong>Common Drop:</strong> Varied food, iron, arrows, shields + trash loot + <strong>8–15 Credits</strong>.</li>
+            <li><strong>Rare Drop:</strong> Diamonds, golden apples, pearls, bow + <strong>16–25 Credits</strong>.</li>
+            <li><strong>Legendary Drop:</strong> Netherite scraps, Totem of Undying, God apples, diamonds + <strong>35–50 Credits</strong>.</li>
+        </ul>
+    </div>
+
+    <h3>3. 🧩 Lockout Bingo</h3>
+    <div class="card">
+        <p><strong>How to Start:</strong> <code>/bingo start</code>. View board with <code>/bingo</code>.</p>
+        <p>An interactive 5x5 board featuring 25 survival tasks (e.g., <em>Mine Ancient Debris, Tame a Cat, Craft Beacon, Brew Invisibility</em>). When a team completes a task, it turns into that team's wool color and is <strong>locked out</strong> from everyone else. Completing a 5-in-a-row line awards <strong>+150 Game Credits</strong> to the team Captain!</p>
+    </div>
+
+    <h2>🔄 Full Tournament Reset</h2>
+    <div class="callout callout-danger">
+        <h3>⚠️ Host Testing Reset Tool</h3>
+        <p>When you finish test sessions, you can completely restore the server to a clean state without reinstalling files:</p>
+        <p><strong>Command:</strong> <code>/smp reset confirm</code><br>
+        <strong>GUI:</strong> Shift + Click the TNT (Slot 25) in <code>/smp</code>.</p>
+        <p><strong>What it does:</strong></p>
+        <ul>
+            <li>Restores all players to <strong>Survival mode</strong> at world spawn.</li>
+            <li>Fills health and food to maximum, removes potion effects, resets XP to 0.</li>
+            <li>Clears test items from inventories and ender chests.</li>
+            <li>Revives all spectators and clears elimination tracking.</li>
+            <li>Disbands all teams, clears player tiers, and resets credit balances.</li>
+            <li>Sets the tournament phase back to <strong>Draft Phase</strong>.</li>
+            <li>Wipes <code>data.yml</code> and writes a fresh save.</li>
+        </ul>
+    </div>
+
+    <h2>⌨️ Commands Cheat Sheet</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Command</th>
+                <th>Who Can Use</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td><code>/smp</code></td><td>Admins</td><td>Opens the interactive visual Control Panel GUI.</td></tr>
+            <tr><td><code>/smp phase &lt;phase&gt;</code></td><td>Admins</td><td>Switches phase (draft, grace, pvp, finale).</td></tr>
+            <tr><td><code>/smp reset confirm</code></td><td>Admins</td><td>Wipes tournament and resets everything to the start.</td></tr>
+            <tr><td><code>/shop</code></td><td>Everyone</td><td>Opens the in-game tournament credit store.</td></tr>
+            <tr><td><code>/team list</code></td><td>Everyone</td><td>Lists all active teams and member rosters.</td></tr>
+            <tr><td><code>/team info [team]</code></td><td>Everyone</td><td>Inspects team status, captain, and alive members.</td></tr>
+            <tr><td><code>/team revive &lt;player&gt;</code></td><td>Captains</td><td>Revives an eliminated teammate for 150 credits.</td></tr>
+            <tr><td><code>/tc &lt;msg&gt;</code></td><td>Everyone</td><td>Sends private chat to teammates only.</td></tr>
+            <tr><td><code>/tracker</code></td><td>Everyone</td><td>Gives you a Team Tracker compass.</td></tr>
+            <tr><td><code>/bingo</code></td><td>Everyone</td><td>Opens the 5x5 Lockout Bingo board.</td></tr>
+            <tr><td><code>/leaderboard</code></td><td>Everyone</td><td>Ranks teams by total team credits.</td></tr>
+            <tr><td><code>/bid nominate &lt;player&gt;</code></td><td>Admins</td><td>Starts a 30s auction for an unassigned player.</td></tr>
+            <tr><td><code>/bid &lt;amount&gt;</code></td><td>Captains</td><td>Places a bid on the active draft player.</td></tr>
+            <tr><td><code>/koth start</code> / <code>stop</code></td><td>Admins</td><td>Starts or stops King of the Hill at your position.</td></tr>
+            <tr><td><code>/airdrop random &lt;tier&gt;</code></td><td>Admins</td><td>Spawns a proximity airdrop near a player.</td></tr>
+        </tbody>
+    </table>
+
+    <footer>
+        Willy Money SMP v2.5 • Developed by Jelani & Willy • Paper 1.20.4
+    </footer>
+</div>
+
+</body>
+</html>

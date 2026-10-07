@@ -1,0 +1,17 @@
+starting-draft-credits: 400
+starting-game-credits: 100
+
+rewards:
+  captain-kill: 25
+  tier-a-kill: 15
+  tier-b-kill: 10
+  tier-c-kill: 10
+  koth-win-reward: 50
+  bingo-line-win: 150
+
+elimination:
+  enabled: true
+  revive-cost: 150
+  lightning-on-death: true
+
+auto-save-interval-minutes: 5
