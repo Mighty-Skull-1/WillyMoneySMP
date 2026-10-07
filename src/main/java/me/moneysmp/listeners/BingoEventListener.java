@@ -38,7 +38,13 @@ public class BingoEventListener implements Listener {
         }
 
         if (mat == Material.COAL_ORE || mat == Material.DEEPSLATE_COAL_ORE || mat == Material.COAL_BLOCK) {
-            if (player.getInventory().containsAtLeast(new ItemStack(Material.COAL), 64)) {
+            if (plugin != null) {
+                plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                    if (player.isOnline() && player.getInventory().containsAtLeast(new ItemStack(Material.COAL), 64)) {
+                        eventManager.claimBingo(player, "Mine 64 Coal");
+                    }
+                }, 5L);
+            } else if (player.getInventory().containsAtLeast(new ItemStack(Material.COAL), 64)) {
                 eventManager.claimBingo(player, "Mine 64 Coal");
             }
         }
@@ -150,6 +156,14 @@ public class BingoEventListener implements Listener {
                 eventManager.claimBingo(player, "Obtain Elytra");
             } else if (mat == Material.WITHER_SKELETON_SKULL) {
                 eventManager.claimBingo(player, "Obtain Wither Skull");
+            } else if (mat == Material.COAL) {
+                if (plugin != null) {
+                    plugin.getServer().getScheduler().runTask(plugin, () -> {
+                        if (player.isOnline() && player.getInventory().containsAtLeast(new ItemStack(Material.COAL), 64)) {
+                            eventManager.claimBingo(player, "Mine 64 Coal");
+                        }
+                    });
+                }
             }
         }
     }

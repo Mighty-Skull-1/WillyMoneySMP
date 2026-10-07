@@ -8,11 +8,13 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -488,10 +490,10 @@ public class EventManager {
         bingoIcons.clear();
 
         addTask("Mine Ancient Debris", Material.ANCIENT_DEBRIS);
-        addTask("Tame a Cat", Material.CAT_SPAWN_EGG);
+        addTask("Tame a Cat", Material.COD);
         addTask("Brew Invisibility", Material.POTION);
         addTask("Craft Diamond Block", Material.DIAMOND_BLOCK);
-        addTask("Kill an Enderman", Material.ENDER_PEARL);
+        addTask("Kill an Enderman", Material.ENDER_EYE);
         addTask("Eat Golden Apple", Material.GOLDEN_APPLE);
         addTask("Obtain Elytra", Material.ELYTRA);
         addTask("Catch a Pufferfish", Material.PUFFERFISH);
@@ -509,9 +511,9 @@ public class EventManager {
         addTask("Shear a Sheep", Material.SHEARS);
         addTask("Find Desert Temple", Material.TNT);
         addTask("Kill Blazes", Material.BLAZE_ROD);
-        addTask("Mine 64 Coal", Material.COAL_BLOCK);
+        addTask("Mine 64 Coal", Material.COAL);
         addTask("Catch Enchanted Book", Material.ENCHANTED_BOOK);
-        addTask("Throw Ender Pearl", Material.ENDER_EYE);
+        addTask("Throw Ender Pearl", Material.ENDER_PEARL);
     }
 
     private void addTask(String task, Material icon) {
@@ -622,21 +624,175 @@ public class EventManager {
         }
     }
 
-    public void openBingoGUI(Player player) {
-        Inventory inv = Bukkit.createInventory(null, 54, "§6§lWilly Money SMP Bingo");
+    public String getTaskDescription(String task) {
+        if (task == null) return "Complete the challenge";
+        switch (task) {
+            case "Mine Ancient Debris": return "Mine an Ancient Debris block in the Nether";
+            case "Tame a Cat": return "Feed raw fish to a stray cat to tame it";
+            case "Brew Invisibility": return "Brew and drink an Invisibility potion";
+            case "Craft Diamond Block": return "Combine 9 Diamonds in a crafting table";
+            case "Kill an Enderman": return "Slay an Enderman in combat";
+            case "Eat Golden Apple": return "Consume a Golden or Enchanted Apple";
+            case "Obtain Elytra": return "Acquire an Elytra into your inventory";
+            case "Catch a Pufferfish": return "Catch a Pufferfish using a Fishing Rod";
+            case "Ride a Strider": return "Saddle and ride a Strider over lava";
+            case "Wear Full Iron": return "Equip a full set of Iron Armor";
+            case "Smelt Netherite": return "Smelt Ancient Debris into Netherite Scrap";
+            case "Tame a Wolf": return "Feed bones to a wild wolf to tame it";
+            case "Find a Village": return "Locate a village and interact with a villager";
+            case "Bake a Cake": return "Craft a Cake (wheat, sugar, milk, egg)";
+            case "Craft Enchanting Table": return "Craft an Enchanting Table with obsidian & diamonds";
+            case "Obtain Wither Skull": return "Slay a Wither Skeleton and loot its skull";
+            case "Brew Strength II": return "Brew and drink a Strength II potion";
+            case "Kill a Warden": return "Summon and defeat a Warden in the Deep Dark";
+            case "Craft Beacon": return "Craft a Beacon using a Nether Star";
+            case "Shear a Sheep": return "Use Shears to collect wool from a sheep";
+            case "Find Desert Temple": return "Trigger the pressure plate in a Desert Pyramid";
+            case "Kill Blazes": return "Slay a Blaze in a Nether Fortress";
+            case "Mine 64 Coal": return "Gather a full stack of 64 Coal";
+            case "Catch Enchanted Book": return "Reel in an Enchanted Book while fishing";
+            case "Throw Ender Pearl": return "Throw an Ender Pearl to teleport";
+            default: return "Complete the survival challenge";
+        }
+    }
 
-        int[] slots = {
-                10, 11, 12, 13, 14,
-                19, 20, 21, 22, 23,
-                28, 29, 30, 31, 32,
-                37, 38, 39, 40, 41,
-                46, 47, 48, 49, 50
+    public void openBingoGUI(Player player) {
+        Inventory inv = Bukkit.createInventory(null, 54, "§6§lLockout Bingo Board");
+
+        // Fill background with border panes
+        ItemStack outerFiller = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+        ItemMeta ofMeta = outerFiller.getItemMeta();
+        if (ofMeta != null) {
+            ofMeta.setDisplayName(" ");
+            outerFiller.setItemMeta(ofMeta);
+        }
+
+        ItemStack innerBorder = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+        ItemMeta ibMeta = innerBorder.getItemMeta();
+        if (ibMeta != null) {
+            ibMeta.setDisplayName(" ");
+            innerBorder.setItemMeta(ibMeta);
+        }
+
+        for (int i = 0; i < 54; i++) {
+            inv.setItem(i, outerFiller);
+        }
+
+        // Left 2 columns and right 2 columns use innerBorder for dark contrast
+        int[] sideSlots = {
+                0, 1, 9, 10, 18, 19, 27, 28, 36, 37, 45, 46,
+                7, 8, 16, 17, 25, 26, 34, 35, 43, 44, 52, 53
+        };
+        for (int s : sideSlots) {
+            inv.setItem(s, innerBorder);
+        }
+
+        // Top Header (Slot 4)
+        ItemStack header = new ItemStack(Material.NETHER_STAR);
+        ItemMeta hMeta = header.getItemMeta();
+        if (hMeta != null) {
+            hMeta.setDisplayName("§6§lLockout Bingo Race");
+            hMeta.setLore(Arrays.asList(
+                    "§8--------------------------",
+                    "§7Status: " + (bingoActive ? "§aActive (Live Race)" : "§cInactive"),
+                    "§7Race across 25 survival challenges.",
+                    "§7First team to complete a task locks it out!",
+                    "§7Complete any line (5 in a row) for §e+150 Credits§7!",
+                    "§8--------------------------"
+            ));
+            hMeta.addEnchant(Enchantment.DURABILITY, 1, true);
+            hMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            header.setItemMeta(hMeta);
+        }
+        inv.setItem(4, header);
+
+        // Sidebar Info: Your Team Progress (Slot 17)
+        Team playerTeam = player != null ? teamManager.getTeamByPlayer(player.getUniqueId()) : null;
+        int teamClaimedCount = 0;
+        if (playerTeam != null) {
+            for (Team t : bingoBoard.values()) {
+                if (t != null && t.equals(playerTeam)) teamClaimedCount++;
+            }
+        }
+        ItemStack teamInfo = new ItemStack(Material.WRITABLE_BOOK);
+        ItemMeta tiMeta = teamInfo.getItemMeta();
+        if (tiMeta != null) {
+            tiMeta.setDisplayName("§e§lYour Team Progress");
+            tiMeta.setLore(Arrays.asList(
+                    "§8--------------------------",
+                    "§7Team: " + (playerTeam != null ? playerTeam.getColorCode() + playerTeam.getName() : "§cNo Team"),
+                    "§7Tasks Claimed: §e" + teamClaimedCount + " §7/ 25",
+                    "§8--------------------------",
+                    "§7Work with teammates to claim a row!"
+            ));
+            teamInfo.setItemMeta(tiMeta);
+        }
+        inv.setItem(17, teamInfo);
+
+        // Sidebar Info: Leaderboard (Slot 26)
+        ItemStack boardStats = new ItemStack(Material.FILLED_MAP);
+        ItemMeta bsMeta = boardStats.getItemMeta();
+        if (bsMeta != null) {
+            bsMeta.setDisplayName("§6§lLive Standings");
+            List<String> bsLore = new ArrayList<>();
+            bsLore.add("§8--------------------------");
+            Map<Team, Integer> counts = new HashMap<>();
+            for (Team t : bingoBoard.values()) {
+                if (t != null) counts.put(t, counts.getOrDefault(t, 0) + 1);
+            }
+            if (counts.isEmpty()) {
+                bsLore.add("§7No tasks claimed yet!");
+            } else {
+                for (Map.Entry<Team, Integer> entry : counts.entrySet()) {
+                    bsLore.add(entry.getKey().getColorCode() + entry.getKey().getName() + "§7: §e" + entry.getValue() + " tasks");
+                }
+            }
+            bsLore.add("§8--------------------------");
+            bsMeta.setLore(bsLore);
+            boardStats.setItemMeta(bsMeta);
+        }
+        inv.setItem(26, boardStats);
+
+        // Sidebar Info: Line Rewards (Slot 35)
+        ItemStack rewardInfo = new ItemStack(Material.GOLD_INGOT);
+        ItemMeta riMeta = rewardInfo.getItemMeta();
+        if (riMeta != null) {
+            riMeta.setDisplayName("§a§lLine Rewards");
+            riMeta.setLore(Arrays.asList(
+                    "§8--------------------------",
+                    "§7Reward: §e+150 Game Credits",
+                    "§7Awarded to the Captain whenever",
+                    "§7your team completes any row,",
+                    "§7column, or diagonal!",
+                    "§8--------------------------"
+            ));
+            rewardInfo.setItemMeta(riMeta);
+        }
+        inv.setItem(35, rewardInfo);
+
+        // Close Menu Button (Slot 53)
+        ItemStack closeBtn = new ItemStack(Material.BARRIER);
+        ItemMeta cMeta = closeBtn.getItemMeta();
+        if (cMeta != null) {
+            cMeta.setDisplayName("§c§lClose Board");
+            cMeta.setLore(Collections.singletonList("§7Click to exit."));
+            closeBtn.setItemMeta(cMeta);
+        }
+        inv.setItem(53, closeBtn);
+
+        // 5x5 Centered Board (Columns 2, 3, 4, 5, 6)
+        int[] centeredSlots = {
+                11, 12, 13, 14, 15,
+                20, 21, 22, 23, 24,
+                29, 30, 31, 32, 33,
+                38, 39, 40, 41, 42,
+                47, 48, 49, 50, 51
         };
 
         int index = 0;
         for (Map.Entry<String, Team> entry : bingoBoard.entrySet()) {
-            if (index >= slots.length) break;
-            int slot = slots[index++];
+            if (index >= centeredSlots.length) break;
+            int slot = centeredSlots[index++];
 
             String task = entry.getKey();
             Team claimer = entry.getValue();
@@ -647,16 +803,30 @@ public class EventManager {
                 ItemMeta meta = item.getItemMeta();
                 if (meta != null) {
                     meta.setDisplayName(claimer.getColorCode() + "§l" + task);
-                    meta.setLore(Collections.singletonList("§aClaimed by: " + claimer.getName()));
+                    List<String> lore = new ArrayList<>();
+                    lore.add("§8--------------------------");
+                    lore.add("§c✖ LOCKED OUT");
+                    lore.add("§7Claimed by: " + claimer.getColorCode() + claimer.getName());
+                    lore.add("§7Objective: §8" + getTaskDescription(task));
+                    lore.add("§8--------------------------");
+                    meta.setLore(lore);
+                    meta.addEnchant(Enchantment.DURABILITY, 1, true);
+                    meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                     item.setItemMeta(meta);
                 }
             } else {
-                Material icon = bingoIcons.getOrDefault(task, Material.GRAY_STAINED_GLASS_PANE);
+                Material icon = bingoIcons.getOrDefault(task, Material.PAPER);
                 item = new ItemStack(icon);
                 ItemMeta meta = item.getItemMeta();
                 if (meta != null) {
                     meta.setDisplayName("§e§l" + task);
-                    meta.setLore(Collections.singletonList("§7Status: §aAvailable to claim!"));
+                    List<String> lore = new ArrayList<>();
+                    lore.add("§8--------------------------");
+                    lore.add("§7Objective: §f" + getTaskDescription(task));
+                    lore.add("§7Status: §a✔ Available to claim!");
+                    lore.add("§8--------------------------");
+                    lore.add("§eFirst team to complete this locks it out!");
+                    meta.setLore(lore);
                     item.setItemMeta(meta);
                 }
             }

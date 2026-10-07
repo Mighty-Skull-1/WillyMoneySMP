@@ -144,6 +144,9 @@ public class KillEventListener implements Listener {
 
         if (title.contains("Bingo")) {
             event.setCancelled(true);
+            if (event.getRawSlot() == 53 && event.getWhoClicked() instanceof Player player) {
+                player.closeInventory();
+            }
             return;
         }
 
