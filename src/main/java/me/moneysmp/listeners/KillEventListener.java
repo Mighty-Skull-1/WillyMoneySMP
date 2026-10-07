@@ -180,8 +180,12 @@ public class KillEventListener implements Listener {
             EventManager.AirdropData data = eventManager.claimAirdrop(event.getClickedBlock().getLocation());
             if (data != null) {
                 Player player = event.getPlayer();
-                creditManager.addGameCredits(player.getUniqueId(), data.getCreditsReward());
-                Bukkit.broadcastMessage("§6[AIRDROP] §e" + player.getName() + " opened the " + data.getTitle() + " §eand earned §a+" + data.getCreditsReward() + " Game Credits§e!");
+                if (data.getCreditsReward() > 0) {
+                    creditManager.addGameCredits(player.getUniqueId(), data.getCreditsReward());
+                    Bukkit.broadcastMessage("§6[AIRDROP] §e" + player.getName() + " opened the " + data.getTitle() + " §eand earned §a+" + data.getCreditsReward() + " Game Credits§e!");
+                } else {
+                    Bukkit.broadcastMessage("§6[AIRDROP] §e" + player.getName() + " opened the " + data.getTitle() + "§e!");
+                }
                 player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.2f);
             }
         }

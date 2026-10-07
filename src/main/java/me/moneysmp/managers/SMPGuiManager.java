@@ -117,6 +117,7 @@ public class SMPGuiManager {
                 "§8-------------------------",
                 "§7Spawns a Common supply drop near an active",
                 "§7player with randomized survival & filler loot.",
+                "§7Reward: §e0 Game Credits §7(Loot only)",
                 "§8-------------------------",
                 "§f▶ Click: §aSpawn Common Airdrop"
         );
@@ -127,6 +128,7 @@ public class SMPGuiManager {
                 "§8-------------------------",
                 "§7Spawns a Rare supply drop near an active",
                 "§7player with diamonds, gapples & pearls.",
+                "§7Reward: §a+5 Game Credits",
                 "§8-------------------------",
                 "§9▶ Click: §aSpawn Rare Airdrop"
         );
@@ -137,6 +139,7 @@ public class SMPGuiManager {
                 "§8-------------------------",
                 "§7Spawns a Legendary drop near an active",
                 "§7player with totems, scraps & god apples.",
+                "§7Reward: §a+15 Game Credits",
                 "§8-------------------------",
                 "§6▶ Click: §aSpawn Legendary Airdrop"
         );

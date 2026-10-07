@@ -1,6 +1,6 @@
 common:
   title: "§f§l[COMMON AIRDROP]"
-  credits-reward: 10
+  credits-reward: 0
   min-items: 4
   max-items: 7
   loot-pool:
@@ -39,7 +39,7 @@ common:
 
 rare:
   title: "§9§l[RARE AIRDROP]"
-  credits-reward: 20
+  credits-reward: 5
   min-items: 4
   max-items: 6
   loot-pool:
@@ -65,7 +65,7 @@ rare:
 
 legendary:
   title: "§6§l[LEGENDARY AIRDROP]"
-  credits-reward: 40
+  credits-reward: 15
   min-items: 4
   max-items: 7
   loot-pool:

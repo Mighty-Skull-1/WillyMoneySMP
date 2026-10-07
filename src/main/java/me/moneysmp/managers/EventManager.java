@@ -86,7 +86,7 @@ public class EventManager {
             plugin.saveResource("airdrops.yml", false);
         }
         airdropConfig = YamlConfiguration.loadConfiguration(airdropFile);
-        if (!airdropConfig.contains("common.loot-pool")) {
+        if (!airdropConfig.contains("common.loot-pool") || airdropConfig.getInt("common.credits-reward", 10) != 0 || airdropConfig.getInt("rare.credits-reward", 20) != 5) {
             plugin.saveResource("airdrops.yml", true);
             airdropConfig = YamlConfiguration.loadConfiguration(airdropFile);
         }
@@ -398,16 +398,15 @@ public class EventManager {
         return list;
     }
 
-    private int calculateRandomCreditsReward(String tier, int baseReward) {
-        Random rand = new Random();
+    private int calculateCreditsReward(String tier) {
         if ("common".equalsIgnoreCase(tier)) {
-            return 8 + rand.nextInt(8); // 8 - 15 credits
+            return airdropConfig != null ? airdropConfig.getInt("common.credits-reward", 0) : 0;
         } else if ("rare".equalsIgnoreCase(tier)) {
-            return 16 + rand.nextInt(10); // 16 - 25 credits
+            return airdropConfig != null ? airdropConfig.getInt("rare.credits-reward", 5) : 5;
         } else if ("legendary".equalsIgnoreCase(tier)) {
-            return 35 + rand.nextInt(16); // 35 - 50 credits
+            return airdropConfig != null ? airdropConfig.getInt("legendary.credits-reward", 15) : 15;
         }
-        return Math.max(5, baseReward);
+        return airdropConfig != null ? airdropConfig.getInt(tier + ".credits-reward", 0) : 0;
     }
 
     // --- AIRDROP SUMMON WITH RANDOMIZED SCATTERED LOOT ---
@@ -423,8 +422,7 @@ public class EventManager {
         fallingChest.setDropItem(false);
 
         String title = airdropConfig != null ? airdropConfig.getString(selectedTier + ".title", "§eSupply Drop") : "§eSupply Drop";
-        int baseReward = airdropConfig != null ? airdropConfig.getInt(selectedTier + ".credits-reward", 10) : 10;
-        int creditsReward = calculateRandomCreditsReward(selectedTier, baseReward);
+        int creditsReward = calculateCreditsReward(selectedTier);
         List<ItemStack> lootItems = generateRandomAirdropLoot(selectedTier);
 
         new BukkitRunnable() {

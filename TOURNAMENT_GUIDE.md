@@ -134,9 +134,9 @@ Any player can type `/shop` at any time to open the 27-slot chest GUI.
 - **Summon**: Click Airdrop chest in `/smp` GUI or `/airdrop random <tier>`.
 - **Landing**: Drops 50–130 blocks away from an active player. Descends from the sky and leaves a smoke flare signal upon landing.
 - **Chests & Loot Pools**:
-  - **Common Airdrop**: Random survival gear (iron, bread, arrows, golden apples, shields) + filler loot + **`8-15 Game Credits`**.
-  - **Rare Airdrop**: Nerfed diamonds, golden apples, pearls, obsidian + **`16-25 Game Credits`**.
-  - **Legendary Airdrop**: Totem of Undying, netherite scraps, enchanted apples, diamonds + **`35-50 Game Credits`**.
+  - **Common Airdrop**: Random survival gear (iron, bread, arrows, golden apples, shields) + filler loot + **`0 Game Credits` (Loot only)**.
+  - **Rare Airdrop**: Nerfed diamonds, golden apples, pearls, obsidian + **`5 Game Credits`**.
+  - **Legendary Airdrop**: Totem of Undying, netherite scraps, enchanted apples, diamonds + **`15 Game Credits`**.
 
 ### 3. Lockout Bingo (5x5 Board)
 - **Start**: `/bingo start` (or click Map in `/smp` GUI).
