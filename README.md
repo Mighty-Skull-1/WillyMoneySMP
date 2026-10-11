@@ -10,12 +10,11 @@ Welcome to **Willy Money SMP**, a high-stakes, economy-driven Minecraft tourname
 3. [Tournament Phases](#-tournament-phases)
 4. [Player Tiers & Drafting](#-player-tiers--drafting)
 5. [Teams, Elimination & Buyback](#-teams-elimination--buyback)
-6. [The In-Game Credit Shop](#-the-in-game-credit-shop)
-7. [Banned Items & Mobility Rules](#-banned-items--mobility-rules)
-8. [Live Tournament Events](#-live-tournament-events)
-9. [Team Tracker Compass](#-team-tracker-compass)
-10. [Admin Control Panel & System Reset](#-admin-control-panel--system-reset)
-11. [Complete Commands Reference](#-complete-commands-reference)
+6. [Banned Items & Movement Rules](#-banned-items--movement-rules)
+7. [Live Tournament Events](#-live-tournament-events)
+8. [Team Tracker Compass](#-team-tracker-compass)
+9. [Admin Control Panel & System Reset](#-admin-control-panel--system-reset)
+10. [Complete Commands Reference](#-complete-commands-reference)
 
 ---
 
@@ -33,7 +32,7 @@ In **Willy Money SMP**, players compete in teams led by designated Captains. The
 | Currency | Purpose | How to Earn / Obtain |
 | :--- | :--- | :--- |
 | **Draft Credits** | Used **strictly by Team Captains** during the Draft Phase auction to bid on players. | Set at the start (`400` default) or granted by Admins via `/credits give <player> <amt> draft`. |
-| **Game Credits** | Used in the `/shop` to purchase combat gear, potions, and to **revive eliminated teammates** (`/team revive`). | Earned from **Player Kills**, winning **King of the Hill (KOTH)**, opening **Airdrops**, and completing **Bingo Lines**. |
+| **Game Credits** | Used to **revive eliminated teammates** (`/team revive`) and rank teams on the leaderboard (`/leaderboard`). | Earned from **Player Kills**, winning **King of the Hill (KOTH)**, opening **Airdrops**, and completing **Bingo Lines**. |
 
 ---
 
@@ -61,7 +60,7 @@ The global game phase is controlled by server admins via `/smp phase <phase>` or
 
 ### 4. Finale Showdown (`/smp phase finale`)
 - **PvP Status**: High-stakes endgame combat.
-- **Gameplay**: Surviving teams converge with full shop gear, potions, and active teammates for the final battle.
+- **Gameplay**: Surviving teams converge with full survival gear, potions, and active teammates for the final battle.
 
 ---
 
@@ -102,40 +101,19 @@ Players are classified into four skill tiers:
 
 ---
 
-## 🛍️ The In-Game Credit Shop (`/shop`)
-
-Any player can type `/shop` at any time to open the interactive 27-slot chest GUI.
-
-| Item | Cost | Details |
-| :--- | :--- | :--- |
-| **Golden Apple (x2)** | 15 Credits | Instant absorption and regeneration. |
-| **Enchanted Golden Apple** | 75 Credits | Maximum defense, absorption, and resistance. |
-| **Totem of Undying** | 85 Credits | Second-chance death prevention. |
-| **Wind Charge (x4)** | 20 Credits | **High-mobility tactical burst** (Replaces banned Ender Pearls). |
-| **Team Tracker Compass** | 25 Credits | Radar compass to track allies or enemy captains. |
-| **Splash Potion of Healing II** | 25 Credits | Instant splash health recovery. |
-| **Potion of Swiftness II** | 20 Credits | High-speed maneuverability. |
-| **Potion of Strength** | 35 Credits | Increased melee damage boost. |
-| **Arrows (x32)** | 10 Credits | Standard bow and crossbow ammunition. |
-| **Diamonds (x4)** | 30 Credits | Diamond resource bundle. |
-| **Firework Rockets (x16)** | 15 Credits | Elytra flight fuel. |
-
----
-
-## 🚫 Banned Items & Mobility Rules
+## 🚫 Banned Items & Movement Rules
 
 To ensure competitive tournament balance and eliminate instant-escape teleportation:
 
-### 1. Ender Pearls Are Banned
-- **Full Usage Lock**: Right-clicking, throwing, placing, crafting, or consuming Ender Pearls is completely blocked.
-- **Interception**: Any launched pearls are canceled immediately and removed to prevent teleportation exploits.
-- **Player Feedback**: Blocked actions trigger an alert sound (`ENTITY_VILLAGER_NO`), a chat notice, and an **Action Bar warning**:
-  `✖ Ender Pearl is BANNED! Use Wind Charges`.
+### 1. Restricted Equipment
+- **Ender Pearls**: Teleportation projectile is disabled. Throwing or right-clicking is canceled and pearl is removed immediately.
+- **Wind Charges**: Burst jumping is disabled. Throwing or launching is canceled and projectiles are removed.
+- **Player Feedback**: Blocked actions trigger an alert sound (`ENTITY_VILLAGER_NO`) and a red **Action Bar alert**:
+  `✖ <Item> is BANNED in tournament!`.
 
-### 2. Approved Mobility: Wind Charges
-- **Wind Charges** replace Ender Pearls across the entire tournament.
-- Available in the **Credit Shop** (`/shop`), **Rare Airdrops**, and **Legendary Airdrops**.
-- Allows skilled vertical rocket-jumping, knockback, and tactical repositioning.
+### 2. Fair Movement Standards
+- Combat mobility is grounded in sprint mechanics, terrain control, and PvP skill.
+- Teleportation and burst launchers are strictly prohibited.
 
 ### 3. Interactive Banned Items GUI (`/banneditems`)
 - Open the 54-slot menu via **`/banneditems`** (or click **Slot 14** in `/smp`).
@@ -161,8 +139,8 @@ To ensure competitive tournament balance and eliminate instant-escape teleportat
 - **Landing**: Drops 50–130 blocks away from an active player. Descends from the sky and leaves a smoke flare signal upon landing.
 - **Chests & Loot Pools**:
   - **Common Airdrop**: Random survival gear (iron, bread, arrows, golden apples, shields) + filler loot (**0 Game Credits** / Loot only).
-  - **Rare Airdrop**: Diamonds, golden apples, **wind charges**, obsidian + **`+5 Game Credits`**.
-  - **Legendary Airdrop**: Totem of Undying, netherite scraps, enchanted apples, diamonds, **wind charges** + **`+15 Game Credits`**.
+  - **Rare Airdrop**: Diamonds, golden apples, obsidian, bows, enchanted books + **`+5 Game Credits`**.
+  - **Legendary Airdrop**: Totem of Undying, netherite scraps, enchanted apples, diamonds + **`+15 Game Credits`**.
 
 ### 3. Lockout Bingo (5x5 Board)
 - **Start**: `/bingo start` (or click Map in `/smp` GUI).
@@ -177,7 +155,7 @@ To ensure competitive tournament balance and eliminate instant-escape teleportat
     - **Slot 35 (Line Rewards)**: Gold Ingot explaining the `+150 Credits` captain payout.
     - **Slot 53 (Close Button)**: Barrier button to exit the menu.
 - **Task Tracking**:
-  - Tasks like *"Use Wind Charge"* and *"Mine 64 Coal"* auto-complete in real-time.
+  - Challenges like *"Mine Obsidian"* and *"Mine 64 Coal"* auto-complete in real-time.
 - **Lockout Rule**: The first team to complete a task claims it permanently in their team color—other teams are locked out.
 - **Reward**: Completing any 5-in-a-row line (row, column, diagonal) awards **`+150 Game Credits`** to the Captain.
 
@@ -207,8 +185,8 @@ Type **`/smp`** to open the interactive Admin Control Panel:
 [Row 2 - Events & System Controls]
   Slot 18: [Beacon]           KOTH Toggle (Left: Start, Right: Stop)
   Slot 19: [Chest]            Summon Common Airdrop
-  Slot 20: [Ender Chest]      Summon Rare Airdrop (With Wind Charges)
-  Slot 21: [Trapped Chest]    Summon Legendary Airdrop (With Wind Charges)
+  Slot 20: [Ender Chest]      Summon Rare Airdrop
+  Slot 21: [Trapped Chest]    Summon Legendary Airdrop
   Slot 22: [Filled Map]       Lockout Bingo Toggle
   Slot 23: [Ender Eye]        Save Tournament Data to data.yml
   Slot 24: [Redstone Torch]   Reload Configurations
@@ -239,7 +217,6 @@ After running tests, you can completely reset everything to the beginning:
 ### Player Commands
 | Command | Aliases | Description |
 | :--- | :--- | :--- |
-| `/shop` | — | Open the Game Credits store. |
 | `/banneditems` | `/banned`, `/banlist`, `/bannedlist` | Open the Banned Items GUI and view restrictions. |
 | `/team list` | — | View all active teams and rosters. |
 | `/team info [team]` | — | Inspect a team's members, captain, and elimination status. |

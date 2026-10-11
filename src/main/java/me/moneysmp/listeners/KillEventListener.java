@@ -35,14 +35,13 @@ public class KillEventListener implements Listener {
     private final PhaseManager phaseManager;
     private final EventManager eventManager;
     private final EliminationManager eliminationManager;
-    private final ShopManager shopManager;
     private final SMPGuiManager smpGuiManager;
 
     private final Map<UUID, Boolean> trackerModes = new HashMap<>();
 
     public KillEventListener(JavaPlugin plugin, TeamManager teamManager, CreditManager creditManager,
                              TierManager tierManager, PhaseManager phaseManager, EventManager eventManager,
-                             EliminationManager eliminationManager, ShopManager shopManager, SMPGuiManager smpGuiManager) {
+                             EliminationManager eliminationManager, SMPGuiManager smpGuiManager) {
         this.plugin = plugin;
         this.teamManager = teamManager;
         this.creditManager = creditManager;
@@ -50,7 +49,6 @@ public class KillEventListener implements Listener {
         this.phaseManager = phaseManager;
         this.eventManager = eventManager;
         this.eliminationManager = eliminationManager;
-        this.shopManager = shopManager;
         this.smpGuiManager = smpGuiManager;
     }
 
@@ -150,14 +148,6 @@ public class KillEventListener implements Listener {
             return;
         }
 
-        if (title.equals(ShopManager.SHOP_TITLE)) {
-            event.setCancelled(true);
-            if (event.getWhoClicked() instanceof Player player && shopManager != null) {
-                shopManager.handlePurchase(player, event.getRawSlot());
-            }
-            return;
-        }
-
         if (title.equals(SMPGuiManager.GUI_TITLE)) {
             event.setCancelled(true);
             if (event.getWhoClicked() instanceof Player player && smpGuiManager != null) {
@@ -169,7 +159,7 @@ public class KillEventListener implements Listener {
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
         String title = event.getView().getTitle();
-        if (title.contains("Bingo") || title.equals(ShopManager.SHOP_TITLE) || title.equals(SMPGuiManager.GUI_TITLE) || title.equals(BannedItemManager.GUI_TITLE)) {
+        if (title.contains("Bingo") || title.equals(SMPGuiManager.GUI_TITLE) || title.equals(BannedItemManager.GUI_TITLE)) {
             event.setCancelled(true);
         }
     }

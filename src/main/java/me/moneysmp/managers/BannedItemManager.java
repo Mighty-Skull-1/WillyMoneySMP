@@ -65,17 +65,26 @@ public class BannedItemManager {
                 Material mat = Material.matchMaterial(key);
                 if (mat != null) {
                     String reason = sec.getString(key + ".reason", "Disabled for competitive tournament balance");
-                    String alt = sec.getString(key + ".alternative", "Wind Charges");
+                    String alt = sec.getString(key + ".alternative", "None / Standard Movement");
                     bannedItems.put(mat, new BanEntry(mat, reason, alt));
                 }
             }
         }
 
-        // Ensure ENDER_PEARL is always in the ban list by default
+        boolean needSave = false;
         if (!bannedItems.containsKey(Material.ENDER_PEARL)) {
             bannedItems.put(Material.ENDER_PEARL, new BanEntry(Material.ENDER_PEARL,
                     "Ender Pearls are disabled for competitive tournament balance",
-                    "Wind Charges"));
+                    "None / Standard Movement"));
+            needSave = true;
+        }
+        if (!bannedItems.containsKey(Material.WIND_CHARGE)) {
+            bannedItems.put(Material.WIND_CHARGE, new BanEntry(Material.WIND_CHARGE,
+                    "Wind Charges are disabled for competitive tournament balance",
+                    "None / Standard Movement"));
+            needSave = true;
+        }
+        if (needSave) {
             saveConfig();
         }
     }
@@ -84,7 +93,9 @@ public class BannedItemManager {
         bannedConfigFile.getParentFile().mkdirs();
         bannedConfig = new YamlConfiguration();
         bannedConfig.set("banned-items.ENDER_PEARL.reason", "Ender Pearls are disabled for competitive tournament balance");
-        bannedConfig.set("banned-items.ENDER_PEARL.alternative", "Wind Charges");
+        bannedConfig.set("banned-items.ENDER_PEARL.alternative", "None / Standard Movement");
+        bannedConfig.set("banned-items.WIND_CHARGE.reason", "Wind Charges are disabled for competitive tournament balance");
+        bannedConfig.set("banned-items.WIND_CHARGE.alternative", "None / Standard Movement");
         try {
             bannedConfig.save(bannedConfigFile);
         } catch (IOException e) {
@@ -201,38 +212,38 @@ public class BannedItemManager {
             bMeta.setDisplayName("§e§lWhy Are Items Banned?");
             bMeta.setLore(Arrays.asList(
                     "§8--------------------------",
-                    "§7Items such as Ender Pearls allow",
-                    "§7instant teleportation escapes that disrupt",
-                    "§7PvP pacing, chase mechanics, and arena boundaries.",
+                    "§7Items such as Ender Pearls and",
+                    "§7Wind Charges allow uncounterable escapes",
+                    "§7that disrupt PvP pacing and arena boundaries.",
                     "§8--------------------------",
-                    "§7They have been banned in favor of",
-                    "§bWind Charges §7which require skilled aiming!",
+                    "§7Combat mobility must rely on sprint,",
+                    "§7terrain mastery, and tactical skill!",
                     "§8--------------------------"
             ));
             book.setItemMeta(bMeta);
         }
         inv.setItem(10, book);
 
-        // Slot 16: Wind Charge Replacement Spotlight
-        ItemStack wcSpotlight = new ItemStack(Material.WIND_CHARGE);
-        ItemMeta wcMeta = wcSpotlight.getItemMeta();
-        if (wcMeta != null) {
-            wcMeta.setDisplayName("§b§lApproved Mobility: Wind Charge");
-            wcMeta.setLore(Arrays.asList(
+        // Slot 16: Tournament Movement Guidelines Spotlight
+        ItemStack rulesSpotlight = new ItemStack(Material.IRON_BOOTS);
+        ItemMeta rsMeta = rulesSpotlight.getItemMeta();
+        if (rsMeta != null) {
+            rsMeta.setDisplayName("§e§lMovement Guidelines");
+            rsMeta.setLore(Arrays.asList(
                     "§8--------------------------",
-                    "§a✔ 100% TOURNAMENT LEGAL",
-                    "§7Replaces Ender Pearls for movement.",
-                    "§7Use for vertical rocket-jumping, knockback,",
-                    "§7and tactical repositioning!",
+                    "§c✖ Ender Pearls: BANNED",
+                    "§c✖ Wind Charges: BANNED",
                     "§8--------------------------",
-                    "§eAvailable in: §fAirdrops & /shop",
+                    "§7All tournament combat must rely on",
+                    "§7standard sprinting and positioning.",
+                    "§7Teleport & burst launchers are disabled!",
                     "§8--------------------------"
             ));
-            wcMeta.addEnchant(Enchantment.UNBREAKING, 1, true);
-            wcMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-            wcSpotlight.setItemMeta(wcMeta);
+            rsMeta.addEnchant(Enchantment.UNBREAKING, 1, true);
+            rsMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            rulesSpotlight.setItemMeta(rsMeta);
         }
-        inv.setItem(16, wcSpotlight);
+        inv.setItem(16, rulesSpotlight);
 
         // Centered Display for banned items
         int[] displaySlots = {

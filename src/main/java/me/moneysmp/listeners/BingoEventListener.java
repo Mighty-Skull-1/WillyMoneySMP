@@ -35,6 +35,10 @@ public class BingoEventListener implements Listener {
             eventManager.claimBingo(player, "Mine Ancient Debris");
         }
 
+        if (mat == Material.OBSIDIAN) {
+            eventManager.claimBingo(player, "Mine Obsidian");
+        }
+
         if (mat == Material.COAL_ORE || mat == Material.DEEPSLATE_COAL_ORE || mat == Material.COAL_BLOCK) {
             if (plugin != null) {
                 plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
@@ -104,13 +108,6 @@ public class BingoEventListener implements Listener {
         Material mat = event.getItem().getType();
         if (mat == Material.GOLDEN_APPLE || mat == Material.ENCHANTED_GOLDEN_APPLE) {
             eventManager.claimBingo(player, "Eat Golden Apple");
-        }
-    }
-
-    @EventHandler
-    public void onProjectileLaunch(ProjectileLaunchEvent event) {
-        if (event.getEntity() instanceof AbstractWindCharge && event.getEntity().getShooter() instanceof Player player) {
-            eventManager.claimBingo(player, "Use Wind Charge");
         }
     }
 

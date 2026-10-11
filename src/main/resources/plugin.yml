@@ -40,8 +40,6 @@ commands:
     permission: moneysmp.admin
   bingo:
     description: Open the interactive 5x5 Lockout Bingo board GUI
-  shop:
-    description: Open the tournament Credit Shop
   credits:
     description: Admin commands to manage draft and game credits
     permission: moneysmp.admin

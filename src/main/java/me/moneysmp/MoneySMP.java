@@ -26,7 +26,6 @@ public class MoneySMP extends JavaPlugin {
     private PhaseManager phaseManager;
     private DisplayManager displayManager;
     private EliminationManager eliminationManager;
-    private ShopManager shopManager;
     private DataManager dataManager;
     private BannedItemManager bannedItemManager;
     private SMPGuiManager smpGuiManager;
@@ -42,7 +41,6 @@ public class MoneySMP extends JavaPlugin {
         this.tierManager = new TierManager();
         this.phaseManager = new PhaseManager();
         this.eliminationManager = new EliminationManager(this);
-        this.shopManager = new ShopManager(creditManager);
         this.bannedItemManager = new BannedItemManager(this);
         this.dataManager = new DataManager(this, teamManager, creditManager, tierManager, phaseManager, eliminationManager);
 
@@ -87,8 +85,6 @@ public class MoneySMP extends JavaPlugin {
         getCommand("bingo").setExecutor(new BingoCommand(eventManager));
         getCommand("bingo").setTabCompleter(tabCompleter);
 
-        getCommand("shop").setExecutor(new ShopCommand(shopManager));
-
         getCommand("credits").setExecutor(new CreditsCommand(creditManager));
         getCommand("credits").setTabCompleter(tabCompleter);
 
@@ -100,7 +96,7 @@ public class MoneySMP extends JavaPlugin {
 
         // --- Listeners Registration ---
         getServer().getPluginManager().registerEvents(new KillEventListener(
-                this, teamManager, creditManager, tierManager, phaseManager, eventManager, eliminationManager, shopManager, smpGuiManager), this);
+                this, teamManager, creditManager, tierManager, phaseManager, eventManager, eliminationManager, smpGuiManager), this);
         getServer().getPluginManager().registerEvents(new BingoEventListener(this, eventManager), this);
         getServer().getPluginManager().registerEvents(new BannedItemListener(bannedItemManager), this);
 
@@ -111,7 +107,7 @@ public class MoneySMP extends JavaPlugin {
         long autoSaveTicks = Math.max(1, autoSaveMinutes) * 60L * 20L;
         Bukkit.getScheduler().runTaskTimer(this, () -> dataManager.saveData(), autoSaveTicks, autoSaveTicks);
 
-        getLogger().info("Willy Money SMP v2.5-SNAPSHOT loaded successfully with full persistence, shop, and tournament systems!");
+        getLogger().info("Willy Money SMP v2.5-SNAPSHOT loaded successfully with full persistence and tournament systems!");
     }
 
     @Override
@@ -132,7 +128,6 @@ public class MoneySMP extends JavaPlugin {
 
     public DataManager getDataManager() { return dataManager; }
     public EliminationManager getEliminationManager() { return eliminationManager; }
-    public ShopManager getShopManager() { return shopManager; }
     public SMPGuiManager getSmpGuiManager() { return smpGuiManager; }
     public BannedItemManager getBannedItemManager() { return bannedItemManager; }
 

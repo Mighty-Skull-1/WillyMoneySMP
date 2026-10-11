@@ -349,7 +349,6 @@ public class EventManager {
             list.add(new LootCandidate(Material.TOTEM_OF_UNDYING, 1, 1, 15));
             list.add(new LootCandidate(Material.DIAMOND, 3, 5, 35));
             list.add(new LootCandidate(Material.GOLDEN_APPLE, 2, 4, 35));
-            list.add(new LootCandidate(Material.WIND_CHARGE, 3, 6, 35));
             list.add(new LootCandidate(Material.ENCHANTED_GOLDEN_APPLE, 1, 1, 10));
             list.add(new LootCandidate(Material.EXPERIENCE_BOTTLE, 12, 24, 40));
             list.add(new LootCandidate(Material.CROSSBOW, 1, 1, 25));
@@ -361,7 +360,6 @@ public class EventManager {
         } else if ("rare".equalsIgnoreCase(tier)) {
             list.add(new LootCandidate(Material.DIAMOND, 1, 3, 30));
             list.add(new LootCandidate(Material.GOLDEN_APPLE, 1, 2, 30));
-            list.add(new LootCandidate(Material.WIND_CHARGE, 2, 4, 35));
             list.add(new LootCandidate(Material.EXPERIENCE_BOTTLE, 6, 12, 40));
             list.add(new LootCandidate(Material.BOW, 1, 1, 25));
             list.add(new LootCandidate(Material.IRON_INGOT, 6, 12, 45));
@@ -513,7 +511,7 @@ public class EventManager {
         addTask("Kill Blazes", Material.BLAZE_ROD);
         addTask("Mine 64 Coal", Material.COAL);
         addTask("Catch Enchanted Book", Material.ENCHANTED_BOOK);
-        addTask("Use Wind Charge", Material.WIND_CHARGE);
+        addTask("Mine Obsidian", Material.OBSIDIAN);
     }
 
     private void addTask(String task, Material icon) {
@@ -651,7 +649,7 @@ public class EventManager {
             case "Kill Blazes": return "Slay a Blaze in a Nether Fortress";
             case "Mine 64 Coal": return "Gather a full stack of 64 Coal";
             case "Catch Enchanted Book": return "Reel in an Enchanted Book while fishing";
-            case "Use Wind Charge": return "Launch a Wind Charge in movement or combat";
+            case "Mine Obsidian": return "Mine an Obsidian block with a diamond pickaxe";
             default: return "Complete the survival challenge";
         }
     }

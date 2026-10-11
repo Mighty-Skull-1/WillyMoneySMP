@@ -64,7 +64,7 @@ public class BannedItemsCommand implements CommandExecutor {
                 }
                 reason = sb.toString().trim();
             }
-            bannedItemManager.banItem(mat, reason, "Wind Charges");
+            bannedItemManager.banItem(mat, reason, "None / Standard Movement");
             sender.sendMessage("§a[Banned Items] Successfully banned §e" + BannedItemManager.formatMaterialName(mat) + "§a!");
             return true;
         }

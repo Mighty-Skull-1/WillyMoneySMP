@@ -90,7 +90,7 @@ public class SMPGuiManager {
                 "§8-------------------------",
                 "§7View and manage banned tournament items.",
                 "§7Ender Pearls & restricted gear are locked.",
-                "§7Replaced by skilled Wind Charges!",
+                "§7Strict combat balance enforced!",
                 "§8-------------------------",
                 "§c▶ Click: §fOpen Banned Items GUI"
         );
@@ -141,7 +141,7 @@ public class SMPGuiManager {
         List<String> rareDropLore = Arrays.asList(
                 "§8-------------------------",
                 "§7Spawns a Rare supply drop near an active",
-                "§7player with diamonds, gapples & wind charges.",
+                "§7player with diamonds, gapples & obsidian.",
                 "§7Reward: §a+5 Game Credits",
                 "§8-------------------------",
                 "§9▶ Click: §aSpawn Rare Airdrop"

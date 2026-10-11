@@ -42,14 +42,14 @@ public class BannedItemListener implements Listener {
             messageCooldowns.put(player.getUniqueId(), now);
             BannedItemManager.BanEntry entry = bannedItemManager.getBanEntry(mat);
             String reason = entry != null ? entry.getReason() : "Disabled in tournament";
-            String alt = entry != null ? entry.getAlternative() : "Wind Charges";
+            String alt = entry != null && entry.getAlternative() != null ? entry.getAlternative() : "None";
 
             player.sendMessage("§c§l[BANNED ITEM] §f" + BannedItemManager.formatMaterialName(mat) +
                     " §cis banned in this tournament!");
-            player.sendMessage("§cReason: §7" + reason + " §8| §eAlternative: §b" + alt);
+            player.sendMessage("§cReason: §7" + reason + " §8| §7Alternative: §f" + alt);
 
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                    TextComponent.fromLegacyText("§c§l✖ " + BannedItemManager.formatMaterialName(mat) + " is BANNED! Use " + alt));
+                    TextComponent.fromLegacyText("§c§l✖ " + BannedItemManager.formatMaterialName(mat) + " is BANNED in tournament!"));
             player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
         }
     }
@@ -73,6 +73,17 @@ public class BannedItemListener implements Listener {
                 notifyPlayer(player, Material.ENDER_PEARL);
             }
             return;
+        }
+
+        if (event.getEntity() instanceof org.bukkit.entity.AbstractWindCharge wc) {
+            if (bannedItemManager.isBanned(Material.WIND_CHARGE)) {
+                event.setCancelled(true);
+                wc.remove();
+                if (wc.getShooter() instanceof Player player) {
+                    notifyPlayer(player, Material.WIND_CHARGE);
+                }
+                return;
+            }
         }
 
         if (event.getEntity().getShooter() instanceof Player player) {

@@ -1,4 +1,7 @@
 banned-items:
   ENDER_PEARL:
     reason: "Ender Pearls are disabled for competitive tournament balance"
-    alternative: "Wind Charges"
+    alternative: "None / Standard Movement"
+  WIND_CHARGE:
+    reason: "Wind Charges are disabled for competitive tournament balance"
+    alternative: "None / Standard Movement"
