@@ -135,7 +135,12 @@ Any player can type `/shop` at any time to open the 27-slot chest GUI.
 - **Start**: `/bingo start` (or click Map in `/smp` GUI).
 - **View Board**: `/bingo` opens a 54-slot GUI showing the 25 tasks.
 - **Lockout Rule**: The first team to complete a task claims it permanently in their team color—other teams are locked out from that task.
-- **Reward**: Completing any 5-in-a-row line (horizontal, vertical, diagonal) awards **`+150 Game Credits`** to the team Captain.
+- **Placement Rewards**:
+  - **1st Place Line**: **`+150 Game Credits`** awarded to the Captain.
+  - **2nd Place Line**: **`+120 Game Credits`** awarded to the Captain.
+  - **3rd Place Line**: **`+100 Game Credits`** awarded to the Captain.
+  - **4th Place Line**: **`+50 Game Credits`** awarded to the Captain.
+  - **5th Place Line**: **`+25 Game Credits`** awarded to the Captain.
 
 ---
 

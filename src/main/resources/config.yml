@@ -8,6 +8,12 @@ rewards:
   tier-c-kill: 10
   koth-win-reward: 50
   bingo-line-win: 150
+  bingo-rewards:
+    1st: 150
+    2nd: 120
+    3rd: 100
+    4th: 50
+    5th: 25
 
 elimination:
   enabled: true

@@ -145,12 +145,17 @@ To ensure competitive tournament balance and eliminate instant-escape teleportat
     - **Slot 4 (Header)**: Race status and event rules.
     - **Slot 17 (Progress Book)**: Viewing team's claim tally (e.g., `4 / 25 Tasks Claimed`).
     - **Slot 26 (Standings Map)**: Real-time leaderboard ranking all teams by claimed tasks.
-    - **Slot 35 (Line Rewards)**: Gold Ingot explaining the `+150 Credits` captain payout.
+    - **Slot 35 (Placement Rewards)**: Gold Ingot displaying tiered payouts (1st: 150, 2nd: 120, 3rd: 100, 4th: 50, 5th: 25).
     - **Slot 53 (Close Button)**: Barrier button to exit the menu.
 - **Task Tracking**:
   - Auto-tracking covers all 25 survival objectives (e.g., *"Obtain Heavy Core"*, *"75-Block Water Clutch"*, *"Mine 64 Coal"*).
 - **Lockout Rule**: The first team to complete a task claims it permanently in their team color—other teams are locked out.
-- **Reward**: Completing any 5-in-a-row line (row, column, diagonal) awards **`+150 Game Credits`** to the Captain.
+- **Podium Line Rewards**:
+  - **1st Place Line**: **`+150 Game Credits`** awarded to the Captain.
+  - **2nd Place Line**: **`+120 Game Credits`** awarded to the Captain.
+  - **3rd Place Line**: **`+100 Game Credits`** awarded to the Captain.
+  - **4th Place Line**: **`+50 Game Credits`** awarded to the Captain.
+  - **5th Place Line**: **`+25 Game Credits`** awarded to the Captain.
 
 ---
 

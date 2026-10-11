@@ -40,6 +40,7 @@ public class EventManager {
     private final Map<String, Team> bingoBoard = new LinkedHashMap<>();
     private final Map<String, Material> bingoIcons = new LinkedHashMap<>();
     private final Set<String> completedLines = new HashSet<>();
+    private final List<Team> bingoWinnersOrder = new ArrayList<>();
     private boolean bingoActive = false;
 
     // Airdrop State
@@ -522,17 +523,36 @@ public class EventManager {
     public void startBingo() {
         bingoActive = true;
         completedLines.clear();
+        bingoWinnersOrder.clear();
         setupBingoTasks();
         for (Player p : Bukkit.getOnlinePlayers()) {
             p.sendTitle("§6§lLOCKOUT BINGO", "§eAuto-tracking active! Type /bingo to view board", 10, 80, 20);
             p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
         }
         Bukkit.broadcastMessage("§6§l[BINGO] §eInteractive 5x5 Lockout Bingo is now LIVE! Complete tasks automatically to claim them!");
+        Bukkit.broadcastMessage("§6§l[BINGO REWARDS] §e1st: §a+150 Credits §8| §e2nd: §a+120 Credits §8| §e3rd: §a+100 Credits §8| §e4th: §a+50 Credits §8| §e5th: §a+25 Credits");
     }
 
     public void stopBingo() {
         if (!bingoActive) return;
         bingoActive = false;
+
+        // Display final placement summary when stopped
+        if (!bingoWinnersOrder.isEmpty()) {
+            Bukkit.broadcastMessage("§6§l[BINGO PODIUM] §eFinal Line Completion Standings:");
+            int[] rewards = {
+                    plugin.getConfig().getInt("rewards.bingo-rewards.1st", 150),
+                    plugin.getConfig().getInt("rewards.bingo-rewards.2nd", 120),
+                    plugin.getConfig().getInt("rewards.bingo-rewards.3rd", 100),
+                    plugin.getConfig().getInt("rewards.bingo-rewards.4th", 50),
+                    plugin.getConfig().getInt("rewards.bingo-rewards.5th", 25)
+            };
+            String[] places = {"1st", "2nd", "3rd", "4th", "5th"};
+            for (int i = 0; i < bingoWinnersOrder.size() && i < places.length; i++) {
+                Team t = bingoWinnersOrder.get(i);
+                Bukkit.broadcastMessage("  §e" + places[i] + " Place: " + t.getColorCode() + t.getName() + " §7(Awarded §a+" + rewards[i] + " Credits§7)");
+            }
+        }
         Bukkit.broadcastMessage("§c[BINGO] Lockout Bingo event has ended.");
     }
 
@@ -608,15 +628,49 @@ public class EventManager {
 
             if (lineComplete) {
                 completedLines.add(lineKey);
-                int reward = plugin.getConfig().getInt("rewards.bingo-line-win", 150);
+
+                int place = bingoWinnersOrder.indexOf(team) + 1;
+                boolean firstLineForTeam = false;
+                if (place == 0) {
+                    bingoWinnersOrder.add(team);
+                    place = bingoWinnersOrder.size();
+                    firstLineForTeam = true;
+                }
+
+                int reward;
+                String placeName;
+                if (place == 1) {
+                    reward = plugin.getConfig().getInt("rewards.bingo-rewards.1st", 150);
+                    placeName = "1st Place";
+                } else if (place == 2) {
+                    reward = plugin.getConfig().getInt("rewards.bingo-rewards.2nd", 120);
+                    placeName = "2nd Place";
+                } else if (place == 3) {
+                    reward = plugin.getConfig().getInt("rewards.bingo-rewards.3rd", 100);
+                    placeName = "3rd Place";
+                } else if (place == 4) {
+                    reward = plugin.getConfig().getInt("rewards.bingo-rewards.4th", 50);
+                    placeName = "4th Place";
+                } else if (place == 5) {
+                    reward = plugin.getConfig().getInt("rewards.bingo-rewards.5th", 25);
+                    placeName = "5th Place";
+                } else {
+                    reward = 10;
+                    placeName = place + "th Place";
+                }
+
                 creditManager.addGameCredits(team.getCaptain(), reward);
 
                 for (Player online : Bukkit.getOnlinePlayers()) {
-                    online.sendTitle("§6§lBINGO LINE COMPLETED!", team.getColorCode() + team.getName() + " completed " + lineNames[i] + "! (+" + reward + " Credits)", 10, 80, 20);
+                    online.sendTitle("§6§lBINGO LINE COMPLETED!", team.getColorCode() + team.getName() + " (" + placeName + ")! (+" + reward + " Credits)", 10, 80, 20);
                     online.playSound(online.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, 1.0f);
                 }
-                Bukkit.broadcastMessage("§6§l[BINGO LINE WIN] " + team.getColorCode() + team.getName() +
-                        " §ecompleted §f" + lineNames[i] + "§e! Awarded §a+" + reward + " Game Credits §eto Captain!");
+
+                String lineDetail = firstLineForTeam ?
+                        " §ecompleted §f" + lineNames[i] + " §eand locked in §6§l" + placeName + "§e! Awarded §a+" + reward + " Game Credits §eto Captain!" :
+                        " §ecompleted another line (§f" + lineNames[i] + "§e)! Awarded §a+" + reward + " Game Credits §eto Captain!";
+
+                Bukkit.broadcastMessage("§6§l[BINGO LINE WIN] " + team.getColorCode() + team.getName() + lineDetail);
             }
         }
     }
@@ -694,7 +748,8 @@ public class EventManager {
                     "§7Status: " + (bingoActive ? "§aActive (Live Race)" : "§cInactive"),
                     "§7Race across 25 survival challenges.",
                     "§7First team to complete a task locks it out!",
-                    "§7Complete any line (5 in a row) for §e+150 Credits§7!",
+                    "§71st: §a+150 §8| §72nd: §a+120 §8| §73rd: §a+100",
+                    "§74th: §a+50 §8| §75th: §a+25 Credits",
                     "§8--------------------------"
             ));
             hMeta.addEnchant(Enchantment.UNBREAKING, 1, true);
@@ -715,13 +770,17 @@ public class EventManager {
         ItemMeta tiMeta = teamInfo.getItemMeta();
         if (tiMeta != null) {
             tiMeta.setDisplayName("§e§lYour Team Progress");
-            tiMeta.setLore(Arrays.asList(
-                    "§8--------------------------",
-                    "§7Team: " + (playerTeam != null ? playerTeam.getColorCode() + playerTeam.getName() : "§cNo Team"),
-                    "§7Tasks Claimed: §e" + teamClaimedCount + " §7/ 25",
-                    "§8--------------------------",
-                    "§7Work with teammates to claim a row!"
-            ));
+            List<String> tiLore = new ArrayList<>();
+            tiLore.add("§8--------------------------");
+            tiLore.add("§7Team: " + (playerTeam != null ? playerTeam.getColorCode() + playerTeam.getName() : "§cNo Team"));
+            tiLore.add("§7Tasks Claimed: §e" + teamClaimedCount + " §7/ 25");
+            if (playerTeam != null && bingoWinnersOrder.contains(playerTeam)) {
+                int place = bingoWinnersOrder.indexOf(playerTeam) + 1;
+                tiLore.add("§7Line Podium: §6§l" + place + (place == 1 ? "st" : place == 2 ? "nd" : place == 3 ? "rd" : "th") + " Place");
+            }
+            tiLore.add("§8--------------------------");
+            tiLore.add("§7Work with teammates to claim a row!");
+            tiMeta.setLore(tiLore);
             teamInfo.setItemMeta(tiMeta);
         }
         inv.setItem(17, teamInfo);
@@ -730,9 +789,18 @@ public class EventManager {
         ItemStack boardStats = new ItemStack(Material.FILLED_MAP);
         ItemMeta bsMeta = boardStats.getItemMeta();
         if (bsMeta != null) {
-            bsMeta.setDisplayName("§6§lLive Standings");
+            bsMeta.setDisplayName("§6§lLive Standings & Podium");
             List<String> bsLore = new ArrayList<>();
             bsLore.add("§8--------------------------");
+            if (!bingoWinnersOrder.isEmpty()) {
+                bsLore.add("§a§lLine Podium Order:");
+                String[] places = {"1st", "2nd", "3rd", "4th", "5th"};
+                for (int i = 0; i < bingoWinnersOrder.size() && i < places.length; i++) {
+                    Team t = bingoWinnersOrder.get(i);
+                    bsLore.add(" §6" + places[i] + ": " + t.getColorCode() + t.getName());
+                }
+                bsLore.add("§8--------------------------");
+            }
             Map<Team, Integer> counts = new HashMap<>();
             for (Team t : bingoBoard.values()) {
                 if (t != null) counts.put(t, counts.getOrDefault(t, 0) + 1);
@@ -740,8 +808,11 @@ public class EventManager {
             if (counts.isEmpty()) {
                 bsLore.add("§7No tasks claimed yet!");
             } else {
-                for (Map.Entry<Team, Integer> entry : counts.entrySet()) {
-                    bsLore.add(entry.getKey().getColorCode() + entry.getKey().getName() + "§7: §e" + entry.getValue() + " tasks");
+                bsLore.add("§eTasks Claimed:");
+                List<Map.Entry<Team, Integer>> sorted = new ArrayList<>(counts.entrySet());
+                sorted.sort((a, b) -> Integer.compare(b.getValue(), a.getValue()));
+                for (Map.Entry<Team, Integer> entry : sorted) {
+                    bsLore.add(" " + entry.getKey().getColorCode() + entry.getKey().getName() + "§7: §e" + entry.getValue() + " tasks");
                 }
             }
             bsLore.add("§8--------------------------");
@@ -754,13 +825,17 @@ public class EventManager {
         ItemStack rewardInfo = new ItemStack(Material.GOLD_INGOT);
         ItemMeta riMeta = rewardInfo.getItemMeta();
         if (riMeta != null) {
-            riMeta.setDisplayName("§a§lLine Rewards");
+            riMeta.setDisplayName("§a§lBingo Placement Rewards");
             riMeta.setLore(Arrays.asList(
                     "§8--------------------------",
-                    "§7Reward: §e+150 Game Credits",
-                    "§7Awarded to the Captain whenever",
-                    "§7your team completes any row,",
-                    "§7column, or diagonal!",
+                    "§e1st Place: §a+150 Credits",
+                    "§e2nd Place: §a+120 Credits",
+                    "§e3rd Place: §a+100 Credits",
+                    "§e4th Place: §a+50 Credits",
+                    "§e5th Place: §a+25 Credits",
+                    "§8--------------------------",
+                    "§7Awarded to the Captain as soon",
+                    "§7as your team finishes any line!",
                     "§8--------------------------"
             ));
             rewardInfo.setItemMeta(riMeta);
