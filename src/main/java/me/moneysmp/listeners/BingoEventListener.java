@@ -35,8 +35,8 @@ public class BingoEventListener implements Listener {
             eventManager.claimBingo(player, "Mine Ancient Debris");
         }
 
-        if (mat == Material.OBSIDIAN) {
-            eventManager.claimBingo(player, "Mine Obsidian");
+        if (mat == Material.HEAVY_CORE) {
+            eventManager.claimBingo(player, "Obtain Heavy Core");
         }
 
         if (mat == Material.COAL_ORE || mat == Material.DEEPSLATE_COAL_ORE || mat == Material.COAL_BLOCK) {
@@ -147,8 +147,8 @@ public class BingoEventListener implements Listener {
     public void onPickup(EntityPickupItemEvent event) {
         if (event.getEntity() instanceof Player player) {
             Material mat = event.getItem().getItemStack().getType();
-            if (mat == Material.ELYTRA) {
-                eventManager.claimBingo(player, "Obtain Elytra");
+            if (mat == Material.HEAVY_CORE) {
+                eventManager.claimBingo(player, "Obtain Heavy Core");
             } else if (mat == Material.WITHER_SKELETON_SKULL) {
                 eventManager.claimBingo(player, "Obtain Wither Skull");
             } else if (mat == Material.COAL) {
@@ -186,10 +186,41 @@ public class BingoEventListener implements Listener {
     }
 
     @EventHandler
+    public void onBucketEmpty(PlayerBucketEmptyEvent event) {
+        Player player = event.getPlayer();
+        if (event.getBucket() == Material.WATER_BUCKET) {
+            if (player.getFallDistance() >= 75.0f) {
+                if (plugin != null) {
+                    plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                        if (player.isOnline() && !player.isDead()) {
+                            eventManager.claimBingo(player, "75-Block Water Clutch");
+                        }
+                    }, 2L);
+                } else if (!player.isDead()) {
+                    eventManager.claimBingo(player, "75-Block Water Clutch");
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (event.getEntity() instanceof Player player && event.getCause() == EntityDamageEvent.DamageCause.FALL) {
+            if (player.getFallDistance() >= 75.0f) {
+                Material standingIn = player.getLocation().getBlock().getType();
+                if (standingIn == Material.WATER) {
+                    event.setCancelled(true);
+                    eventManager.claimBingo(player, "75-Block Water Clutch");
+                }
+            }
+        }
+    }
+
+    @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (event.getWhoClicked() instanceof Player player) {
-            if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.ELYTRA) {
-                eventManager.claimBingo(player, "Obtain Elytra");
+            if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.HEAVY_CORE) {
+                eventManager.claimBingo(player, "Obtain Heavy Core");
             }
             if (plugin != null) {
                 plugin.getServer().getScheduler().runTask(plugin, () -> checkFullIron(player));

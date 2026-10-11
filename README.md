@@ -155,7 +155,7 @@ To ensure competitive tournament balance and eliminate instant-escape teleportat
     - **Slot 35 (Line Rewards)**: Gold Ingot explaining the `+150 Credits` captain payout.
     - **Slot 53 (Close Button)**: Barrier button to exit the menu.
 - **Task Tracking**:
-  - Challenges like *"Mine Obsidian"* and *"Mine 64 Coal"* auto-complete in real-time.
+  - Auto-tracking covers all 25 survival objectives (e.g., *"Obtain Heavy Core"*, *"75-Block Water Clutch"*, *"Mine 64 Coal"*).
 - **Lockout Rule**: The first team to complete a task claims it permanently in their team color—other teams are locked out.
 - **Reward**: Completing any 5-in-a-row line (row, column, diagonal) awards **`+150 Game Credits`** to the Captain.
 

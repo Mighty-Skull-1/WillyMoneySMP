@@ -492,7 +492,7 @@ public class EventManager {
         addTask("Craft Diamond Block", Material.DIAMOND_BLOCK);
         addTask("Kill an Enderman", Material.ENDER_EYE);
         addTask("Eat Golden Apple", Material.GOLDEN_APPLE);
-        addTask("Obtain Elytra", Material.ELYTRA);
+        addTask("Obtain Heavy Core", Material.HEAVY_CORE);
         addTask("Catch a Pufferfish", Material.PUFFERFISH);
         addTask("Ride a Strider", Material.WARPED_FUNGUS_ON_A_STICK);
         addTask("Wear Full Iron", Material.IRON_CHESTPLATE);
@@ -510,7 +510,7 @@ public class EventManager {
         addTask("Kill Blazes", Material.BLAZE_ROD);
         addTask("Mine 64 Coal", Material.COAL);
         addTask("Catch Enchanted Book", Material.ENCHANTED_BOOK);
-        addTask("Mine Obsidian", Material.OBSIDIAN);
+        addTask("75-Block Water Clutch", Material.WATER_BUCKET);
     }
 
     private void addTask(String task, Material icon) {
@@ -630,7 +630,7 @@ public class EventManager {
             case "Craft Diamond Block": return "Combine 9 Diamonds in a crafting table";
             case "Kill an Enderman": return "Slay an Enderman in combat";
             case "Eat Golden Apple": return "Consume a Golden or Enchanted Apple";
-            case "Obtain Elytra": return "Acquire an Elytra into your inventory";
+            case "Obtain Heavy Core": return "Find a Heavy Core in an ominous vault";
             case "Catch a Pufferfish": return "Catch a Pufferfish using a Fishing Rod";
             case "Ride a Strider": return "Saddle and ride a Strider over lava";
             case "Wear Full Iron": return "Equip a full set of Iron Armor";
@@ -648,7 +648,7 @@ public class EventManager {
             case "Kill Blazes": return "Slay a Blaze in a Nether Fortress";
             case "Mine 64 Coal": return "Gather a full stack of 64 Coal";
             case "Catch Enchanted Book": return "Reel in an Enchanted Book while fishing";
-            case "Mine Obsidian": return "Mine an Obsidian block with a diamond pickaxe";
+            case "75-Block Water Clutch": return "Survive a 75+ block fall by placing a water bucket before landing";
             default: return "Complete the survival challenge";
         }
     }
