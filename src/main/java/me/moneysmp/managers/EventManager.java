@@ -364,7 +364,6 @@ public class EventManager {
             list.add(new LootCandidate(Material.BOW, 1, 1, 25));
             list.add(new LootCandidate(Material.IRON_INGOT, 6, 12, 45));
             list.add(new LootCandidate(Material.OBSIDIAN, 2, 5, 30));
-            list.add(new LootCandidate(Material.TNT, 1, 3, 20));
             list.add(new LootCandidate(Material.GOLD_INGOT, 3, 8, 35));
             list.add(new LootCandidate(Material.BONE, 3, 8, 40));
             list.add(new LootCandidate(Material.STRING, 3, 8, 40));
