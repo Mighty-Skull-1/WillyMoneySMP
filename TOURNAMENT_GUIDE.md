@@ -50,17 +50,16 @@ The global game phase is controlled by server admins via `/smp phase <phase>` or
 
 ### 3. PvP Enabled (`/smp phase pvp`)
 - **PvP Status**: Full player combat enabled. Friendly fire remains blocked between teammates.
-- **Permadeath & Elimination**:
-  - Dying during this phase strikes lightning on the player's death spot, sounds a global Wither chime, and forces the player into **Spectator Mode**.
-  - Elimination kill rewards:
-    - **Captain Elimination**: `+25 Game Credits`
-    - **Tier A Elimination**: `+15 Game Credits`
-    - **Tier B Elimination**: `+10 Game Credits`
-    - **Tier C Elimination**: `+10 Game Credits`
+- **Respawn Mechanics**: Normal respawning is active (no permadeath). Players keep fighting in survival upon death.
+- **Kill Credit Rewards**:
+  - **Captain Kill**: `+25 Game Credits`
+  - **Tier A Kill**: `+15 Game Credits`
+  - **Tier B Kill**: `+10 Game Credits`
+  - **Tier C Kill**: `+10 Game Credits`
 
 ### 4. Finale Showdown (`/smp phase finale`)
 - **PvP Status**: High-stakes endgame combat.
-- **Gameplay**: Teams converge with full gear and remaining members for the final victory.
+- **Gameplay**: Teams battle with full survival gear and teamwork for tournament victory.
 
 ---
 
@@ -86,11 +85,11 @@ Players are classified into four skill tiers:
 
 ---
 
-## 🛡️ Teams & Elimination
+## 🛡️ Teams & Combat
 
 - **Friendly Fire**: Players on the same team cannot hurt each other.
 - **Team Chat**: Send private team-only messages using `/tc <message>`.
-- **Spectator Upon Death**: Eliminated players respawn as Spectators and can watch the tournament live for the remainder of the phase.
+- **Respawn System**: No permadeath. Players respawn normally at their bed or spawn upon death.
 
 ---
 

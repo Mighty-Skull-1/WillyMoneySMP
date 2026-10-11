@@ -16,9 +16,8 @@ rewards:
     5th: 25
 
 elimination:
-  enabled: true
-  revive-cost: 150
-  lightning-on-death: true
+  enabled: false
+  lightning-on-death: false
 
 auto-save-interval-minutes: 5
 

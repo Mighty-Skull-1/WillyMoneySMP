@@ -122,7 +122,7 @@ public class KillEventListener implements Listener {
         }
 
         creditManager.addGameCredits(killer.getUniqueId(), rewardPoints);
-        killer.sendMessage("§a+" + rewardPoints + " Game Credits for eliminating " + victim.getName() + " (" + victimTier.name() + " Tier)!");
+        killer.sendMessage("§a+" + rewardPoints + " Game Credits for killing " + victim.getName() + " (" + victimTier.name() + " Tier)!");
     }
 
     @EventHandler
