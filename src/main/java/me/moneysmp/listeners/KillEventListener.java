@@ -131,7 +131,7 @@ public class KillEventListener implements Listener {
         if (eliminationManager != null && eliminationManager.isEliminated(player.getUniqueId())) {
             Bukkit.getScheduler().runTask(plugin, () -> {
                 player.setGameMode(GameMode.SPECTATOR);
-                player.sendMessage("§c§l[ELIMINATED] §eYou are in Spectator mode! Your team captain can revive you with §f/team revive " + player.getName());
+                player.sendMessage("§c§l[ELIMINATED] §eYou are in Spectator mode for the remainder of the phase!");
             });
         }
     }

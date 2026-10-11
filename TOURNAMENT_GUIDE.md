@@ -32,7 +32,7 @@ In **Willy Money SMP**, players compete in teams led by designated Captains. The
 | Currency | Purpose | How to Earn / Obtain |
 | :--- | :--- | :--- |
 | **Draft Credits** | Used **strictly by Team Captains** during the Draft Phase auction to bid on players. | Set at the start (`400` default) or granted by Admins via `/credits give <player> <amt> draft`. |
-| **Game Credits** | Used in the `/shop` to buy combat gear, potions, and to **revive eliminated teammates** (`/team revive`). | Earned from **Player Kills**, winning **King of the Hill (KOTH)**, claiming **Airdrops**, and completing **Bingo Lines**. |
+| **Game Credits** | Used to rank teams on the leaderboard (`/leaderboard`). | Earned from **Player Kills**, winning **King of the Hill (KOTH)**, claiming **Airdrops**, and completing **Bingo Lines**. |
 
 ---
 
@@ -60,14 +60,14 @@ The global game phase is controlled by server admins via `/smp phase <phase>` or
 
 ### 4. Finale Showdown (`/smp phase finale`)
 - **PvP Status**: High-stakes endgame combat.
-- **Gameplay**: Teams converge with full gear, shop potions, and remaining members for the final victory.
+- **Gameplay**: Teams converge with full gear and remaining members for the final victory.
 
 ---
 
 ## 🎖️ Player Tiers & Drafting
 
 Players are classified into four skill tiers:
-- **Captain**: Team leaders who hold draft funds and execute revives.
+- **Captain**: Team leaders who hold draft funds and lead their squad.
 - **Tier A**: Elite PvP and tactical players.
 - **Tier B**: Balanced combat and resource gatherers.
 - **Tier C**: Support, miners, and builders.
@@ -86,18 +86,11 @@ Players are classified into four skill tiers:
 
 ---
 
-## 🛡️ Teams, Elimination & Buyback
+## 🛡️ Teams & Elimination
 
 - **Friendly Fire**: Players on the same team cannot hurt each other.
 - **Team Chat**: Send private team-only messages using `/tc <message>`.
-- **Spectator Upon Death**: Eliminated players respawn as Spectators and can watch the tournament live.
-- **Captain Revive / Buyback**:
-  - Captains can bring eliminated teammates back into the game by typing:
-    ```
-    /team revive <player>
-    ```
-  - **Cost**: `150 Game Credits` (deducted from the Captain).
-  - **Effect**: The revived player returns to **Survival mode**, heals, and teleports directly to their Captain's location!
+- **Spectator Upon Death**: Eliminated players respawn as Spectators and can watch the tournament live for the remainder of the phase.
 
 ---
 
@@ -201,10 +194,8 @@ After running tests, you can completely reset everything to the beginning:
 ### Player Commands
 | Command | Usage |
 | :--- | :--- |
-| `/shop` | Open the Game Credits store. |
 | `/team list` | View all active teams and rosters. |
 | `/team info [team]` | Inspect a team's members, captain, and elimination status. |
-| `/team revive <player>` | *(Captains only)* Revive an eliminated teammate for 150 credits. |
 | `/tc <message>` | Send a private message to your teammates. |
 | `/tracker` | Receive a Team Tracker compass. |
 | `/bingo` | Open the interactive 5x5 Lockout Bingo GUI. |

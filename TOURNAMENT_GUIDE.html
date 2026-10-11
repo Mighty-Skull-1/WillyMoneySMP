@@ -193,7 +193,7 @@
             <tr>
                 <td><strong>Game Credits</strong></td>
                 <td>All Players</td>
-                <td>Used in the in-game <code>/shop</code> and to <strong>revive eliminated teammates</strong>.</td>
+                <td>Used to rank teams on the tournament leaderboard.</td>
                 <td>Earned via <strong>Kills</strong>, winning <strong>KOTH</strong>, looting <strong>Airdrops</strong>, and completing <strong>Bingo lines</strong>.</td>
             </tr>
         </tbody>
@@ -219,34 +219,29 @@
             <span class="phase-badge badge-pvp">Phase 3</span>
             <h3>⚔️ PvP Enabled</h3>
             <p><strong>PvP Status:</strong> Active (Friendly Fire Disabled).</p>
-            <p>Combat is turned on! Eliminated players drop into <strong>Spectator mode</strong> upon death. Kills award Game Credits. Captains can buy back teammates for 150 credits.</p>
+            <p>Combat is turned on! Eliminated players drop into <strong>Spectator mode</strong> upon death. Kills award Game Credits.</p>
             <code>/smp phase pvp</code>
         </div>
         <div class="card">
             <span class="phase-badge badge-finale">Phase 4</span>
             <h3>👑 Finale Showdown</h3>
             <p><strong>PvP Status:</strong> Full Combat.</p>
-            <p>The endgame battle for tournament victory. Surviving teams converge with shop buffs and remaining members until one team stands alone!</p>
+            <p>The endgame battle for tournament victory. Surviving teams converge with full gear and remaining members until one team stands alone!</p>
             <code>/smp phase finale</code>
         </div>
     </div>
 
-    <h2>☠️ Elimination & Buyback System</h2>
+    <h2>☠️ Elimination System</h2>
     <div class="card">
         <p>When PvP is active (Phase 3 & 4), player deaths are permanent:</p>
         <ul>
-            <li><strong>Spectator Mode:</strong> Upon dying, a player is struck with lightning, a global Wither sound echoes, and they are placed into Spectator mode.</li>
+            <li><strong>Spectator Mode:</strong> Upon dying, a player is struck with lightning, a global Wither sound echoes, and they are placed into Spectator mode for the rest of the phase.</li>
             <li><strong>Kill Credit Rewards:</strong>
                 <ul>
                     <li>Eliminating a <strong>Captain</strong>: <code>+25 Game Credits</code></li>
                     <li>Eliminating a <strong>Tier A</strong> player: <code>+15 Game Credits</code></li>
                     <li>Eliminating a <strong>Tier B / C</strong> player: <code>+10 Game Credits</code></li>
                 </ul>
-            </li>
-            <li><strong>Captain Buyback / Revive:</strong>
-                <p>Team Captains can revive fallen teammates at any time by running:</p>
-                <code>/team revive &lt;player&gt;</code>
-                <p><strong>Cost:</strong> <code>150 Game Credits</code>. The revived player is restored to Survival mode and instantly teleports to their Captain's side!</p>
             </li>
         </ul>
     </div>
@@ -332,10 +327,8 @@
             <tr><td><code>/smp</code></td><td>Admins</td><td>Opens the interactive visual Control Panel GUI.</td></tr>
             <tr><td><code>/smp phase &lt;phase&gt;</code></td><td>Admins</td><td>Switches phase (draft, grace, pvp, finale).</td></tr>
             <tr><td><code>/smp reset confirm</code></td><td>Admins</td><td>Wipes tournament and resets everything to the start.</td></tr>
-            <tr><td><code>/shop</code></td><td>Everyone</td><td>Opens the in-game tournament credit store.</td></tr>
             <tr><td><code>/team list</code></td><td>Everyone</td><td>Lists all active teams and member rosters.</td></tr>
             <tr><td><code>/team info [team]</code></td><td>Everyone</td><td>Inspects team status, captain, and alive members.</td></tr>
-            <tr><td><code>/team revive &lt;player&gt;</code></td><td>Captains</td><td>Revives an eliminated teammate for 150 credits.</td></tr>
             <tr><td><code>/tc &lt;msg&gt;</code></td><td>Everyone</td><td>Sends private chat to teammates only.</td></tr>
             <tr><td><code>/tracker</code></td><td>Everyone</td><td>Gives you a Team Tracker compass.</td></tr>
             <tr><td><code>/bingo</code></td><td>Everyone</td><td>Opens the 5x5 Lockout Bingo board.</td></tr>

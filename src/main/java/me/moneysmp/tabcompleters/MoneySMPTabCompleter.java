@@ -98,17 +98,13 @@ public class MoneySMPTabCompleter implements TabCompleter {
             }
         } else if (command.getName().equalsIgnoreCase("team")) {
             if (args.length == 1) {
-                candidates.addAll(Arrays.asList("list", "info", "rename", "revive"));
+                candidates.addAll(Arrays.asList("list", "info", "rename"));
                 if (sender.hasPermission("moneysmp.admin")) {
                     candidates.addAll(Arrays.asList("create", "remove", "disband"));
                 }
             } else if (args.length == 2 && args[0].equalsIgnoreCase("info")) {
                 for (Team team : teamManager.getTeams()) {
                     candidates.add(team.getName());
-                }
-            } else if (args.length == 2 && args[0].equalsIgnoreCase("revive")) {
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    candidates.add(player.getName());
                 }
             } else if (args.length == 2 && args[0].equalsIgnoreCase("create")) {
                 candidates.addAll(Arrays.asList("TeamRed", "TeamYellow", "TeamBlue", "TeamPurple", "TeamGreen"));

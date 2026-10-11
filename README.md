@@ -32,7 +32,7 @@ In **Willy Money SMP**, players compete in teams led by designated Captains. The
 | Currency | Purpose | How to Earn / Obtain |
 | :--- | :--- | :--- |
 | **Draft Credits** | Used **strictly by Team Captains** during the Draft Phase auction to bid on players. | Set at the start (`400` default) or granted by Admins via `/credits give <player> <amt> draft`. |
-| **Game Credits** | Used to **revive eliminated teammates** (`/team revive`) and rank teams on the leaderboard (`/leaderboard`). | Earned from **Player Kills**, winning **King of the Hill (KOTH)**, opening **Airdrops**, and completing **Bingo Lines**. |
+| **Game Credits** | Used to rank teams on the leaderboard (`/leaderboard`). | Earned from **Player Kills**, winning **King of the Hill (KOTH)**, opening **Airdrops**, and completing **Bingo Lines**. |
 
 ---
 
@@ -67,7 +67,7 @@ The global game phase is controlled by server admins via `/smp phase <phase>` or
 ## 🎖️ Player Tiers & Drafting
 
 Players are classified into four skill tiers:
-- **Captain**: Team leaders who hold draft funds and execute revives.
+- **Captain**: Team leaders who hold draft funds and lead their squad.
 - **Tier A**: Elite PvP and tactical fighters.
 - **Tier B**: Balanced combat and resource gatherers.
 - **Tier C**: Support players, miners, and builders.
@@ -86,18 +86,11 @@ Players are classified into four skill tiers:
 
 ---
 
-## 🛡️ Teams, Elimination & Buyback
+## 🛡️ Teams & Elimination
 
 - **Friendly Fire Block**: Players on the same team cannot damage each other.
 - **Team Chat**: Send private team-only messages using `/tc <message>` (or `/teamchat`).
-- **Spectator Upon Death**: Eliminated players respawn as Spectators and can watch the tournament live.
-- **Captain Revive / Buyback**:
-  - Captains can bring eliminated teammates back into the game by typing:
-    ```
-    /team revive <player>
-    ```
-  - **Cost**: `150 Game Credits` (deducted from the Captain).
-  - **Effect**: The revived player returns to **Survival mode**, heals, and teleports directly to their Captain's location!
+- **Spectator Upon Death**: Eliminated players respawn as Spectators and can watch the tournament live for the remainder of the phase.
 
 ---
 
@@ -220,7 +213,6 @@ After running tests, you can completely reset everything to the beginning:
 | `/banneditems` | `/banned`, `/banlist`, `/bannedlist` | Open the Banned Items GUI and view restrictions. |
 | `/team list` | — | View all active teams and rosters. |
 | `/team info [team]` | — | Inspect a team's members, captain, and elimination status. |
-| `/team revive <player>` | — | *(Captains only)* Revive an eliminated teammate for 150 credits. |
 | `/tc <message>` | `/teamchat` | Send a private message to your teammates. |
 | `/tracker` | — | Receive a Team Tracker compass. |
 | `/bingo` | — | Open the interactive centered 5x5 Lockout Bingo GUI. |

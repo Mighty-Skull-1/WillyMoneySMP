@@ -99,54 +99,6 @@ public class TeamCommand implements CommandExecutor {
             return true;
         }
 
-        // --- /team revive <player> ---
-        if (sub.equals("revive") || sub.equals("buyback")) {
-            if (!(sender instanceof Player captain)) {
-                sender.sendMessage("Only team captains can revive eliminated players!");
-                return true;
-            }
-
-            Team team = teamManager.getTeamByPlayer(captain.getUniqueId());
-            if (team == null || !team.isCaptain(captain.getUniqueId())) {
-                captain.sendMessage("§cOnly team captains can revive eliminated teammates!");
-                return true;
-            }
-
-            if (args.length < 2) {
-                captain.sendMessage("§cUsage: /team revive <player>");
-                return true;
-            }
-
-            Player target = Bukkit.getPlayer(args[1]);
-            if (target == null) {
-                captain.sendMessage("§cPlayer not found or is currently offline!");
-                return true;
-            }
-
-            if (!team.hasMember(target.getUniqueId())) {
-                captain.sendMessage("§c" + target.getName() + " is not a member of your team!");
-                return true;
-            }
-
-            if (eliminationManager == null || !eliminationManager.isEliminated(target.getUniqueId())) {
-                captain.sendMessage("§c" + target.getName() + " is not currently eliminated!");
-                return true;
-            }
-
-            int reviveCost = plugin != null ? plugin.getConfig().getInt("elimination.revive-cost", 150) : 150;
-            int captainBalance = creditManager.getGameCredits(captain.getUniqueId());
-
-            if (captainBalance < reviveCost) {
-                captain.sendMessage("§cNot enough Game Credits to revive! Cost: §e" + reviveCost + " Credits§c, Balance: §e" + captainBalance + " Credits§c.");
-                return true;
-            }
-
-            if (creditManager.removeGameCredits(captain.getUniqueId(), reviveCost)) {
-                eliminationManager.revive(target, captain, team, reviveCost);
-            }
-            return true;
-        }
-
         // --- /team rename <newName> ---
         if (sub.equals("rename")) {
             if (!(sender instanceof Player captain)) {
@@ -268,7 +220,6 @@ public class TeamCommand implements CommandExecutor {
         sender.sendMessage("§e/team list §7- View all registered tournament teams");
         sender.sendMessage("§e/team info [team] §7- View team roster, tiers, and credits");
         sender.sendMessage("§e/team rename <newName> §7- Captain only: Rename your team");
-        sender.sendMessage("§e/team revive <player> §7- Captain only: Buy back eliminated teammate");
         if (sender.hasPermission("moneysmp.admin")) {
             sender.sendMessage("§c/team create <name> <captain> §7- Create new team");
             sender.sendMessage("§c/team remove <player> §7- Remove member or disband if captain");
