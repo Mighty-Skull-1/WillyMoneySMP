@@ -15,3 +15,7 @@ elimination:
   lightning-on-death: true
 
 auto-save-interval-minutes: 5
+
+web-server:
+  enabled: true
+  port: 8085

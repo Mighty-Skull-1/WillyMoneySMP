@@ -29,6 +29,7 @@ public class MoneySMP extends JavaPlugin {
     private DataManager dataManager;
     private BannedItemManager bannedItemManager;
     private SMPGuiManager smpGuiManager;
+    private me.moneysmp.web.WebServerManager webServerManager;
 
     @Override
     public void onEnable() {
@@ -48,6 +49,8 @@ public class MoneySMP extends JavaPlugin {
         this.eventManager = new EventManager(this, teamManager, creditManager);
         this.displayManager = new DisplayManager(this, teamManager, creditManager, tierManager, phaseManager);
         this.smpGuiManager = new SMPGuiManager(this, phaseManager, eventManager, teamManager, eliminationManager, dataManager, bannedItemManager);
+        this.webServerManager = new me.moneysmp.web.WebServerManager(this, teamManager, creditManager, tierManager, phaseManager, eliminationManager, eventManager);
+        this.webServerManager.start();
 
         MoneySMPTabCompleter tabCompleter = new MoneySMPTabCompleter(tierManager, teamManager, eventManager, bannedItemManager);
 
@@ -112,6 +115,9 @@ public class MoneySMP extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (webServerManager != null) {
+            webServerManager.stop();
+        }
         if (dataManager != null) {
             dataManager.saveData();
         }
