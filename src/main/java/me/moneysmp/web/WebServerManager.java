@@ -61,6 +61,9 @@ public class WebServerManager {
         } catch (IOException e) {
             plugin.getLogger().warning("Could not start WebServer on port " + port + ": " + e.getMessage());
         }
+
+        // Periodic cloud relay sync so Vercel can fetch live data even without open ports
+        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this::pushToCloud, 40L, 200L);
     }
 
     public void stop() {
@@ -69,6 +72,147 @@ public class WebServerManager {
             server = null;
             plugin.getLogger().info("WebServer stopped.");
         }
+    }
+
+    public void pushToCloud() {
+        try {
+            String json = buildLeaderboardJsonString();
+            java.net.URL url = new java.net.URL("https://ntfy.sh/willymoneysmp_leaderboard_live");
+            java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setDoOutput(true);
+            conn.setConnectTimeout(4000);
+            conn.setReadTimeout(4000);
+            conn.setRequestProperty("Content-Type", "text/plain; charset=UTF-8");
+
+            byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
+            try (OutputStream os = conn.getOutputStream()) {
+                os.write(bytes);
+            }
+
+            int code = conn.getResponseCode();
+            if (code >= 200 && code < 300) {
+                try (java.io.InputStream is = conn.getInputStream()) {
+                    while (is.read() != -1) {}
+                }
+            }
+        } catch (Exception ignored) {}
+    }
+
+    public String buildLeaderboardJsonString() {
+        List<Team> teams = new ArrayList<>(teamManager.getTeams());
+        teams.sort((a, b) -> Integer.compare(
+                creditManager.getGameCredits(b.getCaptain()),
+                creditManager.getGameCredits(a.getCaptain())
+        ));
+
+        int totalParticipants = 0;
+        int totalEliminated = 0;
+
+        StringBuilder teamsJson = new StringBuilder("[");
+        boolean firstTeam = true;
+
+        for (Team team : teams) {
+            if (!firstTeam) teamsJson.append(",");
+            firstTeam = false;
+
+            int captainCredits = creditManager.getGameCredits(team.getCaptain());
+            String captainName = Bukkit.getOfflinePlayer(team.getCaptain()).getName();
+            if (captainName == null) captainName = "Unknown";
+
+            int aliveCount = 0;
+            int teamElimCount = 0;
+            int teamTotalCredits = 0;
+
+            StringBuilder membersJson = new StringBuilder("[");
+            boolean firstMember = true;
+
+            for (UUID mUuid : team.getMembers()) {
+                if (!firstMember) membersJson.append(",");
+                firstMember = false;
+
+                String mName = Bukkit.getOfflinePlayer(mUuid).getName();
+                if (mName == null) mName = "Unknown";
+                PlayerTier tier = tierManager.getTier(mUuid);
+                boolean isElim = eliminationManager != null && eliminationManager.isEliminated(mUuid);
+                int gameCreds = creditManager.getGameCredits(mUuid);
+                int draftCreds = creditManager.getDraftCredits(mUuid);
+                boolean isCap = team.isCaptain(mUuid);
+
+                if (isElim) teamElimCount++;
+                else aliveCount++;
+
+                teamTotalCredits += gameCreds;
+
+                membersJson.append("{")
+                        .append("\"uuid\":\"").append(mUuid.toString()).append("\",")
+                        .append("\"name\":\"").append(escapeJson(mName)).append("\",")
+                        .append("\"tier\":\"").append(tier.name()).append("\",")
+                        .append("\"gameCredits\":").append(gameCreds).append(",")
+                        .append("\"draftCredits\":").append(draftCreds).append(",")
+                        .append("\"isCaptain\":").append(isCap).append(",")
+                        .append("\"isEliminated\":").append(isElim)
+                        .append("}");
+            }
+            membersJson.append("]");
+
+            totalParticipants += team.getMembers().size();
+            totalEliminated += teamElimCount;
+
+            String hexColor = "#eab308";
+            String colorCode = team.getColorCode();
+            if (colorCode != null) {
+                if (colorCode.contains("c") || colorCode.contains("4")) hexColor = "#ef4444";
+                else if (colorCode.contains("9") || colorCode.contains("1")) hexColor = "#3b82f6";
+                else if (colorCode.contains("a") || colorCode.contains("2")) hexColor = "#22c55e";
+                else if (colorCode.contains("e") || colorCode.contains("6")) hexColor = "#eab308";
+                else if (colorCode.contains("5") || colorCode.contains("d")) hexColor = "#a855f7";
+                else if (colorCode.contains("b") || colorCode.contains("3")) hexColor = "#06b6d4";
+                else if (colorCode.contains("f") || colorCode.contains("7")) hexColor = "#e2e8f0";
+            }
+
+            teamsJson.append("{")
+                    .append("\"id\":\"").append(escapeJson(team.getName().toLowerCase())).append("\",")
+                    .append("\"name\":\"").append(escapeJson(team.getName())).append("\",")
+                    .append("\"colorCode\":\"").append(escapeJson(team.getColorCode())).append("\",")
+                    .append("\"hexColor\":\"").append(hexColor).append("\",")
+                    .append("\"captain\":\"").append(team.getCaptain().toString()).append("\",")
+                    .append("\"captainName\":\"").append(escapeJson(captainName)).append("\",")
+                    .append("\"totalCredits\":").append(teamTotalCredits).append(",")
+                    .append("\"aliveCount\":").append(aliveCount).append(",")
+                    .append("\"eliminatedCount\":").append(teamElimCount).append(",")
+                    .append("\"members\":").append(membersJson)
+                    .append("}");
+        }
+        teamsJson.append("]");
+
+        String phase = phaseManager != null ? phaseManager.getCurrentPhase().name() : "PVP";
+        int online = Bukkit.getOnlinePlayers().size();
+        boolean koth = eventManager != null && eventManager.isKothActive();
+        boolean bingo = eventManager != null && eventManager.isBingoActive();
+
+        String phaseName = "Combat & Eliminations";
+        if ("DRAFT".equalsIgnoreCase(phase)) phaseName = "Draft Auction";
+        else if ("GRACE".equalsIgnoreCase(phase)) phaseName = "Grace Period";
+        else if ("FINALE".equalsIgnoreCase(phase)) phaseName = "Finale Showdown";
+
+        StringBuilder fullResponse = new StringBuilder("{");
+        fullResponse.append("\"status\":{")
+                .append("\"serverName\":\"Willy Money SMP\",")
+                .append("\"onlinePlayers\":").append(online).append(",")
+                .append("\"maxPlayers\":").append(Bukkit.getMaxPlayers()).append(",")
+                .append("\"phase\":\"").append(phase).append("\",")
+                .append("\"phaseName\":\"").append(escapeJson(phaseName)).append("\",")
+                .append("\"kothActive\":").append(koth).append(",")
+                .append("\"bingoActive\":").append(bingo).append(",")
+                .append("\"totalTeams\":").append(teams.size()).append(",")
+                .append("\"totalParticipants\":").append(totalParticipants).append(",")
+                .append("\"eliminatedCount\":").append(totalEliminated).append(",")
+                .append("\"lastUpdated\":\"").append(java.time.Instant.now().toString()).append("\"")
+                .append("},");
+        fullResponse.append("\"teams\":").append(teamsJson);
+        fullResponse.append("}");
+        return fullResponse.toString();
     }
 
     private class LeaderboardHandler implements HttpHandler {
