@@ -65,6 +65,19 @@ public class SMPCommand implements CommandExecutor {
             return true;
         }
 
+        if (args[0].equalsIgnoreCase("sync")) {
+            sender.sendMessage("§e[Willy Money SMP] Pushing live tournament standings to website relay...");
+            org.bukkit.Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                if (plugin instanceof me.moneysmp.MoneySMP smp && smp.getWebServerManager() != null) {
+                    String result = smp.getWebServerManager().pushToCloudWithDetails();
+                    sender.sendMessage("§a[Willy Money SMP] " + result);
+                } else {
+                    sender.sendMessage("§c[Willy Money SMP] WebServerManager is not active!");
+                }
+            });
+            return true;
+        }
+
         if (args[0].equalsIgnoreCase("reset")) {
             if (args.length >= 2 && args[1].equalsIgnoreCase("confirm")) {
                 if (plugin instanceof me.moneysmp.MoneySMP smp) {

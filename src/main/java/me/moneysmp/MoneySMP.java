@@ -224,4 +224,8 @@ public class MoneySMP extends JavaPlugin {
             sender.sendMessage("§a[Willy Money SMP] Tournament successfully reset from the beginning!");
         }
     }
+
+    public me.moneysmp.web.WebServerManager getWebServerManager() {
+        return webServerManager;
+    }
 }

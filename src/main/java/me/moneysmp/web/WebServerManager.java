@@ -75,15 +75,20 @@ public class WebServerManager {
     }
 
     public void pushToCloud() {
+        pushToCloudWithDetails();
+    }
+
+    public String pushToCloudWithDetails() {
         try {
             String json = buildLeaderboardJsonString();
             java.net.URL url = new java.net.URL("https://ntfy.sh/willymoneysmp_leaderboard_live");
             java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setDoOutput(true);
-            conn.setConnectTimeout(4000);
-            conn.setReadTimeout(4000);
+            conn.setConnectTimeout(6000);
+            conn.setReadTimeout(6000);
             conn.setRequestProperty("Content-Type", "text/plain; charset=UTF-8");
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
 
             byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
             try (OutputStream os = conn.getOutputStream()) {
@@ -95,8 +100,16 @@ public class WebServerManager {
                 try (java.io.InputStream is = conn.getInputStream()) {
                     while (is.read() != -1) {}
                 }
+                plugin.getLogger().info("[WebSync] Pushed tournament status to ntfy.sh (HTTP " + code + ")");
+                return "Push successful (HTTP " + code + ")! Updated live website.";
+            } else {
+                plugin.getLogger().warning("[WebSync] Cloud relay returned HTTP " + code);
+                return "Cloud relay returned HTTP " + code;
             }
-        } catch (Exception ignored) {}
+        } catch (Exception e) {
+            plugin.getLogger().warning("[WebSync] Cloud push failed: " + e.getMessage());
+            return "Push failed: " + e.getMessage();
+        }
     }
 
     public String buildLeaderboardJsonString() {

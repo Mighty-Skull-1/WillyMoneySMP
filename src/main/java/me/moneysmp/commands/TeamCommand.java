@@ -127,6 +127,7 @@ public class TeamCommand implements CommandExecutor {
 
             teamManager.renameTeam(team, newName);
             Bukkit.broadcastMessage("§6[Willy Money SMP] Captain " + captain.getName() + " renamed " + oldName + " to §a" + newName + "§6!");
+            triggerCloudSync();
             return true;
         }
 
@@ -169,6 +170,7 @@ public class TeamCommand implements CommandExecutor {
 
             sender.sendMessage("§aTeam " + teamName + " created with Captain " + captain.getName() +
                     " (" + draftCredits + " Draft / " + gameCredits + " Game Credits)!");
+            triggerCloudSync();
         } else if (sub.equals("remove")) {
             if (args.length < 2) {
                 sender.sendMessage("§cUsage: /team remove <player>");
@@ -194,6 +196,7 @@ public class TeamCommand implements CommandExecutor {
                 teamManager.removePlayerFromTeam(target.getUniqueId());
                 sender.sendMessage("§aSuccessfully removed " + target.getName() + " from " + team.getName() + "!");
             }
+            triggerCloudSync();
         } else if (sub.equals("disband")) {
             if (args.length < 2) {
                 sender.sendMessage("§cUsage: /team disband <teamName>");
@@ -209,10 +212,17 @@ public class TeamCommand implements CommandExecutor {
 
             teamManager.disbandTeam(team);
             sender.sendMessage("§aSuccessfully disbanded team " + teamName + "!");
+            triggerCloudSync();
         } else {
             sendHelp(sender);
         }
         return true;
+    }
+
+    private void triggerCloudSync() {
+        if (plugin instanceof me.moneysmp.MoneySMP smp && smp.getWebServerManager() != null) {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> smp.getWebServerManager().pushToCloud());
+        }
     }
 
     private void sendHelp(CommandSender sender) {
