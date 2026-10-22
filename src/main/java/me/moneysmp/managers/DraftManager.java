@@ -27,7 +27,7 @@ public class DraftManager {
     private int timeLeft = 0;
     private int taskId = -1;
     private long endsAtMillis = 0L;
-    private int auctionSeconds = 15;
+    private int auctionSeconds = 30;
     private int bidIncrement = 5;
     private boolean resetTimerOnBid = false;
 
@@ -69,7 +69,7 @@ public class DraftManager {
     }
 
     private void loadDraftSettings() {
-        auctionSeconds = Math.max(5, plugin.getConfig().getInt("draft.auction-seconds", 15));
+        auctionSeconds = Math.max(5, plugin.getConfig().getInt("draft.auction-seconds", 30));
         bidIncrement = Math.max(1, plugin.getConfig().getInt("draft.bid-increment", 5));
         resetTimerOnBid = plugin.getConfig().getBoolean("draft.reset-timer-on-bid", false);
     }

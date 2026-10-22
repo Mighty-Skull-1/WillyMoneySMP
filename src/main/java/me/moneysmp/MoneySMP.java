@@ -35,6 +35,7 @@ public class MoneySMP extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
+        migrateConfig();
 
         int defaultGameCredits = getConfig().getInt("starting-game-credits", 100);
 
@@ -87,8 +88,8 @@ public class MoneySMP extends JavaPlugin {
         getCommand("airdrop").setExecutor(new AirdropCommand(eventManager));
         getCommand("airdrop").setTabCompleter(tabCompleter);
 
-        getCommand("gladiator").setExecutor(new GladiatorCommand(teamManager, creditManager));
-        getCommand("gladiator").setTabCompleter(tabCompleter);
+        getCommand("freefall").setExecutor(new FreeFallCommand(this, phaseManager));
+        getCommand("freefall").setTabCompleter(tabCompleter);
 
         getCommand("bingo").setExecutor(new BingoCommand(eventManager));
         getCommand("bingo").setTabCompleter(tabCompleter);
@@ -117,7 +118,7 @@ public class MoneySMP extends JavaPlugin {
         long autoSaveTicks = Math.max(1, autoSaveMinutes) * 60L * 20L;
         Bukkit.getScheduler().runTaskTimer(this, () -> dataManager.saveData(), autoSaveTicks, autoSaveTicks);
 
-        getLogger().info("Willy Money SMP v3.2-SNAPSHOT loaded successfully with full persistence and tournament systems!");
+        getLogger().info("Willy Money SMP v3.3-SNAPSHOT loaded successfully with full persistence and tournament systems!");
     }
 
     @Override
@@ -130,13 +131,13 @@ public class MoneySMP extends JavaPlugin {
         }
         if (eventManager != null) {
             eventManager.stopKoth();
-            eventManager.stopBingo();
+            eventManager.stopBingo(false);
         }
         if (draftManager != null) {
             draftManager.cancelDraft();
         }
         Bukkit.getScheduler().cancelTasks(this);
-        getLogger().info("Willy Money SMP v3.2-SNAPSHOT disabled successfully and data saved!");
+        getLogger().info("Willy Money SMP v3.3-SNAPSHOT disabled successfully and data saved!");
     }
 
     public DataManager getDataManager() { return dataManager; }
@@ -152,7 +153,7 @@ public class MoneySMP extends JavaPlugin {
         }
         if (eventManager != null) {
             eventManager.stopKoth();
-            eventManager.stopBingo();
+            eventManager.stopBingo(false);
         }
 
         // 2. Reset player gamemodes, health, hunger, inventories, and teleport to world spawn
@@ -250,6 +251,18 @@ public class MoneySMP extends JavaPlugin {
             } catch (Throwable ignored) {}
         }
         return null;
+    }
+
+    /** Updates settings in older config.yml files to the current tournament rules. */
+    private void migrateConfig() {
+        int version = getConfig().getInt("config-version", 1);
+        if (version < 2) {
+            getConfig().set("draft.auction-seconds", 30);
+            getConfig().set("draft.reset-timer-on-bid", false);
+            getConfig().set("config-version", 2);
+            saveConfig();
+            getLogger().info("Updated config.yml: draft auctions are now 30 seconds with no timer reset.");
+        }
     }
 
     public me.moneysmp.web.WebServerManager getWebServerManager() {

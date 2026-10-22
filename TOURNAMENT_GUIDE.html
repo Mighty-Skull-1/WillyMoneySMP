@@ -194,7 +194,7 @@
                 <td><strong>Game Credits</strong></td>
                 <td>All Players</td>
                 <td>Used to rank teams on the tournament leaderboard.</td>
-                <td>Earned via <strong>Kills</strong>, winning <strong>KOTH</strong>, looting <strong>Airdrops</strong>, and completing <strong>Bingo lines</strong>.</td>
+                <td>Earned via <strong>Kills</strong>, winning <strong>KOTH</strong>, looting <strong>Airdrops</strong>, and placing in <strong>Bingo</strong>.</td>
             </tr>
         </tbody>
     </table>
@@ -205,7 +205,7 @@
             <span class="phase-badge badge-draft">Phase 1</span>
             <h3>📋 Draft Phase</h3>
             <p><strong>PvP Status:</strong> Disabled.</p>
-            <p>Team Captains bid on nominated players during live 15-second auctions using Draft Credits. Bids go up 5 at a time (5, 10, 15...) and the highest bid when the 15-second clock runs out wins. Won players are automatically added to the winning Captain's team.</p>
+            <p>Team Captains bid on nominated players during live 30-second auctions using Draft Credits. Bids go up 5 at a time (5, 10, 15...) and the highest bid when the 30-second clock runs out wins. Won players are automatically added to the winning Captain's team.</p>
             <code>/smp phase draft</code>
         </div>
         <div class="card">
@@ -224,10 +224,10 @@
         </div>
         <div class="card">
             <span class="phase-badge badge-finale">Phase 4</span>
-            <h3>👑 Finale Showdown</h3>
+            <h3>👑 Finale Showdown: Free Fall</h3>
             <p><strong>PvP Status:</strong> Full Combat.</p>
-            <p>The endgame battle for tournament victory. Surviving teams converge with full gear and fight for the championship!</p>
-            <code>/smp phase finale</code>
+            <p>The world border closes in (default 1000 → 50 blocks over 20 minutes), forcing every team into the middle. Being outside the border hurts. Last team standing wins!</p>
+            <code>/freefall start</code>
         </div>
     </div>
 
@@ -251,7 +251,7 @@
     <h3>1. 🏰 King of the Hill (KOTH)</h3>
     <div class="card">
         <p><strong>How to Start:</strong> <code>/koth start</code> or via <code>/smp</code> Control Panel.</p>
-        <p>A 5-block particle flame ring appears with a floating 180-second holographic timer. Teams holding the zone without enemies inside score capture points. If rival teams enter, the hill is marked <strong>CONTESTED</strong>. The team with the most points at 0s wins <strong>+50 Game Credits</strong> awarded to their Captain!</p>
+        <p>A 5-block particle flame ring appears with a floating 180-second holographic timer. Teams holding the zone without enemies inside score capture points. If rival teams enter, the hill is marked <strong>CONTESTED</strong>. When the timer ends, the teams that held it longest win: <strong>1st +100</strong>, <strong>2nd +50</strong>, <strong>3rd +25 Game Credits</strong>, paid to each Captain.</p>
     </div>
 
     <h3>2. 🪂 Proximity Airdrops</h3>
@@ -269,13 +269,13 @@
     <div class="card">
         <p><strong>How to Start:</strong> <code>/bingo start</code>. View board with <code>/bingo</code>.</p>
         <p>An interactive 5x5 board featuring 25 survival tasks (e.g., <em>Mine Ancient Debris, Tame a Cat, Craft Beacon, Brew Invisibility</em>). When a team completes a task, it turns into that team's wool color and is <strong>locked out</strong> from everyone else.</p>
-        <p><strong>Line Placement Rewards:</strong></p>
+        <p><strong>Rewards</strong> (paid when bingo ends, ranked by <strong>most squares claimed</strong>):</p>
         <ul>
-            <li><strong>1st Place Line:</strong> <code>+150 Game Credits</code></li>
-            <li><strong>2nd Place Line:</strong> <code>+120 Game Credits</code></li>
-            <li><strong>3rd Place Line:</strong> <code>+100 Game Credits</code></li>
-            <li><strong>4th Place Line:</strong> <code>+50 Game Credits</code></li>
-            <li><strong>5th Place Line:</strong> <code>+25 Game Credits</code></li>
+            <li><strong>1st:</strong> <code>+150 Game Credits</code></li>
+            <li><strong>2nd:</strong> <code>+120 Game Credits</code></li>
+            <li><strong>3rd:</strong> <code>+100 Game Credits</code></li>
+            <li><strong>4th:</strong> <code>+50 Game Credits</code></li>
+            <li><strong>5th:</strong> <code>+25 Game Credits</code></li>
         </ul>
     </div>
 
@@ -317,9 +317,10 @@
             <tr><td><code>/bingo</code></td><td>Everyone</td><td>Opens the 5x5 Lockout Bingo board.</td></tr>
             <tr><td><code>/leaderboard</code></td><td>Everyone</td><td>Ranks teams by total team credits.</td></tr>
             <tr><td><code>/website</code></td><td>Everyone</td><td>Clickable link to the <a href="https://willy-money-smp-web.vercel.app/">live standings website</a>.</td></tr>
-            <tr><td><code>/bid nominate &lt;player&gt;</code></td><td>Admins</td><td>Starts a 15s auction for an unassigned player.</td></tr>
+            <tr><td><code>/bid nominate &lt;player&gt;</code></td><td>Admins</td><td>Starts a 30s auction for an unassigned player.</td></tr>
             <tr><td><code>/bid</code></td><td>Captains</td><td>Raises the top bid on the active draft player by 5.</td></tr>
             <tr><td><code>/koth start</code> / <code>stop</code></td><td>Admins</td><td>Starts or stops King of the Hill at your position.</td></tr>
+            <tr><td><code>/freefall start</code></td><td>Admins</td><td>Finale: shrinks the world border (also <code>center</code>, <code>status</code>, <code>stop</code>, <code>reset</code>).</td></tr>
             <tr><td><code>/airdrop random &lt;tier&gt;</code></td><td>Admins</td><td>Spawns a proximity airdrop near a player.</td></tr>
         </tbody>
     </table>

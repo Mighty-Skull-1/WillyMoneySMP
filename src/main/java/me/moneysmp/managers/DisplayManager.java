@@ -54,7 +54,7 @@ public class DisplayManager {
         String teamDisplay = (team != null) ? teamColor + "[" + team.getName() + "]" : "§7[No Team]";
         String isCaptainHighlight = (team != null && team.isCaptain(player.getUniqueId())) ? "§e★ " : "";
 
-        String tabName = tier.getPrefix() + " " + teamDisplay + " " + isCaptainHighlight + teamColor + player.getName();
+        String tabName = tier.getPrefix(team != null ? team.getColorCode() : null) + " " + teamDisplay + " " + isCaptainHighlight + teamColor + player.getName();
         player.setPlayerListName(tabName);
 
         player.setPlayerListHeader("§6§l★ WILLY MONEY SMP ★\n§7Phase: " + phaseManager.getCurrentPhase().getDisplayName() + "\n");
@@ -111,7 +111,7 @@ public class DisplayManager {
         int maxDraft = plugin != null ? plugin.getConfig().getInt("starting-draft-credits", 400) : 400;
 
         setLineText(board, "line_phase", "§fPhase: " + phaseManager.getCurrentPhase().getDisplayName());
-        setLineText(board, "line_tier", "§fTier: " + tier.getPrefix());
+        setLineText(board, "line_tier", "§fTier: " + tier.getPrefix(team != null ? team.getColorCode() : null));
         setLineText(board, "line_team", "§fTeam: " + (team != null ? teamColor + team.getName() : "§cNone"));
         setLineText(board, "line_capt", "§fCaptain: §e★ " + captainName);
         setLineText(board, "line_draft", "§fDraft Purse: §a" + draftCredits + " / " + maxDraft);

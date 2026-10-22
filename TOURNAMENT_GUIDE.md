@@ -31,7 +31,7 @@ In **Willy Money SMP**, players compete in teams led by designated Captains. The
 | Currency | Purpose | How to Earn / Obtain |
 | :--- | :--- | :--- |
 | **Draft Credits** | Used **strictly by Team Captains** during the Draft Phase auction to bid on players. | Set at the start (`400` default) or granted by Admins via `/credits give <player> <amt> draft`. |
-| **Game Credits** | Used to rank teams on the leaderboard (`/leaderboard`). | Earned from **Player Kills**, winning **King of the Hill (KOTH)**, claiming **Airdrops**, and completing **Bingo Lines**. |
+| **Game Credits** | Used to rank teams on the leaderboard (`/leaderboard`). | Earned from **Player Kills**, winning **King of the Hill (KOTH)**, claiming **Airdrops**, and placing in **Bingo**. |
 
 ---
 
@@ -41,7 +41,7 @@ The global game phase is controlled by server admins via `/smp phase <phase>` or
 
 ### 1. Draft Phase (`/smp phase draft`)
 - **PvP Status**: Disabled.
-- **Gameplay**: Captains participate in live 15-second player auctions. Admins nominate players, and captains bid using Draft Credits.
+- **Gameplay**: Captains participate in live 30-second player auctions. Admins nominate players, and captains bid using Draft Credits.
 
 ### 2. Grace Period (`/smp phase grace`)
 - **PvP Status**: Strict block on all PvP damage and friendly fire.
@@ -56,9 +56,9 @@ The global game phase is controlled by server admins via `/smp phase <phase>` or
   - **Tier B Kill**: `+10 Game Credits`
   - **Tier C Kill**: `+10 Game Credits`
 
-### 4. Finale Showdown (`/smp phase finale`)
+### 4. Finale Showdown: Free Fall (`/freefall start`)
 - **PvP Status**: High-stakes endgame combat.
-- **Gameplay**: Teams battle with full survival gear and teamwork for tournament victory.
+- **Free Fall**: The world border shrinks in (default 1000 → 50 blocks over 20 minutes), forcing every team into the middle. Being outside the border hurts. Last team standing wins.
 
 ---
 
@@ -75,13 +75,13 @@ Players are classified into four skill tiers:
    ```
    /bid nominate <player>
    ```
-2. A 15-second live auction begins with action-bar countdowns.
+2. A 30-second live auction begins with action-bar countdowns.
 3. Captains bid by typing:
    ```
    /bid
    ```
    Every bid is exactly 5 more than the last (5, 10, 15, 20...), so nobody can blow their whole purse
-   on one player. The 15-second clock counts down without resetting; the top bid at 0 wins.
+   on one player. The 30-second clock counts down without resetting; the top bid at 0 wins.
 4. When the timer expires, the highest bidder automatically wins the player, adds them to their team roster, and deducts the Draft Credits.
 
 ---
@@ -101,7 +101,7 @@ Players are classified into four skill tiers:
 - **Duration**: 180 seconds.
 - **Mechanism**: A 5-block particle flame ring spawns with a floating holographic countdown timer.
 - **Capturing**: Teams standing inside the ring capture the hill. If multiple teams are inside, it becomes `CONTESTED`.
-- **Reward**: The team with the highest capture time wins **`+50 Game Credits`** awarded to the Captain.
+- **Rewards** (most seconds holding the hill): **1st `+100`**, **2nd `+50`**, **3rd `+25` Game Credits**, paid to each team's Captain.
 
 ### 2. Proximity Airdrops
 - **Summon**: Click Airdrop chest in `/smp` GUI or `/airdrop random <tier>`.
@@ -115,12 +115,7 @@ Players are classified into four skill tiers:
 - **Start**: `/bingo start` (or click Map in `/smp` GUI).
 - **View Board**: `/bingo` opens a 54-slot GUI showing the 25 tasks.
 - **Lockout Rule**: The first team to complete a task claims it permanently in their team color—other teams are locked out from that task.
-- **Placement Rewards**:
-  - **1st Place Line**: **`+150 Game Credits`** awarded to the Captain.
-  - **2nd Place Line**: **`+120 Game Credits`** awarded to the Captain.
-  - **3rd Place Line**: **`+100 Game Credits`** awarded to the Captain.
-  - **4th Place Line**: **`+50 Game Credits`** awarded to the Captain.
-  - **5th Place Line**: **`+25 Game Credits`** awarded to the Captain.
+- **Rewards** (paid when an admin ends bingo with `/bingo stop`, ranked by **most squares claimed**): **1st** `+150` · **2nd** `+120` · **3rd** `+100` · **4th** `+50` · **5th** `+25` Game Credits to the Captain.
 
 ---
 
@@ -201,13 +196,14 @@ After running tests, you can completely reset everything to the beginning:
 | `/team create <name> <captain>` | Create a team with a captain. |
 | `/team remove <player>` | Remove a player from their team. |
 | `/team disband <team>` | Disband an entire team. |
-| `/bid nominate <player>` | Put a player up for a 15s draft auction. |
+| `/bid nominate <player>` | Put a player up for a 30s draft auction. |
 | `/bid cancel` | Cancel the active auction. |
 | `/credits give <player> <amt> [game\|draft]` | Give credits to a player. |
 | `/credits take <player> <amt> [game\|draft]` | Deduct credits from a player. |
 | `/credits set <player> <amt> [game\|draft]` | Set a player's credit balance. |
 | `/credits balance <player>` | Check credit balances of a player. |
 | `/koth start` / `/koth stop` | Start or stop King of the Hill at your position. |
+| `/freefall start [minutes] [size]` | Finale: shrink the world border (also `center`, `status`, `stop`, `reset`). |
 | `/airdrop <common\|rare\|legendary>` | Spawn an airdrop at your position. |
 | `/airdrop random <tier>` | Spawn a random airdrop 50–130m near a player. |
 | `/bingo start` / `/bingo stop` | Start or stop the Lockout Bingo event. |

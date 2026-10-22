@@ -93,7 +93,7 @@ public class TeamCommand implements CommandExecutor {
                 String mName = (mPlayer != null) ? "§a" + mPlayer.getName() : "§7" + Bukkit.getOfflinePlayer(mUuid).getName();
                 PlayerTier tier = tierManager.getTier(mUuid);
                 String elimStatus = (eliminationManager != null && eliminationManager.isEliminated(mUuid)) ? " §c[ELIMINATED]" : "";
-                sender.sendMessage(" §8- " + tier.getPrefix() + " " + mName + elimStatus + " §7(" + creditManager.getGameCredits(mUuid) + " Credits)");
+                sender.sendMessage(" §8- " + tier.getPrefix(targetTeam.getColorCode()) + " " + mName + elimStatus + " §7(" + creditManager.getGameCredits(mUuid) + " Credits)");
             }
             sender.sendMessage("§6§m--------------------------------------------------");
             return true;

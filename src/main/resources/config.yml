@@ -1,3 +1,5 @@
+config-version: 2
+
 starting-draft-credits: 400
 starting-game-credits: 100
 
@@ -6,8 +8,12 @@ rewards:
   tier-a-kill: 15
   tier-b-kill: 10
   tier-c-kill: 10
-  koth-win-reward: 50
-  bingo-line-win: 150
+  # King of the Hill: most seconds holding the hill
+  koth:
+    1st: 100
+    2nd: 50
+    3rd: 25
+  # Bingo: paid when bingo ends, by most squares claimed
   bingo-rewards:
     1st: 150
     2nd: 120
@@ -21,9 +27,17 @@ elimination:
 
 auto-save-interval-minutes: 5
 
+# Free Fall (Finale Showdown): /freefall start [minutes] [finalSize]
+freefall:
+  start-size: 1000        # border width when Free Fall starts
+  end-size: 50            # border width when it stops shrinking
+  shrink-minutes: 20      # how long it takes to shrink
+  damage-per-block: 1.0   # damage per second per block outside the border
+  # center-x / center-z are set with /freefall center (default: world spawn)
+
 # Draft auctions (/bid nominate <player>, then captains type /bid)
 draft:
-  auction-seconds: 15        # how long each player is up for auction
+  auction-seconds: 30        # how long each player is up for auction
   bid-increment: 5           # every bid is exactly this much higher: 5, 10, 15, 20...
   reset-timer-on-bid: false  # false = the clock just counts down; true = each bid puts it back to auction-seconds
 

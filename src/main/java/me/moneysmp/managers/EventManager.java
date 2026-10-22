@@ -178,26 +178,59 @@ public class EventManager {
     private void finishKoth() {
         stopKoth();
 
-        Team winner = null;
-        int maxPoints = -1;
-        for (Map.Entry<Team, Integer> entry : kothScores.entrySet()) {
-            if (entry.getValue() > maxPoints) {
-                maxPoints = entry.getValue();
-                winner = entry.getKey();
-            }
+        int[] rewards = {
+                plugin.getConfig().getInt("rewards.koth.1st", 100),
+                plugin.getConfig().getInt("rewards.koth.2nd", 50),
+                plugin.getConfig().getInt("rewards.koth.3rd", 25)
+        };
+        List<String> lines = awardPlaces(kothScores, rewards, "pts");
+        if (lines.isEmpty()) {
+            Bukkit.broadcastMessage("§c[KOTH FINISHED] Nobody held the hill - no winner!");
+            return;
         }
+        Bukkit.broadcastMessage("§6§l[KOTH FINISHED] §eFinal hill standings:");
+        for (String line : lines) Bukkit.broadcastMessage(line);
 
-        if (winner != null && maxPoints > 0) {
-            int reward = plugin.getConfig().getInt("rewards.koth-win-reward", 50);
-            creditManager.addGameCredits(winner.getCaptain(), reward);
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                p.sendTitle("§6§lKOTH WINNER", winner.getColorCode() + winner.getName() + " §7(" + maxPoints + " pts) (+" + reward + " Credits)", 10, 80, 20);
-                p.playSound(p.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, 1.0f);
-            }
-            Bukkit.broadcastMessage("§6§l[KOTH FINISHED] " + winner.getColorCode() + winner.getName() + " won the Hill with " + maxPoints + " points! Awarded +" + reward + " Game Credits!");
-        } else {
-            Bukkit.broadcastMessage("§c[KOTH FINISHED] No winner!");
+        Team winner = topTeam(kothScores);
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            p.sendTitle("§6§lKOTH WINNER", winner.getColorCode() + winner.getName() + " §7(+" + rewards[0] + " Credits)", 10, 80, 20);
+            p.playSound(p.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, 1.0f);
         }
+    }
+
+    private static Team topTeam(Map<Team, Integer> scores) {
+        Team best = null;
+        int max = 0;
+        for (Map.Entry<Team, Integer> e : scores.entrySet()) {
+            if (e.getValue() > max) { max = e.getValue(); best = e.getKey(); }
+        }
+        return best;
+    }
+
+    /**
+     * Ranks teams by score (highest first) and pays each place's reward to that team's captain.
+     * Teams with the same score share the place (and its reward). Teams with 0 get nothing.
+     * Returns the chat lines describing the result.
+     */
+    private List<String> awardPlaces(Map<Team, Integer> scores, int[] rewards, String unit) {
+        List<Map.Entry<Team, Integer>> sorted = new ArrayList<>();
+        for (Map.Entry<Team, Integer> e : scores.entrySet()) {
+            if (e.getValue() != null && e.getValue() > 0 && teamManager.getTeamByName(e.getKey().getName()) != null) sorted.add(e);
+        }
+        sorted.sort((a, b) -> Integer.compare(b.getValue(), a.getValue()));
+        String[] names = {"1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"};
+        List<String> lines = new ArrayList<>();
+        int place = 0;
+        for (int i = 0; i < sorted.size(); i++) {
+            if (i == 0 || !sorted.get(i).getValue().equals(sorted.get(i - 1).getValue())) place = i;
+            if (place >= rewards.length) break;
+            Team team = sorted.get(i).getKey();
+            int reward = rewards[place];
+            creditManager.addGameCredits(team.getCaptain(), reward);
+            lines.add("  §6" + names[Math.min(place, names.length - 1)] + ": " + team.getColorCode() + team.getName()
+                    + " §7(" + sorted.get(i).getValue() + " " + unit + ") §a+" + reward + " Game Credits");
+        }
+        return lines;
     }
 
     public void stopKoth() {
@@ -530,30 +563,50 @@ public class EventManager {
             p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
         }
         Bukkit.broadcastMessage("§6§l[BINGO] §eInteractive 5x5 Lockout Bingo is now LIVE! Complete tasks automatically to claim them!");
-        Bukkit.broadcastMessage("§6§l[BINGO REWARDS] §e1st: §a+150 Credits §8| §e2nd: §a+120 Credits §8| §e3rd: §a+100 Credits §8| §e4th: §a+50 Credits §8| §e5th: §a+25 Credits");
+        int[] r = bingoRewards();
+        Bukkit.broadcastMessage("§6§l[BINGO REWARDS] §eMost squares when bingo ends wins! §e1st: §a+" + r[0] + " §8| §e2nd: §a+" + r[1]
+                + " §8| §e3rd: §a+" + r[2] + " §8| §e4th: §a+" + r[3] + " §8| §e5th: §a+" + r[4]);
     }
 
+    /** Ends bingo and pays 1st-5th place by most squares claimed. */
     public void stopBingo() {
+        stopBingo(true);
+    }
+
+    /** @param award false when the server is shutting down or the tournament is being reset. */
+    public void stopBingo(boolean award) {
         if (!bingoActive) return;
         bingoActive = false;
 
-        // Display final placement summary when stopped
-        if (!bingoWinnersOrder.isEmpty()) {
-            Bukkit.broadcastMessage("§6§l[BINGO PODIUM] §eFinal Line Completion Standings:");
-            int[] rewards = {
-                    plugin.getConfig().getInt("rewards.bingo-rewards.1st", 150),
-                    plugin.getConfig().getInt("rewards.bingo-rewards.2nd", 120),
-                    plugin.getConfig().getInt("rewards.bingo-rewards.3rd", 100),
-                    plugin.getConfig().getInt("rewards.bingo-rewards.4th", 50),
-                    plugin.getConfig().getInt("rewards.bingo-rewards.5th", 25)
-            };
-            String[] places = {"1st", "2nd", "3rd", "4th", "5th"};
-            for (int i = 0; i < bingoWinnersOrder.size() && i < places.length; i++) {
-                Team t = bingoWinnersOrder.get(i);
-                Bukkit.broadcastMessage("  §e" + places[i] + " Place: " + t.getColorCode() + t.getName() + " §7(Awarded §a+" + rewards[i] + " Credits§7)");
+        if (award) {
+            Map<Team, Integer> counts = new HashMap<>();
+            for (Team t : bingoBoard.values()) {
+                if (t != null) counts.merge(t, 1, Integer::sum);
+            }
+            List<String> lines = awardPlaces(counts, bingoRewards(), "squares");
+            if (lines.isEmpty()) {
+                Bukkit.broadcastMessage("§c[BINGO] Bingo ended with no squares claimed - no rewards.");
+            } else {
+                Bukkit.broadcastMessage("§6§l[BINGO FINAL STANDINGS] §eMost squares claimed:");
+                for (String line : lines) Bukkit.broadcastMessage(line);
+                Team winner = topTeam(counts);
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    p.sendTitle("§6§lBINGO WINNER", winner.getColorCode() + winner.getName() + " §7(+" + bingoRewards()[0] + " Credits)", 10, 80, 20);
+                    p.playSound(p.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, 1.0f);
+                }
             }
         }
         Bukkit.broadcastMessage("§c[BINGO] Lockout Bingo event has ended.");
+    }
+
+    private int[] bingoRewards() {
+        return new int[]{
+                plugin.getConfig().getInt("rewards.bingo-rewards.1st", 150),
+                plugin.getConfig().getInt("rewards.bingo-rewards.2nd", 120),
+                plugin.getConfig().getInt("rewards.bingo-rewards.3rd", 100),
+                plugin.getConfig().getInt("rewards.bingo-rewards.4th", 50),
+                plugin.getConfig().getInt("rewards.bingo-rewards.5th", 25)
+        };
     }
 
     public boolean isBingoActive() {
@@ -629,50 +682,22 @@ public class EventManager {
             if (lineComplete) {
                 completedLines.add(lineKey);
 
-                int place = bingoWinnersOrder.indexOf(team) + 1;
-                boolean firstLineForTeam = false;
-                if (place == 0) {
-                    bingoWinnersOrder.add(team);
-                    place = bingoWinnersOrder.size();
-                    firstLineForTeam = true;
-                }
-
-                int reward;
-                String placeName;
-                if (place == 1) {
-                    reward = plugin.getConfig().getInt("rewards.bingo-rewards.1st", 150);
-                    placeName = "1st Place";
-                } else if (place == 2) {
-                    reward = plugin.getConfig().getInt("rewards.bingo-rewards.2nd", 120);
-                    placeName = "2nd Place";
-                } else if (place == 3) {
-                    reward = plugin.getConfig().getInt("rewards.bingo-rewards.3rd", 100);
-                    placeName = "3rd Place";
-                } else if (place == 4) {
-                    reward = plugin.getConfig().getInt("rewards.bingo-rewards.4th", 50);
-                    placeName = "4th Place";
-                } else if (place == 5) {
-                    reward = plugin.getConfig().getInt("rewards.bingo-rewards.5th", 25);
-                    placeName = "5th Place";
-                } else {
-                    reward = 10;
-                    placeName = place + "th Place";
-                }
-
-                creditManager.addGameCredits(team.getCaptain(), reward);
-
+                if (!bingoWinnersOrder.contains(team)) bingoWinnersOrder.add(team);
+                // Lines are just for bragging now - rewards are paid when bingo ends, by most squares.
                 for (Player online : Bukkit.getOnlinePlayers()) {
-                    online.sendTitle("§6§lBINGO LINE COMPLETED!", team.getColorCode() + team.getName() + " (" + placeName + ")! (+" + reward + " Credits)", 10, 80, 20);
+                    online.sendTitle("§6§lBINGO LINE!", team.getColorCode() + team.getName() + " §7completed " + lineNames[i], 10, 60, 20);
                     online.playSound(online.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, 1.0f);
                 }
-
-                String lineDetail = firstLineForTeam ?
-                        " §ecompleted §f" + lineNames[i] + " §eand locked in §6§l" + placeName + "§e! Awarded §a+" + reward + " Game Credits §eto Captain!" :
-                        " §ecompleted another line (§f" + lineNames[i] + "§e)! Awarded §a+" + reward + " Game Credits §eto Captain!";
-
-                Bukkit.broadcastMessage("§6§l[BINGO LINE WIN] " + team.getColorCode() + team.getName() + lineDetail);
+                Bukkit.broadcastMessage("§6§l[BINGO LINE] " + team.getColorCode() + team.getName() + " §ecompleted §f" + lineNames[i] + "§e!");
             }
         }
+    }
+
+    private int completedLinesFor(Team team) {
+        String prefix = team.getName().toLowerCase() + "_";
+        int n = 0;
+        for (String key : completedLines) if (key.startsWith(prefix)) n++;
+        return n;
     }
 
     public String getTaskDescription(String task) {
@@ -776,10 +801,10 @@ public class EventManager {
             tiLore.add("§7Tasks Claimed: §e" + teamClaimedCount + " §7/ 25");
             if (playerTeam != null && bingoWinnersOrder.contains(playerTeam)) {
                 int place = bingoWinnersOrder.indexOf(playerTeam) + 1;
-                tiLore.add("§7Line Podium: §6§l" + place + (place == 1 ? "st" : place == 2 ? "nd" : place == 3 ? "rd" : "th") + " Place");
+                tiLore.add("§7Lines completed: §6§l" + completedLinesFor(playerTeam));
             }
             tiLore.add("§8--------------------------");
-            tiLore.add("§7Work with teammates to claim a row!");
+            tiLore.add("§7Most squares when bingo ends wins!");
             tiMeta.setLore(tiLore);
             teamInfo.setItemMeta(tiMeta);
         }
@@ -793,7 +818,7 @@ public class EventManager {
             List<String> bsLore = new ArrayList<>();
             bsLore.add("§8--------------------------");
             if (!bingoWinnersOrder.isEmpty()) {
-                bsLore.add("§a§lLine Podium Order:");
+                bsLore.add("§a§lFirst to complete a line:");
                 String[] places = {"1st", "2nd", "3rd", "4th", "5th"};
                 for (int i = 0; i < bingoWinnersOrder.size() && i < places.length; i++) {
                     Team t = bingoWinnersOrder.get(i);
@@ -828,14 +853,14 @@ public class EventManager {
             riMeta.setDisplayName("§a§lBingo Placement Rewards");
             riMeta.setLore(Arrays.asList(
                     "§8--------------------------",
-                    "§e1st Place: §a+150 Credits",
-                    "§e2nd Place: §a+120 Credits",
-                    "§e3rd Place: §a+100 Credits",
-                    "§e4th Place: §a+50 Credits",
-                    "§e5th Place: §a+25 Credits",
+                    "§e1st Place: §a+" + bingoRewards()[0] + " Credits",
+                    "§e2nd Place: §a+" + bingoRewards()[1] + " Credits",
+                    "§e3rd Place: §a+" + bingoRewards()[2] + " Credits",
+                    "§e4th Place: §a+" + bingoRewards()[3] + " Credits",
+                    "§e5th Place: §a+" + bingoRewards()[4] + " Credits",
                     "§8--------------------------",
-                    "§7Awarded to the Captain as soon",
-                    "§7as your team finishes any line!",
+                    "§7Paid to the Captain when bingo",
+                    "§7ends: most squares claimed wins!",
                     "§8--------------------------"
             ));
             rewardInfo.setItemMeta(riMeta);
