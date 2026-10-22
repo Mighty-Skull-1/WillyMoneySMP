@@ -108,13 +108,20 @@ public class DisplayManager {
         // Every player's name (above their head and in tab) is coloured by their team, for everyone.
         syncNameColors(board);
 
-        int maxDraft = plugin != null ? plugin.getConfig().getInt("starting-draft-credits", 400) : 400;
+        int maxDraft = plugin != null ? plugin.getConfig().getInt("starting-draft-credits", 300) : 300;
 
         setLineText(board, "line_phase", "§fPhase: " + phaseManager.getCurrentPhase().getDisplayName());
         setLineText(board, "line_tier", "§fTier: " + tier.getPrefix(team != null ? team.getColorCode() : null));
         setLineText(board, "line_team", "§fTeam: " + (team != null ? teamColor + team.getName() : "§cNone"));
         setLineText(board, "line_capt", "§fCaptain: §e★ " + captainName);
-        setLineText(board, "line_draft", "§fDraft Purse: §a" + draftCredits + " / " + maxDraft);
+        // The draft purse only matters during the Draft phase; hide the line once the phase moves on.
+        Objective sidebar = board.getObjective("WillySMP");
+        if (phaseManager.getCurrentPhase() == me.moneysmp.models.SMPPhase.DRAFT) {
+            if (sidebar != null && !sidebar.getScore("§e").isScoreSet()) sidebar.getScore("§e").setScore(5);
+            setLineText(board, "line_draft", "§fDraft Purse: §a" + draftCredits + " / " + maxDraft);
+        } else {
+            board.resetScores("§e");
+        }
         setLineText(board, "line_game", "§fGame Balance: §b" + gameCredits + " Credits");
     }
 

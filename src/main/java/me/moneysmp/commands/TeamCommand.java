@@ -80,7 +80,7 @@ public class TeamCommand implements CommandExecutor {
             Player capPlayer = Bukkit.getPlayer(targetTeam.getCaptain());
             String capName = (capPlayer != null) ? "§a" + capPlayer.getName() : "§7Offline (" + targetTeam.getCaptain().toString().substring(0, 8) + ")";
             int draftPurse = creditManager.getDraftCredits(targetTeam.getCaptain());
-            int maxDraft = plugin != null ? plugin.getConfig().getInt("starting-draft-credits", 400) : 400;
+            int maxDraft = plugin != null ? plugin.getConfig().getInt("starting-draft-credits", 300) : 300;
 
             sender.sendMessage("§6§m--------------------------------------------------");
             sender.sendMessage("§6Team: " + targetTeam.getColorCode() + "§l" + targetTeam.getName());
@@ -160,7 +160,7 @@ public class TeamCommand implements CommandExecutor {
                 return true;
             }
 
-            int draftCredits = plugin != null ? plugin.getConfig().getInt("starting-draft-credits", 400) : 400;
+            int draftCredits = plugin != null ? plugin.getConfig().getInt("starting-draft-credits", 300) : 300;
             int gameCredits = plugin != null ? plugin.getConfig().getInt("starting-game-credits", 100) : 100;
 
             Team team = teamManager.createTeam(teamName, captain.getUniqueId());

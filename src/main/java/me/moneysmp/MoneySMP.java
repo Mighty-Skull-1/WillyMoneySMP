@@ -263,6 +263,12 @@ public class MoneySMP extends JavaPlugin {
             saveConfig();
             getLogger().info("Updated config.yml: draft auctions are now 30 seconds with no timer reset.");
         }
+        if (getConfig().getInt("config-version", 1) < 3) {
+            if (getConfig().getInt("starting-draft-credits", 400) == 400) getConfig().set("starting-draft-credits", 300);
+            getConfig().set("config-version", 3);
+            saveConfig();
+            getLogger().info("Updated config.yml: captains now start with 300 draft credits.");
+        }
     }
 
     public me.moneysmp.web.WebServerManager getWebServerManager() {

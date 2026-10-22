@@ -1,6 +1,6 @@
-config-version: 2
+config-version: 3
 
-starting-draft-credits: 400
+starting-draft-credits: 300
 starting-game-credits: 100
 
 rewards:

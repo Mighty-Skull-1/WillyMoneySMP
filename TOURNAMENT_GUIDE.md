@@ -30,7 +30,7 @@ In **Willy Money SMP**, players compete in teams led by designated Captains. The
 
 | Currency | Purpose | How to Earn / Obtain |
 | :--- | :--- | :--- |
-| **Draft Credits** | Used **strictly by Team Captains** during the Draft Phase auction to bid on players. | Set at the start (`400` default) or granted by Admins via `/credits give <player> <amt> draft`. |
+| **Draft Credits** | Used **strictly by Team Captains** during the Draft Phase auction to bid on players. | Set at the start (`300` default) or granted by Admins via `/credits give <player> <amt> draft`. |
 | **Game Credits** | Used to rank teams on the leaderboard (`/leaderboard`). | Earned from **Player Kills**, winning **King of the Hill (KOTH)**, claiming **Airdrops**, and placing in **Bingo**. |
 
 ---
@@ -163,7 +163,7 @@ After running tests, you can completely reset everything to the beginning:
   - All players teleported to world spawn.
   - Eliminations cleared and spectators revived.
   - All teams disbanded and player tiers cleared.
-  - Credits reset to starting defaults (`game: 100`, `draft: 400`).
+  - Credits reset to starting defaults (`game: 100`, `draft: 300`).
   - Tournament phase reset to `Draft`.
   - All ongoing events stopped.
   - `data.yml` wiped fresh.
