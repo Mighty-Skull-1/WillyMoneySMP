@@ -98,6 +98,8 @@ public class MoneySMP extends JavaPlugin {
 
         getCommand("leaderboard").setExecutor(new LeaderboardCommand(teamManager, creditManager));
 
+        getCommand("website").setExecutor(new WebsiteCommand(this));
+
         BannedItemsCommand bannedItemsCommand = new BannedItemsCommand(bannedItemManager);
         getCommand("banneditems").setExecutor(bannedItemsCommand);
         getCommand("banneditems").setTabCompleter(tabCompleter);
@@ -115,7 +117,7 @@ public class MoneySMP extends JavaPlugin {
         long autoSaveTicks = Math.max(1, autoSaveMinutes) * 60L * 20L;
         Bukkit.getScheduler().runTaskTimer(this, () -> dataManager.saveData(), autoSaveTicks, autoSaveTicks);
 
-        getLogger().info("Willy Money SMP v2.7-SNAPSHOT loaded successfully with full persistence and tournament systems!");
+        getLogger().info("Willy Money SMP v2.8-SNAPSHOT loaded successfully with full persistence and tournament systems!");
     }
 
     @Override
@@ -134,7 +136,7 @@ public class MoneySMP extends JavaPlugin {
             draftManager.cancelDraft();
         }
         Bukkit.getScheduler().cancelTasks(this);
-        getLogger().info("Willy Money SMP v2.7-SNAPSHOT disabled successfully and data saved!");
+        getLogger().info("Willy Money SMP v2.8-SNAPSHOT disabled successfully and data saved!");
     }
 
     public DataManager getDataManager() { return dataManager; }

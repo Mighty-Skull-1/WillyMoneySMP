@@ -27,6 +27,9 @@ draft:
   bid-increment: 5           # every bid is exactly this much higher: 5, 10, 15, 20...
   reset-timer-on-bid: true   # each new bid puts the clock back to auction-seconds
 
+# Website shown on the scoreboard, tab list and /website
+website-url: https://willy-money-smp-web.vercel.app/
+
 # Live website sync (https://github.com/Mighty-Skull-1/WillyMoneySMPWeb)
 # Updates are signed with the key in web-signing-key.properties so nobody can post fake standings.
 # ntfy-topic must match NTFY_TOPIC in the website's src/config.ts.

@@ -223,6 +223,7 @@ After running tests, you can completely reset everything to the beginning:
 | `/tracker` | — | Receive a Team Tracker compass. |
 | `/bingo` | — | Open the interactive centered 5x5 Lockout Bingo GUI. |
 | `/leaderboard` | `/top` | View top teams ranked by credit balances. |
+| `/website` | `/site`, `/web` | Clickable link to the live standings website. |
 
 ### Admin Commands
 | Command | Usage | Description |

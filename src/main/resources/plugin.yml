@@ -1,10 +1,10 @@
 name: WillyMoneySMP
-version: 2.7-SNAPSHOT
+version: 2.8-SNAPSHOT
 main: me.moneysmp.MoneySMP
 api-version: 1.20
 authors: [Jelani, Willy]
 description: Full-featured tournament engine with Phase controls, Hologram KOTH, Flare Airdrops, Interactive GUI Bingo, and Draft Economy.
-website: https://willymoneysmp.net
+website: https://willy-money-smp-web.vercel.app/
 
 commands:
   smp:
@@ -46,6 +46,9 @@ commands:
   leaderboard:
     description: View the tournament leaderboard
     aliases: [top]
+  website:
+    description: Get a clickable link to the live standings website
+    aliases: [site, web]
   banneditems:
     description: View and manage banned tournament items and restrictions
     aliases: [banned, banlist, bannedlist]

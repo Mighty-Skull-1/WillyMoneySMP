@@ -58,7 +58,14 @@ public class DisplayManager {
         player.setPlayerListName(tabName);
 
         player.setPlayerListHeader("§6§l★ WILLY MONEY SMP ★\n§7Phase: " + phaseManager.getCurrentPhase().getDisplayName() + "\n");
-        player.setPlayerListFooter("\n§eOnline Players: §f" + Bukkit.getOnlinePlayers().size() + " §8| §ewillymoneysmp.net");
+        player.setPlayerListFooter("\n§eOnline Players: §f" + Bukkit.getOnlinePlayers().size()
+                + "\n§7Live standings: §b" + websiteDisplay() + "\n");
+    }
+
+    /** Website address from config.yml (website-url), shown without https:// to keep it short. */
+    private String websiteDisplay() {
+        String url = plugin.getConfig().getString("website-url", "https://willy-money-smp-web.vercel.app/");
+        return url.replaceFirst("^https?://", "").replaceAll("/+$", "");
     }
 
     public void updateScoreboard(Player player) {
@@ -79,7 +86,7 @@ public class DisplayManager {
             registerLine(board, obj, "line_draft", "§fDraft Purse: ", 5, "§e");
             registerLine(board, obj, "line_game", "§fGame Balance: ", 4, "§f");
             obj.getScore("§7-------------------").setScore(3);
-            obj.getScore("§ewillymoneysmp.net").setScore(2);
+            obj.getScore("§b" + websiteDisplay()).setScore(2);
 
             player.setScoreboard(board);
         }
