@@ -267,4 +267,5 @@ The plugin pushes the standings, draft auction and draft pool to the website
 - If the key file is missing the plugin creates a new one and prints its public key in the console;
   copy it into the website's `SIGNING_PUBLIC_KEY` (or upload the key file that matches the site).
 - `/smp sync` pushes an update immediately, `/smp webkey` shows the public key.
+- `/smp setip <address>` changes the server address shown on the website (saved as `server-address` in `config.yml`).
 - Settings live under `web-sync:` in `config.yml` (`ntfy-topic` must match `NTFY_TOPIC` on the website).

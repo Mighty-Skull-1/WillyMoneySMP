@@ -77,6 +77,27 @@ public class SMPCommand implements CommandExecutor {
             return true;
         }
 
+        if (args[0].equalsIgnoreCase("setip") || args[0].equalsIgnoreCase("setaddress")) {
+            if (args.length < 2) {
+                sender.sendMessage("§eCurrent server address on the website: §f"
+                        + plugin.getConfig().getString("server-address", "(not set)"));
+                sender.sendMessage("§cUsage: /smp setip <address>   e.g. /smp setip play.example.net");
+                return true;
+            }
+            String address = args[1].trim().replaceFirst("^https?://", "");
+            if (!address.matches("[A-Za-z0-9.:\\-]{3,100}")) {
+                sender.sendMessage("§cThat doesn't look like a server address (letters, numbers, dots, dashes and :port only).");
+                return true;
+            }
+            plugin.getConfig().set("server-address", address);
+            plugin.saveConfig();
+            sender.sendMessage("§a[Willy Money SMP] Server address set to §f" + address + "§a. The website updates in a few seconds.");
+            if (plugin instanceof me.moneysmp.MoneySMP smp && smp.getWebServerManager() != null) {
+                smp.getWebServerManager().requestPush();
+            }
+            return true;
+        }
+
         if (args[0].equalsIgnoreCase("webkey")) {
             if (!(plugin instanceof me.moneysmp.MoneySMP smp) || smp.getWebServerManager() == null
                     || smp.getWebServerManager().getPublicKey() == null) {
@@ -124,7 +145,7 @@ public class SMPCommand implements CommandExecutor {
             return true;
         }
 
-        sender.sendMessage("§cUsage:\n/smp (opens GUI)\n/smp phase <draft|grace|pvp|finale>\n/smp reset [confirm]\n/smp reload\n/smp save\n/smp sync\n/smp webkey");
+        sender.sendMessage("§cUsage:\n/smp (opens GUI)\n/smp phase <draft|grace|pvp|finale>\n/smp reset [confirm]\n/smp reload\n/smp save\n/smp sync\n/smp webkey\n/smp setip <address>");
         return true;
     }
 }

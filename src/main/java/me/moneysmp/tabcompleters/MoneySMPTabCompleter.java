@@ -41,7 +41,7 @@ public class MoneySMPTabCompleter implements TabCompleter {
 
         if (command.getName().equalsIgnoreCase("smp")) {
             if (args.length == 1) {
-                candidates.addAll(Arrays.asList("gui", "phase", "reload", "reset", "save", "sync", "webkey"));
+                candidates.addAll(Arrays.asList("gui", "phase", "reload", "reset", "save", "sync", "webkey", "setip"));
             } else if (args.length == 2 && args[0].equalsIgnoreCase("phase")) {
                 candidates.addAll(Arrays.asList("draft", "grace", "pvp", "finale"));
             } else if (args.length == 2 && args[0].equalsIgnoreCase("reset")) {

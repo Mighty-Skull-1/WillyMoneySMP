@@ -27,6 +27,9 @@ draft:
   bid-increment: 5           # every bid is exactly this much higher: 5, 10, 15, 20...
   reset-timer-on-bid: false  # false = the clock just counts down; true = each bid puts it back to auction-seconds
 
+# Minecraft server address shown on the website's Join panel. Change it in game with /smp setip <address>
+server-address: willymoneysmp.minefort.com
+
 # Website shown on the scoreboard, tab list and /website
 website-url: https://willy-money-smp-web.vercel.app/
 

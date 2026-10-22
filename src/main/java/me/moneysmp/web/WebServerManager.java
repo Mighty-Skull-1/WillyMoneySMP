@@ -282,6 +282,8 @@ public class WebServerManager {
 
         StringBuilder sb = new StringBuilder("{");
         sb.append("\"p\":\"").append(phaseManager.getCurrentPhase().name()).append("\",");
+        String address = plugin.getConfig().getString("server-address", "").trim();
+        if (!address.isEmpty()) sb.append("\"ip\":").append(str(address)).append(",");
         sb.append("\"on\":").append(Bukkit.getOnlinePlayers().size()).append(",");
         sb.append("\"max\":").append(Bukkit.getMaxPlayers()).append(",");
         sb.append("\"k\":").append(eventManager != null && eventManager.isKothActive() ? 1 : 0).append(",");
