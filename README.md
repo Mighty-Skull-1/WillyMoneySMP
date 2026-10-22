@@ -162,9 +162,10 @@ To ensure competitive tournament balance and eliminate instant-escape teleportat
 
 ## 🧭 Team Tracker Compass (`/tracker`)
 
-- **Right-Click**: Switches tracking modes in your hand:
-  - **Teammate Tracking (Green)**: Compass needle points toward the nearest living teammate.
-  - **Enemy Captain Tracking (Red)**: Compass needle points toward the nearest enemy team Captain.
+- **Tier A, B & C players**: Right-click to point the compass at your nearest teammate.
+- **Captains only**: Right-click to switch between your nearest teammate and the nearest **enemy Captain**.
+
+**Team colours**: Every player's name above their head is shown in their team's colour (e.g. TeamBlue = blue), so you can tell teams apart at a glance. The colour comes from the team name: red, blue, green, yellow, purple, gold/orange or aqua/cyan.
 
 ---
 

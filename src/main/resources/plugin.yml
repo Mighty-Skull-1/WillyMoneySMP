@@ -1,5 +1,5 @@
 name: WillyMoneySMP
-version: 3.0.1-SNAPSHOT
+version: 3.1-SNAPSHOT
 main: me.moneysmp.MoneySMP
 api-version: 1.20
 authors: [Jelani, Willy]

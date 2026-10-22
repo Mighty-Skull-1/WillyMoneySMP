@@ -99,44 +99,14 @@ public class DisplayManager {
         int draftCredits = 0;
         int gameCredits = creditManager.getGameCredits(player.getUniqueId());
 
-        org.bukkit.scoreboard.Team sbTeam = board.getTeam("tm_tag");
         if (team != null) {
             Player capPlayer = Bukkit.getPlayer(team.getCaptain());
             captainName = (capPlayer != null) ? capPlayer.getName() : "Offline";
             draftCredits = creditManager.getDraftCredits(team.getCaptain());
-
-            // Set up clean teammate name tag coloring
-            if (sbTeam == null) {
-                sbTeam = board.registerNewTeam("tm_tag");
-            }
-            sbTeam.color(getNamedColor(team.getName()));
-
-            Set<String> currentTeammates = new HashSet<>();
-            for (UUID memberUuid : team.getMembers()) {
-                Player teammate = Bukkit.getPlayer(memberUuid);
-                if (teammate != null) {
-                    currentTeammates.add(teammate.getName());
-                }
-            }
-
-            for (String entry : new HashSet<>(sbTeam.getEntries())) {
-                if (!currentTeammates.contains(entry)) {
-                    sbTeam.removeEntry(entry);
-                }
-            }
-
-            for (String name : currentTeammates) {
-                if (!sbTeam.hasEntry(name)) {
-                    sbTeam.addEntry(name);
-                }
-            }
-        } else {
-            if (sbTeam != null) {
-                for (String entry : new HashSet<>(sbTeam.getEntries())) {
-                    sbTeam.removeEntry(entry);
-                }
-            }
         }
+
+        // Every player's name (above their head and in tab) is coloured by their team, for everyone.
+        syncNameColors(board);
 
         int maxDraft = plugin != null ? plugin.getConfig().getInt("starting-draft-credits", 400) : 400;
 
@@ -146,6 +116,42 @@ public class DisplayManager {
         setLineText(board, "line_capt", "§fCaptain: §e★ " + captainName);
         setLineText(board, "line_draft", "§fDraft Purse: §a" + draftCredits + " / " + maxDraft);
         setLineText(board, "line_game", "§fGame Balance: §b" + gameCredits + " Credits");
+    }
+
+    /**
+     * Puts every tournament team on this player's scoreboard as a coloured scoreboard team, so names
+     * above heads show in their team's colour (blue team = blue) no matter who is looking.
+     */
+    private void syncNameColors(Scoreboard board) {
+        org.bukkit.scoreboard.Team legacy = board.getTeam("tm_tag"); // old "teammates only" colouring
+        if (legacy != null) legacy.unregister();
+
+        Set<String> wanted = new HashSet<>();
+        for (Team team : teamManager.getTeams()) {
+            String id = "wm_" + Integer.toHexString(team.getName().toLowerCase().hashCode());
+            wanted.add(id);
+            org.bukkit.scoreboard.Team sbTeam = board.getTeam(id);
+            if (sbTeam == null) sbTeam = board.registerNewTeam(id);
+            NamedTextColor color = getNamedColor(team.getName());
+            if (!color.equals(sbTeam.color())) sbTeam.color(color);
+
+            Set<String> names = new HashSet<>();
+            for (UUID memberUuid : team.getMembers()) {
+                String name = Bukkit.getOfflinePlayer(memberUuid).getName();
+                if (name != null) names.add(name);
+            }
+            for (String entry : new HashSet<>(sbTeam.getEntries())) {
+                if (!names.contains(entry)) sbTeam.removeEntry(entry);
+            }
+            for (String name : names) {
+                if (!sbTeam.hasEntry(name)) sbTeam.addEntry(name);
+            }
+        }
+
+        // Remove teams that were disbanded or renamed.
+        for (org.bukkit.scoreboard.Team sbTeam : new HashSet<>(board.getTeams())) {
+            if (sbTeam.getName().startsWith("wm_") && !wanted.contains(sbTeam.getName())) sbTeam.unregister();
+        }
     }
 
     private NamedTextColor getNamedColor(String teamName) {

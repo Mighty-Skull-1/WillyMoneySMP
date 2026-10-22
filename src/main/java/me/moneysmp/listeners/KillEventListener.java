@@ -201,14 +201,17 @@ public class KillEventListener implements Listener {
         if (!item.getItemMeta().getDisplayName().contains("Team Tracker")) return;
 
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            boolean mode = trackerModes.getOrDefault(player.getUniqueId(), true);
-            mode = !mode;
-            trackerModes.put(player.getUniqueId(), mode);
-
             Team playerTeam = teamManager.getTeamByPlayer(player.getUniqueId());
             if (playerTeam == null) {
                 player.sendMessage("§cYou must be on a team to use the Team Tracker!");
                 return;
+            }
+
+            // Only captains can track enemy captains. Tier A/B/C players always track their teammates.
+            boolean mode = true; // true = nearest teammate, false = nearest enemy captain
+            if (playerTeam.isCaptain(player.getUniqueId())) {
+                mode = !trackerModes.getOrDefault(player.getUniqueId(), true);
+                trackerModes.put(player.getUniqueId(), mode);
             }
 
             Player target = null;
