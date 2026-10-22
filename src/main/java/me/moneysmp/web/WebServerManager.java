@@ -363,6 +363,20 @@ public class WebServerManager {
         }
         sb.append(",");
 
+        // Banned items (from /banneditems), so the website's Banned Items tab always matches the server
+        if (plugin instanceof me.moneysmp.MoneySMP smp && smp.getBannedItemManager() != null) {
+            sb.append("\"ban\":[");
+            boolean firstBan = true;
+            for (BannedItemManager.BanEntry ban : smp.getBannedItemManager().getBannedItems().values()) {
+                if (!firstBan) sb.append(",");
+                firstBan = false;
+                sb.append("[").append(str(BannedItemManager.formatMaterialName(ban.getMaterial()))).append(",")
+                  .append(str(shorten(ban.getReason(), 160))).append(",")
+                  .append(str(shorten(ban.getAlternative(), 80))).append("]");
+            }
+            sb.append("],");
+        }
+
         // Recent picks
         sb.append("\"h\":[");
         if (draftManager != null) {
@@ -420,6 +434,12 @@ public class WebServerManager {
             case 'f': case '7': return "#e2e8f0";
             default: return "#eab308";
         }
+    }
+
+    private static String shorten(String s, int max) {
+        if (s == null) return "";
+        s = s.replaceAll("§.", "").trim();
+        return s.length() <= max ? s : s.substring(0, max - 1) + "…";
     }
 
     private static int parseIntSafe(String s) {
