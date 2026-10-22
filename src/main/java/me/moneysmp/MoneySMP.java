@@ -117,7 +117,7 @@ public class MoneySMP extends JavaPlugin {
         long autoSaveTicks = Math.max(1, autoSaveMinutes) * 60L * 20L;
         Bukkit.getScheduler().runTaskTimer(this, () -> dataManager.saveData(), autoSaveTicks, autoSaveTicks);
 
-        getLogger().info("Willy Money SMP v3.0-SNAPSHOT loaded successfully with full persistence and tournament systems!");
+        getLogger().info("Willy Money SMP v3.0.1-SNAPSHOT loaded successfully with full persistence and tournament systems!");
     }
 
     @Override
@@ -136,7 +136,7 @@ public class MoneySMP extends JavaPlugin {
             draftManager.cancelDraft();
         }
         Bukkit.getScheduler().cancelTasks(this);
-        getLogger().info("Willy Money SMP v3.0-SNAPSHOT disabled successfully and data saved!");
+        getLogger().info("Willy Money SMP v3.0.1-SNAPSHOT disabled successfully and data saved!");
     }
 
     public DataManager getDataManager() { return dataManager; }
@@ -158,11 +158,8 @@ public class MoneySMP extends JavaPlugin {
         // 2. Reset player gamemodes, health, hunger, inventories, and teleport to world spawn
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.setGameMode(GameMode.SURVIVAL);
-            if (player.getAttribute(Attribute.GENERIC_MAX_HEALTH) != null) {
-                player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
-            } else {
-                player.setHealth(20.0);
-            }
+            org.bukkit.attribute.AttributeInstance maxHealth = maxHealthAttribute(player);
+            player.setHealth(maxHealth != null ? maxHealth.getValue() : 20.0);
             player.setFoodLevel(20);
             player.setSaturation(20.0f);
             player.setExhaustion(0.0f);
@@ -242,6 +239,17 @@ public class MoneySMP extends JavaPlugin {
         if (webServerManager != null) {
             webServerManager.requestPush();
         }
+    }
+
+    /** Max-health attribute that works on Paper 1.21.1 ("generic.max_health") and 1.21.3+ ("max_health"). */
+    private static org.bukkit.attribute.AttributeInstance maxHealthAttribute(Player player) {
+        for (String key : new String[]{"max_health", "generic.max_health"}) {
+            try {
+                Attribute attr = org.bukkit.Registry.ATTRIBUTE.get(org.bukkit.NamespacedKey.minecraft(key));
+                if (attr != null) return player.getAttribute(attr);
+            } catch (Throwable ignored) {}
+        }
+        return null;
     }
 
     public me.moneysmp.web.WebServerManager getWebServerManager() {
