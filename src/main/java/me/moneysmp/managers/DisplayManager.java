@@ -77,6 +77,11 @@ public class DisplayManager {
             board = manager.getNewScoreboard();
             Objective obj = board.registerNewObjective("WillySMP", Criteria.DUMMY, "§6§lWILLY MONEY SMP");
             obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+            try {
+                obj.numberFormat(io.papermc.paper.scoreboard.numbers.NumberFormat.blank()); // hide the red numbers
+            } catch (Throwable ignored) {
+                // older server without number formats - numbers just stay visible
+            }
 
             obj.getScore("§7--------------------").setScore(10);
             registerLine(board, obj, "line_phase", "§fPhase: ", 9, "§a");
@@ -105,9 +110,6 @@ public class DisplayManager {
             draftCredits = creditManager.getDraftCredits(team.getCaptain());
         }
 
-        // Every player's name (above their head and in tab) is coloured by their team, for everyone.
-        syncNameColors(board);
-
         int maxDraft = plugin != null ? plugin.getConfig().getInt("starting-draft-credits", 300) : 300;
 
         setLineText(board, "line_phase", "§fPhase: " + phaseManager.getCurrentPhase().getDisplayName());
@@ -121,6 +123,14 @@ public class DisplayManager {
             setLineText(board, "line_draft", "§fDraft Purse: §a" + draftCredits + " / " + maxDraft);
         } else {
             board.resetScores("§e");
+        }
+
+        // Every player's name (above their head and in tab) is coloured by their team, for everyone.
+        // Done last and guarded so a problem here can never blank out the sidebar.
+        try {
+            syncNameColors(board);
+        } catch (Exception e) {
+            plugin.getLogger().warning("Could not update team name colours: " + e);
         }
         setLineText(board, "line_game", "§fGame Balance: §b" + gameCredits + " Credits");
     }
@@ -140,7 +150,7 @@ public class DisplayManager {
             org.bukkit.scoreboard.Team sbTeam = board.getTeam(id);
             if (sbTeam == null) sbTeam = board.registerNewTeam(id);
             NamedTextColor color = getNamedColor(team.getName());
-            if (!color.equals(sbTeam.color())) sbTeam.color(color);
+            if (!sbTeam.hasColor() || !color.equals(sbTeam.color())) sbTeam.color(color);
 
             Set<String> names = new HashSet<>();
             for (UUID memberUuid : team.getMembers()) {
