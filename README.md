@@ -20,7 +20,7 @@ Welcome to **Willy Money SMP**, a high-stakes, economy-driven Minecraft tourname
 
 ## 🎮 Tournament Overview
 In **Willy Money SMP**, players compete in teams led by designated Captains. The tournament progresses through four structured phases:
-- **Drafting**: Captains spend Draft Credits in live 15-second auctions (bids go up 5 at a time; every bid resets the clock) to build their rosters.
+- **Drafting**: Captains spend Draft Credits in live 15-second auctions (bids go up 5 at a time; highest bid when the clock runs out wins) to build their rosters.
 - **Resource Gathering**: A Grace Period where PvP is strictly disabled so teams can mine and gear up.
 - **Combat & Eliminations**: Full PvP enabled. Deaths trigger permadeath into Spectator mode with lightning strikes and global sound effects.
 - **Finale**: The ultimate endgame showdown where surviving teams fight for the championship.
@@ -82,7 +82,7 @@ Players are classified into four skill tiers:
    /bid
    ```
    Every bid is exactly 5 more than the last (5, 10, 15, 20...), so nobody can blow their whole purse
-   on one player. Each new bid resets the clock to 15 seconds. Settings: `draft:` in `config.yml`.
+   on one player. The 15-second clock counts down without resetting; the top bid at 0 wins. Settings: `draft:` in `config.yml`.
 4. When the timer expires, the highest bidder automatically wins the player, adds them to their team roster, and deducts the Draft Credits.
 
 ---

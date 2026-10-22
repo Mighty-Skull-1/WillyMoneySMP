@@ -29,7 +29,7 @@ public class DraftManager {
     private long endsAtMillis = 0L;
     private int auctionSeconds = 15;
     private int bidIncrement = 5;
-    private boolean resetTimerOnBid = true;
+    private boolean resetTimerOnBid = false;
 
     /** Most recent sales first: {playerName, teamName, price}. Shown on the website. */
     private final Deque<String[]> recentPicks = new ArrayDeque<>();
@@ -71,7 +71,7 @@ public class DraftManager {
     private void loadDraftSettings() {
         auctionSeconds = Math.max(5, plugin.getConfig().getInt("draft.auction-seconds", 15));
         bidIncrement = Math.max(1, plugin.getConfig().getInt("draft.bid-increment", 5));
-        resetTimerOnBid = plugin.getConfig().getBoolean("draft.reset-timer-on-bid", true);
+        resetTimerOnBid = plugin.getConfig().getBoolean("draft.reset-timer-on-bid", false);
     }
     public List<String[]> getRecentPicks() { return new ArrayList<>(recentPicks); }
     public void clearHistory() { recentPicks.clear(); notifyChange(); }
@@ -98,7 +98,7 @@ public class DraftManager {
         Bukkit.broadcastMessage("§6§l[DRAFT] §e" + nomineeName + " §7(" + tier.getPrefix() + "§7) is up for auction! §a"
                 + auctionSeconds + " seconds on the clock!");
         Bukkit.broadcastMessage("§7Captains: type §e/bid §7to bid. Bids go up §e" + bidIncrement + " §7at a time"
-                + (resetTimerOnBid ? " and every bid resets the clock to §e" + auctionSeconds + "s§7." : "."));
+                + (resetTimerOnBid ? " and every bid resets the clock to §e" + auctionSeconds + "s§7." : ". §7Highest bid when the clock hits 0 wins!"));
 
         taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
             if (timeLeft <= 0) {

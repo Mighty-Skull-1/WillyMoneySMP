@@ -81,7 +81,7 @@ Players are classified into four skill tiers:
    /bid
    ```
    Every bid is exactly 5 more than the last (5, 10, 15, 20...), so nobody can blow their whole purse
-   on one player. Each new bid resets the clock to 15 seconds.
+   on one player. The 15-second clock counts down without resetting; the top bid at 0 wins.
 4. When the timer expires, the highest bidder automatically wins the player, adds them to their team roster, and deducts the Draft Credits.
 
 ---

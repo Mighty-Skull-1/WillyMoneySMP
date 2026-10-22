@@ -25,7 +25,7 @@ auto-save-interval-minutes: 5
 draft:
   auction-seconds: 15        # how long each player is up for auction
   bid-increment: 5           # every bid is exactly this much higher: 5, 10, 15, 20...
-  reset-timer-on-bid: true   # each new bid puts the clock back to auction-seconds
+  reset-timer-on-bid: false  # false = the clock just counts down; true = each bid puts it back to auction-seconds
 
 # Website shown on the scoreboard, tab list and /website
 website-url: https://willy-money-smp-web.vercel.app/
