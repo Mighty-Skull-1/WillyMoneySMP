@@ -108,6 +108,11 @@ public class KillEventListener implements Listener {
 
         if (killerTeam == null || victimTeam == null) return;
 
+        if (plugin instanceof me.moneysmp.MoneySMP smp && smp.getStatsManager() != null) {
+            smp.getStatsManager().addKill(killer.getUniqueId());
+            smp.getStatsManager().addDeath(victim.getUniqueId());
+        }
+
         PlayerTier victimTier = tierManager.getTier(victim.getUniqueId());
         int rewardPoints = 5;
 

@@ -21,6 +21,22 @@ elimination:
 
 auto-save-interval-minutes: 5
 
-web-server:
+# Draft auctions (/bid nominate <player>, then captains type /bid)
+draft:
+  auction-seconds: 15        # how long each player is up for auction
+  bid-increment: 5           # every bid is exactly this much higher: 5, 10, 15, 20...
+  reset-timer-on-bid: true   # each new bid puts the clock back to auction-seconds
+
+# Live website sync (https://github.com/Mighty-Skull-1/WillyMoneySMPWeb)
+# Updates are signed with the key in web-signing-key.properties so nobody can post fake standings.
+# ntfy-topic must match NTFY_TOPIC in the website's src/config.ts.
+web-sync:
   enabled: true
+  ntfy-server: https://ntfy.sh
+  ntfy-topic: willymoneysmp_leaderboard_live
+  heartbeat-seconds: 60
+
+# Optional local REST API (the website does not need this).
+web-server:
+  enabled: false
   port: 8085

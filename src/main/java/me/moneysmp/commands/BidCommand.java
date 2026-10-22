@@ -91,21 +91,26 @@ public class BidCommand implements CommandExecutor {
             return true;
         }
 
-        if (args.length < 1) {
-            captain.sendMessage("§cUsage: /bid <amount>");
-            return true;
+        // Bids go up in fixed steps (default +5): 5, 10, 15, 20...
+        // "/bid" places the next step. "/bid <amount>" is accepted only if it IS the next step.
+        int nextBid = draftManager.getNextBid();
+        int amount = nextBid;
+        if (args.length >= 1) {
+            try {
+                amount = Integer.parseInt(args[0]);
+            } catch (NumberFormatException e) {
+                captain.sendMessage("§cJust type §e/bid §cto bid §e" + nextBid + "§c.");
+                return true;
+            }
+            if (amount != nextBid) {
+                captain.sendMessage("§cBids go up §e" + draftManager.getBidIncrement() + " §cat a time. The next bid is §e"
+                        + nextBid + "§c - just type §e/bid§c.");
+                return true;
+            }
         }
 
-        int amount;
-        try {
-            amount = Integer.parseInt(args[0]);
-        } catch (NumberFormatException e) {
-            captain.sendMessage("§cInvalid bid amount! Please specify a positive number.");
-            return true;
-        }
-
-        if (amount <= 0) {
-            captain.sendMessage("§cBid amount must be greater than 0!");
+        if (draftManager.isHighestBidder(captain)) {
+            captain.sendMessage("§eYou're already the top bidder at " + draftManager.getHighestBid() + " credits!");
             return true;
         }
 
@@ -130,7 +135,7 @@ public class BidCommand implements CommandExecutor {
         }
 
         if (!draftManager.placeBid(captain, amount)) {
-            captain.sendMessage("§cYour bid must be higher than the current top bid (" + draftManager.getHighestBid() + " Credits)!");
+            captain.sendMessage("§cSomeone bid first! The next bid is now §e" + draftManager.getNextBid() + "§c - type §e/bid §cagain.");
         }
 
         return true;

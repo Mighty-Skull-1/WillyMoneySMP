@@ -221,7 +221,7 @@ public class TeamCommand implements CommandExecutor {
 
     private void triggerCloudSync() {
         if (plugin instanceof me.moneysmp.MoneySMP smp && smp.getWebServerManager() != null) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> smp.getWebServerManager().pushToCloud());
+            smp.getWebServerManager().requestPush();
         }
     }
 

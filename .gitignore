@@ -8,3 +8,7 @@ target/
 .classpath/
 bin/
 data.yml
+
+# Website signing key - never commit the private key
+web-signing-key.properties
+upload-to-server/

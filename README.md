@@ -20,7 +20,7 @@ Welcome to **Willy Money SMP**, a high-stakes, economy-driven Minecraft tourname
 
 ## 🎮 Tournament Overview
 In **Willy Money SMP**, players compete in teams led by designated Captains. The tournament progresses through four structured phases:
-- **Drafting**: Captains spend Draft Credits in live 30-second auctions to build their rosters.
+- **Drafting**: Captains spend Draft Credits in live 15-second auctions (bids go up 5 at a time; every bid resets the clock) to build their rosters.
 - **Resource Gathering**: A Grace Period where PvP is strictly disabled so teams can mine and gear up.
 - **Combat & Eliminations**: Full PvP enabled. Deaths trigger permadeath into Spectator mode with lightning strikes and global sound effects.
 - **Finale**: The ultimate endgame showdown where surviving teams fight for the championship.
@@ -42,7 +42,7 @@ The global game phase is controlled by server admins via `/smp phase <phase>` or
 
 ### 1. Draft Phase (`/smp phase draft`)
 - **PvP Status**: Disabled.
-- **Gameplay**: Captains participate in live 30-second player auctions. Admins nominate players, and captains bid using Draft Credits.
+- **Gameplay**: Captains participate in live 15-second player auctions. Admins nominate players, and captains bid using Draft Credits.
 
 ### 2. Grace Period (`/smp phase grace`)
 - **PvP Status**: Strict block on all PvP damage and friendly fire.
@@ -76,11 +76,13 @@ Players are classified into four skill tiers:
    ```
    /bid nominate <player>
    ```
-2. A 30-second live auction begins with action-bar countdowns.
+2. A 15-second live auction begins with action-bar countdowns.
 3. Captains bid by typing:
    ```
-   /bid <amount>
+   /bid
    ```
+   Every bid is exactly 5 more than the last (5, 10, 15, 20...), so nobody can blow their whole purse
+   on one player. Each new bid resets the clock to 15 seconds. Settings: `draft:` in `config.yml`.
 4. When the timer expires, the highest bidder automatically wins the player, adds them to their team roster, and deducts the Draft Credits.
 
 ---
@@ -239,7 +241,7 @@ After running tests, you can completely reset everything to the beginning:
 | `/team create <name> <captain>` | — | Create a team with a captain. |
 | `/team remove <player>` | — | Remove a player from their team. |
 | `/team disband <team>` | — | Disband an entire team. |
-| `/bid nominate <player>` | — | Put a player up for a 30s draft auction. |
+| `/bid nominate <player>` | — | Put a player up for a 15s draft auction. |
 | `/bid cancel` | — | Cancel the active auction. |
 | `/credits give <player> <amt> [game\|draft]` | — | Give credits to a player. |
 | `/credits take <player> <amt> [game\|draft]` | — | Deduct credits from a player. |
@@ -251,3 +253,17 @@ After running tests, you can completely reset everything to the beginning:
 | `/bingo start` / `/bingo stop` | — | Start or stop the Lockout Bingo event. |
 | `/announce <message>` | `/broadcast`, `/alert` | Global server announcement with sound. |
 | `/titleannounce <title>` | — | Fullscreen screen title alert for all players. |
+
+## Live website sync
+
+The plugin pushes the standings, draft auction and draft pool to the website
+(https://github.com/Mighty-Skull-1/WillyMoneySMPWeb) through the public ntfy.sh relay.
+
+- Updates go out whenever something changes (checked every 2 seconds), plus a heartbeat every minute.
+- Every update is signed with `plugins/WillyMoneySMP/web-signing-key.properties`. The website only accepts
+  updates that match the public key in its `src/config.ts`, so nobody can post fake standings.
+  **Never share or commit that file.**
+- If the key file is missing the plugin creates a new one and prints its public key in the console;
+  copy it into the website's `SIGNING_PUBLIC_KEY` (or upload the key file that matches the site).
+- `/smp sync` pushes an update immediately, `/smp webkey` shows the public key.
+- Settings live under `web-sync:` in `config.yml` (`ntfy-topic` must match `NTFY_TOPIC` on the website).

@@ -22,18 +22,21 @@ public class DataManager {
     private final TierManager tierManager;
     private final PhaseManager phaseManager;
     private final EliminationManager eliminationManager;
+    private final StatsManager statsManager;
 
     private final File dataFile;
     private FileConfiguration dataConfig;
 
     public DataManager(JavaPlugin plugin, TeamManager teamManager, CreditManager creditManager,
-                       TierManager tierManager, PhaseManager phaseManager, EliminationManager eliminationManager) {
+                       TierManager tierManager, PhaseManager phaseManager, EliminationManager eliminationManager,
+                       StatsManager statsManager) {
         this.plugin = plugin;
         this.teamManager = teamManager;
         this.creditManager = creditManager;
         this.tierManager = tierManager;
         this.phaseManager = phaseManager;
         this.eliminationManager = eliminationManager;
+        this.statsManager = statsManager;
 
         this.dataFile = new File(plugin.getDataFolder(), "data.yml");
         loadData();
@@ -119,6 +122,10 @@ public class DataManager {
             } catch (Exception ignored) {}
         }
 
+        // Load PvP stats (kills / deaths)
+        loadIntMap("kills", (uuid, value) -> statsManager.setKills(uuid, value));
+        loadIntMap("deaths", (uuid, value) -> statsManager.setDeaths(uuid, value));
+
         plugin.getLogger().info("Tournament data loaded successfully from data.yml");
     }
 
@@ -163,10 +170,28 @@ public class DataManager {
         }
         dataConfig.set("eliminated", elimList);
 
+        // Save PvP stats
+        for (Map.Entry<UUID, Integer> entry : statsManager.getAllKills().entrySet()) {
+            dataConfig.set("kills." + entry.getKey().toString(), entry.getValue());
+        }
+        for (Map.Entry<UUID, Integer> entry : statsManager.getAllDeaths().entrySet()) {
+            dataConfig.set("deaths." + entry.getKey().toString(), entry.getValue());
+        }
+
         try {
             dataConfig.save(dataFile);
         } catch (IOException e) {
             plugin.getLogger().severe("Failed to save tournament data to data.yml: " + e.getMessage());
+        }
+    }
+
+    private void loadIntMap(String path, java.util.function.BiConsumer<UUID, Integer> setter) {
+        ConfigurationSection sec = dataConfig.getConfigurationSection(path);
+        if (sec == null) return;
+        for (String key : sec.getKeys(false)) {
+            try {
+                setter.accept(UUID.fromString(key), sec.getInt(key));
+            } catch (Exception ignored) {}
         }
     }
 

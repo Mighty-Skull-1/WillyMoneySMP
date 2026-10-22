@@ -66,15 +66,35 @@ public class SMPCommand implements CommandExecutor {
         }
 
         if (args[0].equalsIgnoreCase("sync")) {
-            sender.sendMessage("§e[Willy Money SMP] Pushing live tournament standings to website relay...");
-            org.bukkit.Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                if (plugin instanceof me.moneysmp.MoneySMP smp && smp.getWebServerManager() != null) {
-                    String result = smp.getWebServerManager().pushToCloudWithDetails();
-                    sender.sendMessage("§a[Willy Money SMP] " + result);
-                } else {
-                    sender.sendMessage("§c[Willy Money SMP] WebServerManager is not active!");
-                }
-            });
+            if (!(plugin instanceof me.moneysmp.MoneySMP smp) || smp.getWebServerManager() == null) {
+                sender.sendMessage("§c[Willy Money SMP] Website sync is not active!");
+                return true;
+            }
+            sender.sendMessage("§e[Willy Money SMP] Pushing live tournament standings to the website...");
+            smp.getWebServerManager().forcePush(result ->
+                    org.bukkit.Bukkit.getScheduler().runTask(plugin, () ->
+                            sender.sendMessage((result.startsWith("Website updated") ? "§a" : "§c") + "[Willy Money SMP] " + result)));
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("webkey")) {
+            if (!(plugin instanceof me.moneysmp.MoneySMP smp) || smp.getWebServerManager() == null
+                    || smp.getWebServerManager().getPublicKey() == null) {
+                sender.sendMessage("§c[Willy Money SMP] No website signing key is loaded. Check the console for errors.");
+                return true;
+            }
+            String key = smp.getWebServerManager().getPublicKey();
+            sender.sendMessage("§6[Willy Money SMP] Website public key §7(goes in the website's src/config.ts):");
+            if (sender instanceof Player player) {
+                net.md_5.bungee.api.chat.TextComponent comp = new net.md_5.bungee.api.chat.TextComponent("§e" + key);
+                comp.setClickEvent(new net.md_5.bungee.api.chat.ClickEvent(
+                        net.md_5.bungee.api.chat.ClickEvent.Action.COPY_TO_CLIPBOARD, key));
+                player.spigot().sendMessage(comp);
+                sender.sendMessage("§7(Click the key to copy it.)");
+            } else {
+                sender.sendMessage(key);
+            }
+            sender.sendMessage("§7Last sync result: §f" + smp.getWebServerManager().getLastResult());
             return true;
         }
 
@@ -104,7 +124,7 @@ public class SMPCommand implements CommandExecutor {
             return true;
         }
 
-        sender.sendMessage("§cUsage:\n/smp (opens GUI)\n/smp phase <draft|grace|pvp|finale>\n/smp reset [confirm]\n/smp reload\n/smp save");
+        sender.sendMessage("§cUsage:\n/smp (opens GUI)\n/smp phase <draft|grace|pvp|finale>\n/smp reset [confirm]\n/smp reload\n/smp save\n/smp sync\n/smp webkey");
         return true;
     }
 }

@@ -22,6 +22,10 @@ public class MoneySMPTabCompleter implements TabCompleter {
     private final TeamManager teamManager;
     private final EventManager eventManager;
     private final me.moneysmp.managers.BannedItemManager bannedItemManager;
+    private me.moneysmp.managers.DraftManager draftManager;
+
+    /** Lets /bid tab-complete the next valid bid amount. */
+    public void setDraftManager(me.moneysmp.managers.DraftManager draftManager) { this.draftManager = draftManager; }
 
     public MoneySMPTabCompleter(TierManager tierManager, TeamManager teamManager, EventManager eventManager,
                                 me.moneysmp.managers.BannedItemManager bannedItemManager) {
@@ -37,7 +41,7 @@ public class MoneySMPTabCompleter implements TabCompleter {
 
         if (command.getName().equalsIgnoreCase("smp")) {
             if (args.length == 1) {
-                candidates.addAll(Arrays.asList("gui", "phase", "reload", "reset", "save"));
+                candidates.addAll(Arrays.asList("gui", "phase", "reload", "reset", "save", "sync", "webkey"));
             } else if (args.length == 2 && args[0].equalsIgnoreCase("phase")) {
                 candidates.addAll(Arrays.asList("draft", "grace", "pvp", "finale"));
             } else if (args.length == 2 && args[0].equalsIgnoreCase("reset")) {
@@ -75,7 +79,9 @@ public class MoneySMPTabCompleter implements TabCompleter {
                     candidates.add("nominate");
                     candidates.add("cancel");
                 }
-                candidates.addAll(Arrays.asList("10", "25", "50", "100"));
+                if (draftManager != null && draftManager.isDraftActive()) {
+                    candidates.add(String.valueOf(draftManager.getNextBid()));
+                }
             } else if (args.length == 2 && args[0].equalsIgnoreCase("nominate") && sender.hasPermission("moneysmp.admin")) {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     PlayerTier tier = tierManager.getTier(player.getUniqueId());

@@ -10,11 +10,10 @@ Welcome to **Willy Money SMP**, a high-stakes, economy-driven Minecraft tourname
 3. [Tournament Phases](#-tournament-phases)
 4. [Player Tiers & Drafting](#-player-tiers--drafting)
 5. [Teams, Elimination & Buyback](#-teams-elimination--buyback)
-6. [The In-Game Credit Shop](#-the-in-game-credit-shop)
-7. [Live Tournament Events](#-live-tournament-events)
-8. [Team Tracker Compass](#-team-tracker-compass)
-9. [Admin Control Panel & System Reset](#-admin-control-panel--system-reset)
-10. [Complete Commands Reference](#-complete-commands-reference)
+6. [Live Tournament Events](#-live-tournament-events)
+7. [Team Tracker Compass](#-team-tracker-compass)
+8. [Admin Control Panel & System Reset](#-admin-control-panel--system-reset)
+9. [Complete Commands Reference](#-complete-commands-reference)
 
 ---
 
@@ -42,7 +41,7 @@ The global game phase is controlled by server admins via `/smp phase <phase>` or
 
 ### 1. Draft Phase (`/smp phase draft`)
 - **PvP Status**: Disabled.
-- **Gameplay**: Captains participate in live 30-second player auctions. Admins nominate players, and captains bid using Draft Credits.
+- **Gameplay**: Captains participate in live 15-second player auctions. Admins nominate players, and captains bid using Draft Credits.
 
 ### 2. Grace Period (`/smp phase grace`)
 - **PvP Status**: Strict block on all PvP damage and friendly fire.
@@ -76,11 +75,13 @@ Players are classified into four skill tiers:
    ```
    /bid nominate <player>
    ```
-2. A 30-second live auction begins with action-bar countdowns.
+2. A 15-second live auction begins with action-bar countdowns.
 3. Captains bid by typing:
    ```
-   /bid <amount>
+   /bid
    ```
+   Every bid is exactly 5 more than the last (5, 10, 15, 20...), so nobody can blow their whole purse
+   on one player. Each new bid resets the clock to 15 seconds.
 4. When the timer expires, the highest bidder automatically wins the player, adds them to their team roster, and deducts the Draft Credits.
 
 ---
@@ -90,26 +91,6 @@ Players are classified into four skill tiers:
 - **Friendly Fire**: Players on the same team cannot hurt each other.
 - **Team Chat**: Send private team-only messages using `/tc <message>`.
 - **Respawn System**: No permadeath. Players respawn normally at their bed or spawn upon death.
-
----
-
-## 🛍️ The In-Game Credit Shop (`/shop`)
-
-Any player can type `/shop` at any time to open the 27-slot chest GUI.
-
-| Item | Cost | Details |
-| :--- | :--- | :--- |
-| **Golden Apple (x2)** | 15 Credits | Instant golden apple absorption & regeneration. |
-| **Enchanted Golden Apple** | 75 Credits | High-tier defense & resistance. |
-| **Totem of Undying** | 85 Credits | Second-chance death prevention. |
-| **Ender Pearl (x4)** | 20 Credits | Fast teleportation & mobility. |
-| **Team Tracker Compass** | 25 Credits | Radar compass to track allies or enemy captains. |
-| **Splash Potion of Healing II** | 25 Credits | Instant health splash potion. |
-| **Potion of Swiftness II** | 20 Credits | High-speed maneuverability. |
-| **Potion of Strength** | 35 Credits | Increased melee damage. |
-| **Arrows (x32)** | 10 Credits | Standard bow/crossbow ammunition. |
-| **Diamonds (x4)** | 30 Credits | Diamond resource bundle. |
-| **Firework Rockets (x16)** | 15 Credits | Elytra flight fuel. |
 
 ---
 
@@ -218,7 +199,7 @@ After running tests, you can completely reset everything to the beginning:
 | `/team create <name> <captain>` | Create a team with a captain. |
 | `/team remove <player>` | Remove a player from their team. |
 | `/team disband <team>` | Disband an entire team. |
-| `/bid nominate <player>` | Put a player up for 30s draft auction. |
+| `/bid nominate <player>` | Put a player up for a 15s draft auction. |
 | `/bid cancel` | Cancel the active auction. |
 | `/credits give <player> <amt> [game\|draft]` | Give credits to a player. |
 | `/credits take <player> <amt> [game\|draft]` | Deduct credits from a player. |

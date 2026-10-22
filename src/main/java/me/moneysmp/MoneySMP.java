@@ -29,6 +29,7 @@ public class MoneySMP extends JavaPlugin {
     private DataManager dataManager;
     private BannedItemManager bannedItemManager;
     private SMPGuiManager smpGuiManager;
+    private StatsManager statsManager;
     private me.moneysmp.web.WebServerManager webServerManager;
 
     @Override
@@ -43,16 +44,20 @@ public class MoneySMP extends JavaPlugin {
         this.phaseManager = new PhaseManager();
         this.eliminationManager = new EliminationManager(this);
         this.bannedItemManager = new BannedItemManager(this);
-        this.dataManager = new DataManager(this, teamManager, creditManager, tierManager, phaseManager, eliminationManager);
+        this.statsManager = new StatsManager();
+        this.dataManager = new DataManager(this, teamManager, creditManager, tierManager, phaseManager, eliminationManager, statsManager);
 
         this.draftManager = new DraftManager(this, teamManager, creditManager, tierManager);
         this.eventManager = new EventManager(this, teamManager, creditManager);
         this.displayManager = new DisplayManager(this, teamManager, creditManager, tierManager, phaseManager);
         this.smpGuiManager = new SMPGuiManager(this, phaseManager, eventManager, teamManager, eliminationManager, dataManager, bannedItemManager);
-        this.webServerManager = new me.moneysmp.web.WebServerManager(this, teamManager, creditManager, tierManager, phaseManager, eliminationManager, eventManager);
+        this.webServerManager = new me.moneysmp.web.WebServerManager(this, teamManager, creditManager, tierManager,
+                phaseManager, eliminationManager, eventManager, draftManager, statsManager);
         this.webServerManager.start();
+        this.draftManager.setOnChange(() -> webServerManager.requestPush());
 
         MoneySMPTabCompleter tabCompleter = new MoneySMPTabCompleter(tierManager, teamManager, eventManager, bannedItemManager);
+        tabCompleter.setDraftManager(draftManager);
 
         // --- Commands Registration ---
         getCommand("smp").setExecutor(new SMPCommand(this, phaseManager, eventManager, dataManager, smpGuiManager));
@@ -110,7 +115,7 @@ public class MoneySMP extends JavaPlugin {
         long autoSaveTicks = Math.max(1, autoSaveMinutes) * 60L * 20L;
         Bukkit.getScheduler().runTaskTimer(this, () -> dataManager.saveData(), autoSaveTicks, autoSaveTicks);
 
-        getLogger().info("Willy Money SMP v2.5-SNAPSHOT loaded successfully with full persistence and tournament systems!");
+        getLogger().info("Willy Money SMP v2.7-SNAPSHOT loaded successfully with full persistence and tournament systems!");
     }
 
     @Override
@@ -129,13 +134,14 @@ public class MoneySMP extends JavaPlugin {
             draftManager.cancelDraft();
         }
         Bukkit.getScheduler().cancelTasks(this);
-        getLogger().info("Willy Money SMP v2.5-SNAPSHOT disabled successfully and data saved!");
+        getLogger().info("Willy Money SMP v2.7-SNAPSHOT disabled successfully and data saved!");
     }
 
     public DataManager getDataManager() { return dataManager; }
     public EliminationManager getEliminationManager() { return eliminationManager; }
     public SMPGuiManager getSmpGuiManager() { return smpGuiManager; }
     public BannedItemManager getBannedItemManager() { return bannedItemManager; }
+    public StatsManager getStatsManager() { return statsManager; }
 
     public void resetTournament(CommandSender sender) {
         // 1. Stop any ongoing draft auction or events
@@ -174,9 +180,15 @@ public class MoneySMP extends JavaPlugin {
             player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, 0.8f);
         }
 
-        // 3. Clear eliminations
+        // 3. Clear eliminations and PvP stats
         if (eliminationManager != null) {
             eliminationManager.clearAll();
+        }
+        if (statsManager != null) {
+            statsManager.clearAll();
+        }
+        if (draftManager != null) {
+            draftManager.clearHistory();
         }
 
         // 4. Disband all teams
@@ -222,6 +234,11 @@ public class MoneySMP extends JavaPlugin {
 
         if (sender != null) {
             sender.sendMessage("§a[Willy Money SMP] Tournament successfully reset from the beginning!");
+        }
+
+        // 11. Update the website right away
+        if (webServerManager != null) {
+            webServerManager.requestPush();
         }
     }
 

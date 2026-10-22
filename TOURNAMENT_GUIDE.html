@@ -205,7 +205,7 @@
             <span class="phase-badge badge-draft">Phase 1</span>
             <h3>📋 Draft Phase</h3>
             <p><strong>PvP Status:</strong> Disabled.</p>
-            <p>Team Captains bid on nominated players during live 30-second auctions using Draft Credits. Won players are automatically added to the winning Captain's team.</p>
+            <p>Team Captains bid on nominated players during live 15-second auctions using Draft Credits. Bids go up 5 at a time (5, 10, 15...) and every bid resets the clock to 15 seconds. Won players are automatically added to the winning Captain's team.</p>
             <code>/smp phase draft</code>
         </div>
         <div class="card">
@@ -245,31 +245,6 @@
             </li>
         </ul>
     </div>
-
-    <h2>🛍️ The Credit Shop (<code>/shop</code>)</h2>
-    <p>Type <code>/shop</code> at any time to open the 27-slot chest shop:</p>
-    <table>
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th>Price (Game Credits)</th>
-                <th>Tactical Advantage</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr><td>Golden Apples (x2)</td><td>15</td><td>Quick health absorption and regeneration.</td></tr>
-            <tr><td>Enchanted Golden Apple</td><td>75</td><td>Ultimate damage absorption, resistance, and fire immunity.</td></tr>
-            <tr><td>Totem of Undying</td><td>85</td><td>Saves you from lethal blows.</td></tr>
-            <tr><td>Ender Pearls (x4)</td><td>20</td><td>Escape traps or rush opponents.</td></tr>
-            <tr><td>Team Tracker Compass</td><td>25</td><td>Right-click to locate teammates or track enemy captains.</td></tr>
-            <tr><td>Splash Potion of Healing II</td><td>25</td><td>Instant area-of-effect emergency healing.</td></tr>
-            <tr><td>Potion of Swiftness II</td><td>20</td><td>Sprint and flank faster than enemies.</td></tr>
-            <tr><td>Potion of Strength</td><td>35</td><td>Boosts melee attack power.</td></tr>
-            <tr><td>Diamonds (x4)</td><td>30</td><td>Essential armor & weapon crafting material.</td></tr>
-            <tr><td>Arrows (x32)</td><td>10</td><td>Ammunition for bows and crossbows.</td></tr>
-            <tr><td>Firework Rockets (x16)</td><td>15</td><td>Elytra flight fuel.</td></tr>
-        </tbody>
-    </table>
 
     <h2>🎯 Live Tournament Events</h2>
 
@@ -341,8 +316,8 @@
             <tr><td><code>/tracker</code></td><td>Everyone</td><td>Gives you a Team Tracker compass.</td></tr>
             <tr><td><code>/bingo</code></td><td>Everyone</td><td>Opens the 5x5 Lockout Bingo board.</td></tr>
             <tr><td><code>/leaderboard</code></td><td>Everyone</td><td>Ranks teams by total team credits.</td></tr>
-            <tr><td><code>/bid nominate &lt;player&gt;</code></td><td>Admins</td><td>Starts a 30s auction for an unassigned player.</td></tr>
-            <tr><td><code>/bid &lt;amount&gt;</code></td><td>Captains</td><td>Places a bid on the active draft player.</td></tr>
+            <tr><td><code>/bid nominate &lt;player&gt;</code></td><td>Admins</td><td>Starts a 15s auction for an unassigned player.</td></tr>
+            <tr><td><code>/bid</code></td><td>Captains</td><td>Raises the top bid on the active draft player by 5.</td></tr>
             <tr><td><code>/koth start</code> / <code>stop</code></td><td>Admins</td><td>Starts or stops King of the Hill at your position.</td></tr>
             <tr><td><code>/airdrop random &lt;tier&gt;</code></td><td>Admins</td><td>Spawns a proximity airdrop near a player.</td></tr>
         </tbody>
