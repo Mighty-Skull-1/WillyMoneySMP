@@ -89,12 +89,12 @@ public class KillEventListener implements Listener {
 
         Team victimTeam = teamManager.getTeamByPlayer(victim.getUniqueId());
 
-        // Elimination handling in PVP and FINALE phases
-        if (eliminationManager != null && plugin.getConfig().getBoolean("elimination.enabled", true)) {
+        // Free Fall (FINALE) is always permadeath. During PVP, eliminations follow config (elimination.enabled).
+        if (eliminationManager != null) {
             SMPPhase phase = phaseManager.getCurrentPhase();
-            if (phase == SMPPhase.PVP || phase == SMPPhase.FINALE) {
-                eliminationManager.eliminate(victim, victimTeam);
-            }
+            boolean permadeath = phase == SMPPhase.FINALE
+                    || (phase == SMPPhase.PVP && plugin.getConfig().getBoolean("elimination.enabled", false));
+            if (permadeath) eliminationManager.eliminate(victim, victimTeam);
         }
 
         if (killer == null || killer.equals(victim)) return;
@@ -130,13 +130,25 @@ public class KillEventListener implements Listener {
         killer.sendMessage("§a+" + rewardPoints + " Game Credits for killing " + victim.getName() + " (" + victimTier.name() + " Tier)!");
     }
 
+    /** Eliminated players stay out even if they log out and back in. */
+    @EventHandler
+    public void onPlayerJoin(org.bukkit.event.player.PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        if (eliminationManager != null && eliminationManager.isEliminated(player.getUniqueId())
+                && player.getGameMode() != GameMode.SPECTATOR) {
+            Bukkit.getScheduler().runTask(plugin, () -> player.setGameMode(GameMode.SPECTATOR));
+        }
+    }
+
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         if (eliminationManager != null && eliminationManager.isEliminated(player.getUniqueId())) {
             Bukkit.getScheduler().runTask(plugin, () -> {
                 player.setGameMode(GameMode.SPECTATOR);
-                player.sendMessage("§c§l[ELIMINATED] §eYou are in Spectator mode for the remainder of the phase!");
+                player.sendMessage(phaseManager.getCurrentPhase() == SMPPhase.FINALE
+                        ? "§c§l[ELIMINATED] §eFree Fall is permadeath - you're spectating for the rest of the tournament."
+                        : "§c§l[ELIMINATED] §eYou are in Spectator mode for the remainder of the phase!");
             });
         }
     }

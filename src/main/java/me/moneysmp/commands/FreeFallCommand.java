@@ -1,6 +1,9 @@
 package me.moneysmp.commands;
 
+import me.moneysmp.managers.CreditManager;
 import me.moneysmp.managers.PhaseManager;
+import me.moneysmp.managers.TeamManager;
+import me.moneysmp.models.Team;
 import me.moneysmp.models.SMPPhase;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -13,6 +16,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 /**
  * /freefall - the Finale Showdown. Switches to the FINALE phase and shrinks the world border
  * so every team is forced into the middle.
@@ -21,7 +28,11 @@ import org.bukkit.plugin.java.JavaPlugin;
  *   /freefall center                       set the border centre to where you are standing
  *   /freefall status                       current border size / time left
  *   /freefall stop                         freeze the border where it is
+ *   /freefall end                          end the tournament: the team on top of the leaderboard wins
  *   /freefall reset                        put the border back to normal (huge)
+ *
+ * Free Fall is permadeath: anyone who dies is eliminated and spectates. The winner is the team with the
+ * most Game Credits (same ranking as /leaderboard and the website) when an admin runs /freefall end.
  *
  * Defaults come from config.yml (freefall: section).
  */
@@ -30,12 +41,16 @@ public class FreeFallCommand implements CommandExecutor {
 
     private final JavaPlugin plugin;
     private final PhaseManager phaseManager;
+    private final TeamManager teamManager;
+    private final CreditManager creditManager;
     private int announceTaskId = -1;
     private long endsAtMillis = 0L;
 
-    public FreeFallCommand(JavaPlugin plugin, PhaseManager phaseManager) {
+    public FreeFallCommand(JavaPlugin plugin, PhaseManager phaseManager, TeamManager teamManager, CreditManager creditManager) {
         this.plugin = plugin;
         this.phaseManager = phaseManager;
+        this.teamManager = teamManager;
+        this.creditManager = creditManager;
     }
 
     @Override
@@ -75,13 +90,14 @@ public class FreeFallCommand implements CommandExecutor {
                 endsAtMillis = 0L;
                 Bukkit.broadcastMessage("§6§l[FREE FALL] §eThe border has stopped at §f" + (int) b.getSize() + " blocks§e.");
             }
+            case "end" -> endTournament(world);
             case "reset" -> {
                 cancelAnnouncements();
                 endsAtMillis = 0L;
                 world.getWorldBorder().setSize(NORMAL_BORDER);
                 sender.sendMessage("§a[Free Fall] World border reset to normal.");
             }
-            default -> sender.sendMessage("§cUsage:\n/freefall start [minutes] [finalSize]\n/freefall center\n/freefall status\n/freefall stop\n/freefall reset");
+            default -> sender.sendMessage("§cUsage:\n/freefall start [minutes] [finalSize]\n/freefall center\n/freefall status\n/freefall stop\n/freefall end\n/freefall reset");
         }
         return true;
     }
@@ -123,7 +139,8 @@ public class FreeFallCommand implements CommandExecutor {
         }
         Bukkit.broadcastMessage("§4§l[FREE FALL] §eThe Finale Showdown has begun! The border shrinks from §f" + startSize
                 + " §eto §f" + finalSize + " blocks §eover §f" + minutes + " minutes§e, centred on §f" + (int) cx + ", " + (int) cz + "§e.");
-        Bukkit.broadcastMessage("§7Stay inside the border - it hurts outside. Last team standing takes the crown!");
+        Bukkit.broadcastMessage("§c§lPERMADEATH: §7die now and you're out for good. Stay inside the border - it hurts outside.");
+        Bukkit.broadcastMessage("§6The team on top of the leaderboard when Free Fall ends wins the tournament!");
 
         cancelAnnouncements();
         announceTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
@@ -135,6 +152,47 @@ public class FreeFallCommand implements CommandExecutor {
             }
             Bukkit.broadcastMessage("§4[Free Fall] §eBorder: §f" + (int) border.getSize() + " blocks §7- " + formatTime(left) + " until it stops.");
         }, 60 * 20L, 60 * 20L);
+    }
+
+    /** Ends the tournament. The winner is the team with the most combined Game Credits (the website's #1). */
+    private void endTournament(World world) {
+        WorldBorder b = world.getWorldBorder();
+        b.setSize(b.getSize());
+        cancelAnnouncements();
+        endsAtMillis = 0L;
+
+        List<Team> ranked = new ArrayList<>(teamManager.getTeams());
+        ranked.sort((a, c) -> {
+            int diff = Integer.compare(teamCredits(c), teamCredits(a));
+            return diff != 0 ? diff : a.getName().compareToIgnoreCase(c.getName());
+        });
+        if (ranked.isEmpty()) {
+            Bukkit.broadcastMessage("§6§l[FREE FALL] §eThe tournament is over - no teams to rank.");
+            return;
+        }
+        Team winner = ranked.get(0);
+        String winName = winner.getColorCode() + winner.getName();
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            p.sendTitle(winName + " §6§lWINS!", "§e" + teamCredits(winner) + " Game Credits - top of the leaderboard", 10, 120, 30);
+            p.playSound(p.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, 1.0f);
+            p.playSound(p.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_TWINKLE, 1.0f, 1.0f);
+        }
+        Bukkit.broadcastMessage("§6§m------------------------------------------");
+        Bukkit.broadcastMessage("§6§l  WILLY MONEY SMP - FINAL STANDINGS");
+        String[] medals = {"§6§l1st", "§f§l2nd", "§c§l3rd"};
+        for (int i = 0; i < ranked.size(); i++) {
+            Team t = ranked.get(i);
+            String place = i < 3 ? medals[i] : "§7" + (i + 1) + "th";
+            Bukkit.broadcastMessage("  " + place + " §r" + t.getColorCode() + t.getName() + " §8- §e" + teamCredits(t) + " Credits");
+        }
+        Bukkit.broadcastMessage("§6§m------------------------------------------");
+        Bukkit.broadcastMessage("§e" + winName + " §ewins Willy Money SMP! §7Final standings are on the website.");
+    }
+
+    private int teamCredits(Team team) {
+        int total = 0;
+        for (UUID member : team.getMembers()) total += creditManager.getGameCredits(member);
+        return total;
     }
 
     private World targetWorld(CommandSender sender) {

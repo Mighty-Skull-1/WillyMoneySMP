@@ -88,7 +88,7 @@ public class MoneySMP extends JavaPlugin {
         getCommand("airdrop").setExecutor(new AirdropCommand(eventManager));
         getCommand("airdrop").setTabCompleter(tabCompleter);
 
-        getCommand("freefall").setExecutor(new FreeFallCommand(this, phaseManager));
+        getCommand("freefall").setExecutor(new FreeFallCommand(this, phaseManager, teamManager, creditManager));
         getCommand("freefall").setTabCompleter(tabCompleter);
 
         getCommand("bingo").setExecutor(new BingoCommand(eventManager));

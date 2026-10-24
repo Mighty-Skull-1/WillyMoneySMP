@@ -58,7 +58,7 @@ The global game phase is controlled by server admins via `/smp phase <phase>` or
 
 ### 4. Finale Showdown: Free Fall (`/freefall start`)
 - **PvP Status**: High-stakes endgame combat.
-- **Free Fall**: The world border shrinks in (default 1000 → 50 blocks over 20 minutes), forcing every team into the middle. Being outside the border hurts. Last team standing wins.
+- **Free Fall**: The world border shrinks in (default 1000 → 50 blocks over 20 minutes), forcing every team into the middle. Being outside the border hurts. **Permadeath:** die and you are out for good (spectator). When an admin runs `/freefall end`, the team on top of the leaderboard (most Game Credits) wins the tournament.
 
 ---
 
@@ -203,7 +203,7 @@ After running tests, you can completely reset everything to the beginning:
 | `/credits set <player> <amt> [game\|draft]` | Set a player's credit balance. |
 | `/credits balance <player>` | Check credit balances of a player. |
 | `/koth start` / `/koth stop` | Start or stop King of the Hill at your position. |
-| `/freefall start [minutes] [size]` | Finale: shrink the world border (also `center`, `status`, `stop`, `reset`). |
+| `/freefall start [minutes] [size]` | Finale: shrink the world border (also `center`, `status`, `stop`, `end`, `reset`). |
 | `/airdrop <common\|rare\|legendary>` | Spawn an airdrop at your position. |
 | `/airdrop random <tier>` | Spawn a random airdrop 50–130m near a player. |
 | `/bingo start` / `/bingo stop` | Start or stop the Lockout Bingo event. |
