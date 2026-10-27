@@ -1,0 +1,38 @@
+name: Build plugin
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      - name: Build jar
+        run: mvn -B -q package
+
+      - name: Rename jar
+        run: cp target/MoneySMP-*.jar WillyMoneySMP.jar
+
+      # Always replaces the "latest" release, so the newest jar is at:
+      # https://github.com/Mighty-Skull-1/WillyMoneySMP/releases/latest/download/WillyMoneySMP.jar
+      - name: Publish latest build
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: Latest build
+          body: "Built from ${{ github.sha }}. Download WillyMoneySMP.jar and put it in the server's plugins folder."
+          make_latest: true
+          files: WillyMoneySMP.jar

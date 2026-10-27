@@ -38,8 +38,17 @@ import java.util.function.Consumer;
  */
 public class WebServerManager {
     private static final long TICK_INTERVAL = 40L;          // 2 seconds
-    private static final long MIN_PUSH_INTERVAL_MS = 1500L; // don't spam ntfy for routine changes
     private static final int NTFY_MESSAGE_LIMIT = 4096;
+
+    // ntfy.sh allows a burst of ~60 requests, then about one every 5 seconds per IP. Going over that
+    // gets HTTP 429, and hammering it after that gets the server's IP blocked (connect timeouts).
+    // We mirror that limit with our own token bucket (a little stricter) so we never trip it:
+    // short bursts (draft bids) still go out instantly, but sustained changes (bingo, KOTH) are paced.
+    private static final int PUSH_BURST = 30;
+    private static final long PUSH_REFILL_MS = 6000L;
+    // After a failure, wait before trying again: 15s, 30s, 60s ... up to 5 minutes.
+    private static final long BACKOFF_START_MS = 15_000L;
+    private static final long BACKOFF_MAX_MS = 300_000L;
 
     private final JavaPlugin plugin;
     private final TeamManager teamManager;
@@ -68,8 +77,16 @@ public class WebServerManager {
     private boolean pushQueued = false;
     private boolean warnedAboutSize = false;
 
+    // Rate limiting (main thread)
+    private double pushTokens = PUSH_BURST;
+    private long tokensUpdatedAt = System.currentTimeMillis();
+
     // Shared with the sender / HTTP threads
     private volatile boolean retrySoon = false;
+    private volatile boolean sendInFlight = false;
+    private volatile long backoffUntil = 0L;
+    private volatile long backoffMs = 0L;
+    private volatile int failuresSinceLastLog = 0;
     private volatile String lastSignedMessage = null;
     private volatile String lastStatusJson = "{}";
     private volatile String lastResult = "No updates sent yet.";
@@ -191,12 +208,55 @@ public class WebServerManager {
         boolean heartbeatDue = now - lastPushAt >= heartbeatMs();
 
         if (!changed && !heartbeatDue) return;
-        if (changed && !heartbeatDue && !urgent && now - lastPushAt < MIN_PUSH_INTERVAL_MS) return;
+        // One request at a time, and respect the back-off after a failure. Nothing is lost by
+        // waiting: the next tick sends the latest snapshot, which replaces anything skipped.
+        if (sendInFlight || now < backoffUntil) return;
+        refillTokens(now);
+        if (pushTokens < 1) return;
 
+        pushTokens -= 1;
         retrySoon = false;
         lastPayloadBody = body;
         lastPushAt = now;
         send(withTimestamp(body, now), null);
+    }
+
+    private void refillTokens(long now) {
+        long elapsed = now - tokensUpdatedAt;
+        if (elapsed > 0) {
+            pushTokens = Math.min(PUSH_BURST, pushTokens + (double) elapsed / PUSH_REFILL_MS);
+            tokensUpdatedAt = now;
+        }
+    }
+
+    /** Called on the sender thread after each attempt. */
+    private void recordResult(boolean ok, boolean rateLimited, String result) {
+        if (ok) {
+            if (failuresSinceLastLog > 0) {
+                plugin.getLogger().info("[WebSync] Website sync recovered after " + failuresSinceLastLog + " failed attempt(s).");
+            }
+            failuresSinceLastLog = 0;
+            backoffMs = 0L;
+            backoffUntil = 0L;
+            return;
+        }
+        retrySoon = true;
+        backoffMs = backoffMs == 0L ? BACKOFF_START_MS : Math.min(BACKOFF_MAX_MS, backoffMs * 2);
+        if (rateLimited) {
+            // ntfy is telling us we used up our allowance: start from an empty bucket.
+            try {
+                Bukkit.getScheduler().runTask(plugin, () -> pushTokens = 0);
+            } catch (Exception ignored) {
+                // Plugin is disabling.
+            }
+        }
+        backoffUntil = System.currentTimeMillis() + backoffMs;
+        failuresSinceLastLog++;
+        // Log the first failure, then only every 10th, so the console isn't flooded.
+        if (failuresSinceLastLog == 1 || failuresSinceLastLog % 10 == 0) {
+            plugin.getLogger().warning("[WebSync] " + result + " (attempt " + failuresSinceLastLog
+                    + ", next try in " + (backoffMs / 1000) + "s)");
+        }
     }
 
     private static String withTimestamp(String body, long now) {
@@ -206,6 +266,7 @@ public class WebServerManager {
 
     private void send(String payload, Consumer<String> callback) {
         final String url = ntfyUrl();
+        sendInFlight = true;
         try {
             sender.submit(() -> {
                 String result;
@@ -218,21 +279,28 @@ public class WebServerManager {
                         plugin.getLogger().warning("[WebSync] Update is " + bytes.length + " bytes (ntfy limit " + NTFY_MESSAGE_LIMIT
                                 + "). It will be sent as an attachment; the website handles this but it is slower.");
                     }
-                    result = post(url, bytes);
+                    int code = post(url, bytes);
+                    boolean ok = code >= 200 && code < 300;
+                    result = ok ? "Website updated (HTTP " + code + ")."
+                            : "Cloud relay returned HTTP " + code + (code == 429 ? " (rate limited)" : "");
+                    recordResult(ok, code == 429, result);
                 } catch (Exception e) {
-                    retrySoon = true;
                     result = "Push failed: " + e.getMessage();
-                    plugin.getLogger().warning("[WebSync] " + result);
+                    recordResult(false, false, result);
+                } finally {
+                    sendInFlight = false;
                 }
                 lastResult = result;
                 if (callback != null) callback.accept(result);
             });
         } catch (Exception e) {
             // Executor shut down (plugin disabling) - nothing to do.
+            sendInFlight = false;
         }
     }
 
-    private String post(String url, byte[] body) throws IOException {
+    /** Returns the HTTP status code. */
+    private int post(String url, byte[] body) throws IOException {
         HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
         conn.setRequestMethod("POST");
         conn.setDoOutput(true);
@@ -247,13 +315,7 @@ public class WebServerManager {
         try (InputStream is = code < 400 ? conn.getInputStream() : conn.getErrorStream()) {
             if (is != null) is.readAllBytes();
         }
-        if (code >= 200 && code < 300) {
-            return "Website updated (HTTP " + code + ").";
-        }
-        retrySoon = true;
-        String msg = "Cloud relay returned HTTP " + code + (code == 429 ? " (rate limited, will retry)" : "");
-        plugin.getLogger().warning("[WebSync] " + msg);
-        return msg;
+        return code;
     }
 
     // ------------------------------------------------------------------ payload (main thread only)
