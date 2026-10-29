@@ -1,4 +1,4 @@
-config-version: 4
+config-version: 5
 
 starting-draft-credits: 300
 starting-game-credits: 100
@@ -10,6 +10,13 @@ rewards:
   tier-c-kill: 10
   # King of the Hill: most seconds holding the hill
   koth:
+    1st: 125
+    2nd: 100
+    3rd: 75
+    4th: 50
+    5th: 25
+  # Free For All (/ffa): placed by when each team is wiped out, last team standing = 1st
+  ffa:
     1st: 125
     2nd: 100
     3rd: 75

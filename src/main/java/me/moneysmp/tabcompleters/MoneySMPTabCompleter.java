@@ -61,9 +61,15 @@ public class MoneySMPTabCompleter implements TabCompleter {
             if (args.length == 1) {
                 candidates.addAll(Arrays.asList("start", "stop"));
             }
+        } else if (command.getName().equalsIgnoreCase("ffa")) {
+            if (args.length == 1) {
+                candidates.addAll(Arrays.asList("start", "status", "out", "end", "stop"));
+            } else if (args.length == 2 && args[0].equalsIgnoreCase("out")) {
+                for (org.bukkit.entity.Player p : org.bukkit.Bukkit.getOnlinePlayers()) candidates.add(p.getName());
+            }
         } else if (command.getName().equalsIgnoreCase("freefall")) {
             if (args.length == 1) {
-                candidates.addAll(Arrays.asList("start", "center", "status", "stop", "standings", "out", "end", "reset"));
+                candidates.addAll(Arrays.asList("start", "center", "status", "stop", "end", "reset"));
             } else if (args.length == 2 && args[0].equalsIgnoreCase("start")) {
                 candidates.addAll(Arrays.asList("10", "15", "20", "30"));
             } else if (args.length == 3 && args[0].equalsIgnoreCase("start")) {

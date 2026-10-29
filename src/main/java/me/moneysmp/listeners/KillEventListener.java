@@ -89,17 +89,17 @@ public class KillEventListener implements Listener {
 
         Team victimTeam = teamManager.getTeamByPlayer(victim.getUniqueId());
 
+        // FFA event: dying only knocks you out of the FFA - never out of the tournament.
+        me.moneysmp.managers.FfaManager ffa = (plugin instanceof me.moneysmp.MoneySMP smpF) ? smpF.getFfaManager() : null;
+        boolean ffaDeath = ffa != null && ffa.isAlive(victim.getUniqueId());
+        if (ffaDeath) ffa.knockOut(victim.getUniqueId(), null);
+
         // Free Fall (FINALE) is always permadeath. During PVP, eliminations follow config (elimination.enabled).
-        if (eliminationManager != null) {
+        if (eliminationManager != null && !ffaDeath) {
             SMPPhase phase = phaseManager.getCurrentPhase();
             boolean permadeath = phase == SMPPhase.FINALE
                     || (phase == SMPPhase.PVP && plugin.getConfig().getBoolean("elimination.enabled", false));
-            if (permadeath) {
-                eliminationManager.eliminate(victim, victimTeam);
-                if (phase == SMPPhase.FINALE && plugin instanceof me.moneysmp.MoneySMP smp && smp.getFinaleManager() != null) {
-                    smp.getFinaleManager().checkTeam(victimTeam);
-                }
-            }
+            if (permadeath) eliminationManager.eliminate(victim, victimTeam);
         }
 
         if (killer == null || killer.equals(victim)) return;
@@ -143,11 +143,24 @@ public class KillEventListener implements Listener {
                 && player.getGameMode() != GameMode.SPECTATOR) {
             Bukkit.getScheduler().runTask(plugin, () -> player.setGameMode(GameMode.SPECTATOR));
         }
+        if (plugin instanceof me.moneysmp.MoneySMP smp && smp.getFfaManager() != null) smp.getFfaManager().handleJoin(player);
+    }
+
+    /** Logging out during an FFA counts as being knocked out (no combat logging). */
+    @EventHandler
+    public void onPlayerQuit(org.bukkit.event.player.PlayerQuitEvent event) {
+        if (plugin instanceof me.moneysmp.MoneySMP smp && smp.getFfaManager() != null
+                && smp.getFfaManager().isAlive(event.getPlayer().getUniqueId())) {
+            smp.getFfaManager().knockOut(event.getPlayer().getUniqueId(), "logged out");
+        }
     }
 
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
+        if (plugin instanceof me.moneysmp.MoneySMP smp && smp.getFfaManager() != null) {
+            smp.getFfaManager().handleRespawn(player, event.getRespawnLocation());
+        }
         if (eliminationManager != null && eliminationManager.isEliminated(player.getUniqueId())) {
             Bukkit.getScheduler().runTask(plugin, () -> {
                 player.setGameMode(GameMode.SPECTATOR);

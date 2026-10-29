@@ -57,10 +57,18 @@ The global game phase is controlled by server admins via `/smp phase <phase>` or
   - **Tier B Kill**: `+10 Game Credits`
   - **Tier C Kill**: `+10 Game Credits`
 
+### Free For All (`/ffa start`)
+- PvP event during the PvP phase. Everyone on a team who is online when it starts takes part.
+- Die (or log out) and you're out of the FFA only: you spectate until it ends, then you're put back in Survival at your respawn point. Nothing in the tournament is reset.
+- When nobody on a team is left standing, that team is out. First team out = 5th, next = 4th... last team standing = 1st.
+- Rewards (`rewards.ffa` in config.yml, paid to the captain): 125 / 100 / 75 / 50 / 25.
+- Rule: fight whoever you want, but no focusing one team for the whole FFA (fine).
+- Admin: `/ffa status`, `/ffa out <player>` (AFK players), `/ffa end` (end now and pay; teams still in ranked by credits), `/ffa stop` (cancel, no rewards).
+
 ### 4. Finale Showdown: Free Fall (`/freefall start`)
 - **PvP Status**: High-stakes endgame combat.
-- **Free Fall**: The world border shrinks in (default 1000 → 50 blocks over 20 minutes), forcing every team into the middle. Being outside the border hurts. **Permadeath:** die and you are out for good (spectator). A team stays in while any player is alive; when its last player is knocked out it locks in its place (first out = last place). The last team standing wins. `/freefall standings` shows the live placings, `/freefall out <player>` eliminates an inactive player, and `/freefall end` ends it early (teams still standing are ranked by credits).
-- **Admin**: `/freefall center` (stand where the middle should be), `/freefall start [minutes] [finalSize]`, `/freefall status`, `/freefall stop`, `/freefall standings`, `/freefall out <player>`, `/freefall end` (ends early), `/freefall reset`.
+- **Free Fall**: The world border shrinks in (default 1000 → 50 blocks over 20 minutes), forcing every team into the middle. Being outside the border hurts. **Permadeath:** die and you are out for good (spectator). When an admin runs `/freefall end`, the team on top of the leaderboard (most Game Credits) wins the tournament.
+- **Admin**: `/freefall center` (stand where the middle should be), `/freefall start [minutes] [finalSize]`, `/freefall status`, `/freefall stop`, `/freefall end` (crowns the #1 team), `/freefall reset`.
 
 ---
 
@@ -249,7 +257,8 @@ After running tests, you can completely reset everything to the beginning:
 | `/credits set <player> <amt> [game\|draft]` | — | Set a player's credit balance. |
 | `/credits balance <player>` | — | Check credit balances of a player. |
 | `/koth start` / `/koth stop` | — | Start or stop King of the Hill at your position. |
-| `/freefall start [minutes] [size]` | — | Finale: shrink the world border (also `center`, `status`, `stop`, `standings`, `out`, `end`, `reset`). |
+| `/ffa start` | — | Free For All event: last team standing wins (also `status`, `out <player>`, `end`, `stop`). |
+| `/freefall start [minutes] [size]` | — | Finale: shrink the world border (also `center`, `status`, `stop`, `end`, `reset`). |
 | `/airdrop <common\|rare\|legendary>` | — | Spawn an airdrop at your position. |
 | `/airdrop random <tier>` | — | Spawn an airdrop 50–130m near an active player. |
 | `/bingo start` / `/bingo stop` | — | Start or stop the Lockout Bingo event. |

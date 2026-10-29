@@ -36,7 +36,10 @@ commands:
     description: Spawn supply drop crates
     permission: moneysmp.admin
   freefall:
-    description: "Finale Showdown: shrink the world border (start, center, status, stop, standings, out, end, reset)"
+    description: "Finale Showdown: shrink the world border (start, center, status, stop, end, reset)"
+    permission: moneysmp.admin
+  ffa:
+    description: "PvP Free For All event: last team standing wins (start, status, out, end, stop)"
     permission: moneysmp.admin
   bingo:
     description: Open the interactive 5x5 Lockout Bingo board GUI
