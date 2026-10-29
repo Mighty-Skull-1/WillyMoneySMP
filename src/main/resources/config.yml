@@ -1,4 +1,4 @@
-config-version: 3
+config-version: 4
 
 starting-draft-credits: 300
 starting-game-credits: 100
@@ -10,9 +10,11 @@ rewards:
   tier-c-kill: 10
   # King of the Hill: most seconds holding the hill
   koth:
-    1st: 100
-    2nd: 50
-    3rd: 25
+    1st: 125
+    2nd: 100
+    3rd: 75
+    4th: 50
+    5th: 25
   # Bingo: paid when bingo ends, by most squares claimed
   bingo-rewards:
     1st: 150
@@ -60,3 +62,9 @@ web-sync:
 web-server:
   enabled: false
   port: 8085
+
+# King of the Hill event settings
+koth:
+  duration-seconds: 300   # 5 minutes
+  give-sword: true        # everyone on a team gets a Knockback II wooden sword when KOTH starts
+  sword-uses: 5           # roughly how many hits before the sword breaks

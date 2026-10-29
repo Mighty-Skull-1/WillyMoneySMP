@@ -124,10 +124,11 @@ To ensure competitive tournament balance and eliminate instant-escape teleportat
 
 ### 1. King of the Hill (KOTH)
 - **Start**: `/koth start` (or click Beacon in `/smp` GUI).
-- **Duration**: 180 seconds.
+- **Duration**: 5 minutes (`koth.duration-seconds` in config.yml).
+- **KOTH Sword**: every team player gets a Knockback II wooden sword that breaks after about 5 hits.
 - **Mechanism**: A 5-block particle flame ring spawns with a floating holographic countdown timer.
 - **Capturing**: Teams standing inside the ring capture the hill. If multiple teams are inside, it becomes `CONTESTED`.
-- **Rewards** (most seconds holding the hill): **1st `+100`**, **2nd `+50`**, **3rd `+25` Game Credits**, paid to each team's Captain.
+- **Rewards** (most seconds holding the hill): **1st `+125`**, **2nd `+100`**, **3rd `+75`**, **4th `+50`**, **5th `+25` Game Credits**, paid to each team's Captain.
 
 ### 2. Proximity Airdrops
 - **Summon**: Click Airdrop chest in `/smp` GUI or `/airdrop random <tier>`.

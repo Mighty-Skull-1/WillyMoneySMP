@@ -100,7 +100,8 @@ public class EventManager {
         if (kothTaskId != -1) stopKoth();
 
         this.kothLoc = loc.getBlock().getLocation().add(0.5, 0, 0.5);
-        this.kothTimeLeft = 180;
+        int kothDuration = Math.max(30, plugin.getConfig().getInt("koth.duration-seconds", 300));
+        this.kothTimeLeft = kothDuration;
         this.kothScores.clear();
 
         World world = loc.getWorld();
@@ -113,10 +114,14 @@ public class EventManager {
         kothHologram.setMarker(true);
         kothHologram.setInvulnerable(true);
         kothHologram.setPersistent(false);
-        kothHologram.setCustomName("§6§lKING OF THE HILL §e(180s)");
+        kothHologram.setCustomName("§6§lKING OF THE HILL §e(" + kothDuration + "s)");
 
         Bukkit.broadcastMessage("§6§l[KOTH EVENT] §eKing of the Hill is active at §f(" +
                 loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ() + ")§e! Stand inside the particle ring!");
+        int[] kr = kothRewards();
+        Bukkit.broadcastMessage("§6§l[KOTH REWARDS] §e" + (kothDuration / 60) + " min" + (kothDuration % 60 != 0 ? " " + (kothDuration % 60) + "s" : "")
+                + " on the clock! §e1st §a+" + kr[0] + " §8| §e2nd §a+" + kr[1] + " §8| §e3rd §a+" + kr[2] + " §8| §e4th §a+" + kr[3] + " §8| §e5th §a+" + kr[4]);
+        if (plugin.getConfig().getBoolean("koth.give-sword", true)) giveKothSwords();
 
         kothTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
             if (kothLoc == null || kothLoc.getWorld() == null) {
@@ -175,14 +180,44 @@ public class EventManager {
         }, 0L, 20L);
     }
 
+    private int[] kothRewards() {
+        return new int[]{
+                plugin.getConfig().getInt("rewards.koth.1st", 125),
+                plugin.getConfig().getInt("rewards.koth.2nd", 100),
+                plugin.getConfig().getInt("rewards.koth.3rd", 75),
+                plugin.getConfig().getInt("rewards.koth.4th", 50),
+                plugin.getConfig().getInt("rewards.koth.5th", 25)
+        };
+    }
+
+    /** Every team player (not spectators) gets a Knockback II wooden sword that breaks after a few hits. */
+    private void giveKothSwords() {
+        int uses = Math.max(1, plugin.getConfig().getInt("koth.sword-uses", 5));
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (p.getGameMode() == GameMode.SPECTATOR) continue;
+            if (teamManager.getTeamByPlayer(p.getUniqueId()) == null) continue;
+            ItemStack sword = new ItemStack(Material.WOODEN_SWORD);
+            sword.addUnsafeEnchantment(Enchantment.KNOCKBACK, 2);
+            ItemMeta meta = sword.getItemMeta();
+            if (meta != null) {
+                meta.setDisplayName("§6§lKOTH Sword");
+                meta.setLore(Arrays.asList("§7Knockback II", "§cBreaks after about " + uses + " hits!"));
+                if (meta instanceof org.bukkit.inventory.meta.Damageable dmg) {
+                    int max = Material.WOODEN_SWORD.getMaxDurability();
+                    dmg.setDamage(Math.max(0, max - uses));
+                }
+                sword.setItemMeta(meta);
+            }
+            Map<Integer, ItemStack> left = p.getInventory().addItem(sword);
+            for (ItemStack it : left.values()) p.getWorld().dropItemNaturally(p.getLocation(), it);
+            p.sendMessage("§6[KOTH] §eYou got a §6Knockback II KOTH Sword§e - knock them off the hill!");
+        }
+    }
+
     private void finishKoth() {
         stopKoth();
 
-        int[] rewards = {
-                plugin.getConfig().getInt("rewards.koth.1st", 100),
-                plugin.getConfig().getInt("rewards.koth.2nd", 50),
-                plugin.getConfig().getInt("rewards.koth.3rd", 25)
-        };
+        int[] rewards = kothRewards();
         List<String> lines = awardPlaces(kothScores, rewards, "pts");
         if (lines.isEmpty()) {
             Bukkit.broadcastMessage("§c[KOTH FINISHED] Nobody held the hill - no winner!");

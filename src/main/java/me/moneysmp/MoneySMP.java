@@ -275,6 +275,19 @@ public class MoneySMP extends JavaPlugin {
             saveConfig();
             getLogger().info("Updated config.yml: captains now start with 300 draft credits.");
         }
+        if (getConfig().getInt("config-version", 1) < 4) {
+            getConfig().set("rewards.koth.1st", 125);
+            getConfig().set("rewards.koth.2nd", 100);
+            getConfig().set("rewards.koth.3rd", 75);
+            getConfig().set("rewards.koth.4th", 50);
+            getConfig().set("rewards.koth.5th", 25);
+            getConfig().set("koth.duration-seconds", 300);
+            getConfig().set("koth.give-sword", true);
+            getConfig().set("koth.sword-uses", 5);
+            getConfig().set("config-version", 4);
+            saveConfig();
+            getLogger().info("Updated config.yml: KOTH is 5 minutes, pays 125/100/75/50/25, and gives Knockback II swords.");
+        }
     }
 
     public me.moneysmp.web.WebServerManager getWebServerManager() {
