@@ -63,7 +63,7 @@ public class MoneySMPTabCompleter implements TabCompleter {
             }
         } else if (command.getName().equalsIgnoreCase("freefall")) {
             if (args.length == 1) {
-                candidates.addAll(Arrays.asList("start", "center", "status", "stop", "end", "reset"));
+                candidates.addAll(Arrays.asList("start", "center", "status", "stop", "standings", "out", "end", "reset"));
             } else if (args.length == 2 && args[0].equalsIgnoreCase("start")) {
                 candidates.addAll(Arrays.asList("10", "15", "20", "30"));
             } else if (args.length == 3 && args[0].equalsIgnoreCase("start")) {

@@ -26,6 +26,7 @@ public class MoneySMP extends JavaPlugin {
     private PhaseManager phaseManager;
     private DisplayManager displayManager;
     private EliminationManager eliminationManager;
+    private me.moneysmp.managers.FinaleManager finaleManager;
     private DataManager dataManager;
     private BannedItemManager bannedItemManager;
     private SMPGuiManager smpGuiManager;
@@ -46,6 +47,7 @@ public class MoneySMP extends JavaPlugin {
         this.eliminationManager = new EliminationManager(this);
         this.bannedItemManager = new BannedItemManager(this);
         this.statsManager = new StatsManager();
+        this.finaleManager = new me.moneysmp.managers.FinaleManager(this, teamManager, eliminationManager, creditManager);
         this.dataManager = new DataManager(this, teamManager, creditManager, tierManager, phaseManager, eliminationManager, statsManager);
 
         this.draftManager = new DraftManager(this, teamManager, creditManager, tierManager);
@@ -88,7 +90,7 @@ public class MoneySMP extends JavaPlugin {
         getCommand("airdrop").setExecutor(new AirdropCommand(eventManager));
         getCommand("airdrop").setTabCompleter(tabCompleter);
 
-        getCommand("freefall").setExecutor(new FreeFallCommand(this, phaseManager, teamManager, creditManager));
+        getCommand("freefall").setExecutor(new FreeFallCommand(this, phaseManager, teamManager, creditManager, eliminationManager, finaleManager));
         getCommand("freefall").setTabCompleter(tabCompleter);
 
         getCommand("bingo").setExecutor(new BingoCommand(eventManager));
@@ -142,6 +144,7 @@ public class MoneySMP extends JavaPlugin {
 
     public DataManager getDataManager() { return dataManager; }
     public EliminationManager getEliminationManager() { return eliminationManager; }
+    public me.moneysmp.managers.FinaleManager getFinaleManager() { return finaleManager; }
     public SMPGuiManager getSmpGuiManager() { return smpGuiManager; }
     public BannedItemManager getBannedItemManager() { return bannedItemManager; }
     public StatsManager getStatsManager() { return statsManager; }
@@ -183,6 +186,9 @@ public class MoneySMP extends JavaPlugin {
         // 3. Clear eliminations and PvP stats
         if (eliminationManager != null) {
             eliminationManager.clearAll();
+        }
+        if (finaleManager != null) {
+            finaleManager.reset();
         }
         if (statsManager != null) {
             statsManager.clearAll();

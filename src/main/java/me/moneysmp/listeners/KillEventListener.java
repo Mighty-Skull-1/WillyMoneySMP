@@ -94,7 +94,12 @@ public class KillEventListener implements Listener {
             SMPPhase phase = phaseManager.getCurrentPhase();
             boolean permadeath = phase == SMPPhase.FINALE
                     || (phase == SMPPhase.PVP && plugin.getConfig().getBoolean("elimination.enabled", false));
-            if (permadeath) eliminationManager.eliminate(victim, victimTeam);
+            if (permadeath) {
+                eliminationManager.eliminate(victim, victimTeam);
+                if (phase == SMPPhase.FINALE && plugin instanceof me.moneysmp.MoneySMP smp && smp.getFinaleManager() != null) {
+                    smp.getFinaleManager().checkTeam(victimTeam);
+                }
+            }
         }
 
         if (killer == null || killer.equals(victim)) return;
