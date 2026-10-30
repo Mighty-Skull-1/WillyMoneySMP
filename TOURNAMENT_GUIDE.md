@@ -56,12 +56,13 @@ The global game phase is controlled by server admins via `/smp phase <phase>` or
   - **Tier B Kill**: `+10 Game Credits`
   - **Tier C Kill**: `+10 Game Credits`
 
-### Free For All (`/ffa start`)
+### Team Deathmatch (`/tdm start` or `/ffa start`)
 - PvP event during the PvP phase. Everyone on a team who is online when it starts takes part.
 - Die (or log out) and you're out of the FFA only: you spectate until it ends, then you're put back in Survival at your respawn point. Nothing in the tournament is reset.
 - When nobody on a team is left standing, that team is out. First team out = 5th, next = 4th... last team standing = 1st.
 - Rewards (`rewards.ffa` in config.yml, paid to the captain): 125 / 100 / 75 / 50 / 25.
-- Rule: fight whoever you want, but no focusing one team for the whole FFA (fine).
+- Kills are worth +20 more than usual (`ffa.kill-bonus`). Every 4 minutes a bounty tier (Captains → C → A → B, `ffa.bounty-order`) glows and is worth another +20 (`ffa.bounty-bonus`).
+- Rule: fight whoever you want, but no focusing one team for the whole deathmatch (fine).
 - Admin: `/ffa status`, `/ffa out <player>` (AFK players), `/ffa end` (end now and pay; teams still in ranked by credits), `/ffa stop` (cancel, no rewards).
 
 ### 4. Finale Showdown: Free Fall (`/freefall start`)
@@ -212,7 +213,7 @@ After running tests, you can completely reset everything to the beginning:
 | `/credits set <player> <amt> [game\|draft]` | Set a player's credit balance. |
 | `/credits balance <player>` | Check credit balances of a player. |
 | `/koth start` / `/koth stop` | Start or stop King of the Hill at your position. |
-| `/ffa start` | Free For All event: last team standing wins (also `status`, `out <player>`, `end`, `stop`). |
+| `/ffa start` | Team Deathmatch: last team standing wins, bounty tier glows (also `status`, `out <player>`, `end`, `stop`). |
 | `/freefall start [minutes] [size]` | Finale: shrink the world border (also `center`, `status`, `stop`, `end`, `reset`). |
 | `/airdrop <common\|rare\|legendary>` | Spawn an airdrop at your position. |
 | `/airdrop random <tier>` | Spawn a random airdrop 50–130m near a player. |

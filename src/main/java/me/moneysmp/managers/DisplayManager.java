@@ -37,6 +37,11 @@ public class DisplayManager {
     }
 
     public void cleanGlowEffects(Player player) {
+        // Team Deathmatch bounty tier glows (outline in their team colour); everyone else never glows.
+        if (plugin instanceof me.moneysmp.MoneySMP smp && smp.getFfaManager() != null && smp.getFfaManager().shouldGlow(player)) {
+            if (!player.isGlowing()) player.setGlowing(true);
+            return;
+        }
         // Strip lingering global glowing flags to ensure no white outlines render
         if (player.hasPotionEffect(PotionEffectType.GLOWING)) {
             player.removePotionEffect(PotionEffectType.GLOWING);

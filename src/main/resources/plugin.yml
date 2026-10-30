@@ -39,7 +39,8 @@ commands:
     description: "Finale Showdown: shrink the world border (start, center, status, stop, end, reset)"
     permission: moneysmp.admin
   ffa:
-    description: "PvP Free For All event: last team standing wins (start, status, out, end, stop)"
+    description: "Team Deathmatch event: last team standing wins, bounty tier glows (start, status, out, end, stop)"
+    aliases: [tdm, deathmatch]
     permission: moneysmp.admin
   bingo:
     description: Open the interactive 5x5 Lockout Bingo board GUI

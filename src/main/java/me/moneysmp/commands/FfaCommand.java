@@ -47,7 +47,7 @@ public class FfaCommand implements CommandExecutor {
                 ffa.stop();
             }
             default -> {
-                sender.sendMessage("§c§lFree For All commands:");
+                sender.sendMessage("§c§lTeam Deathmatch commands (/ffa or /tdm):");
                 sender.sendMessage("§e/ffa start §7- everyone on a team who's online joins; last team standing wins");
                 sender.sendMessage("§e/ffa status §7- who's still standing and placings so far");
                 sender.sendMessage("§e/ffa out <player> §7- knock out an AFK/inactive player");

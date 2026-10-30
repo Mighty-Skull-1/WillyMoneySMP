@@ -92,6 +92,8 @@ public class KillEventListener implements Listener {
         // FFA event: dying only knocks you out of the FFA - never out of the tournament.
         me.moneysmp.managers.FfaManager ffa = (plugin instanceof me.moneysmp.MoneySMP smpF) ? smpF.getFfaManager() : null;
         boolean ffaDeath = ffa != null && ffa.isAlive(victim.getUniqueId());
+        int tdmExtra = ffaDeath ? ffa.extraKillReward(victim.getUniqueId()) : 0;
+        boolean tdmBounty = ffaDeath && ffa.isBounty(victim.getUniqueId());
         if (ffaDeath) ffa.knockOut(victim.getUniqueId(), null);
 
         // Free Fall (FINALE) is always permadeath. During PVP, eliminations follow config (elimination.enabled).
@@ -131,8 +133,10 @@ public class KillEventListener implements Listener {
             rewardPoints = plugin != null ? plugin.getConfig().getInt("rewards.tier-c-kill", 10) : 10;
         }
 
+        rewardPoints += tdmExtra; // Team Deathmatch: +20 per kill, +20 more on the glowing bounty tier
         creditManager.addGameCredits(killer.getUniqueId(), rewardPoints);
-        killer.sendMessage("§a+" + rewardPoints + " Game Credits for killing " + victim.getName() + " (" + victimTier.name() + " Tier)!");
+        killer.sendMessage("§a+" + rewardPoints + " Game Credits for killing " + victim.getName() + " (" + victimTier.name() + " Tier)"
+                + (tdmBounty ? " §6§l[BOUNTY]" : tdmExtra > 0 ? " §c[DEATHMATCH]" : "") + "§a!");
     }
 
     /** Eliminated players stay out even if they log out and back in. */

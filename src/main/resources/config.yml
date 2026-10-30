@@ -1,4 +1,4 @@
-config-version: 5
+config-version: 6
 
 starting-draft-credits: 300
 starting-game-credits: 100
@@ -15,7 +15,7 @@ rewards:
     3rd: 75
     4th: 50
     5th: 25
-  # Free For All (/ffa): placed by when each team is wiped out, last team standing = 1st
+  # Team Deathmatch (/ffa or /tdm) placings: placed by when each team is wiped out, last team standing = 1st
   ffa:
     1st: 125
     2nd: 100
@@ -75,3 +75,10 @@ koth:
   duration-seconds: 300   # 5 minutes
   give-sword: true        # everyone on a team gets a Knockback II wooden sword when KOTH starts
   sword-uses: 5           # roughly how many hits before the sword breaks
+
+# Team Deathmatch (/ffa or /tdm)
+ffa:
+  kill-bonus: 20              # every kill during the deathmatch pays this much extra
+  bounty-bonus: 20            # killing someone from the glowing bounty tier pays this much more on top
+  bounty-rotate-seconds: 240  # bounty tier changes every 4 minutes
+  bounty-order: [CAPTAIN, C, A, B]

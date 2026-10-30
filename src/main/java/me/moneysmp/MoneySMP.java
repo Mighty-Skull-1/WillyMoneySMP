@@ -149,6 +149,7 @@ public class MoneySMP extends JavaPlugin {
     public DataManager getDataManager() { return dataManager; }
     public EliminationManager getEliminationManager() { return eliminationManager; }
     public me.moneysmp.managers.FfaManager getFfaManager() { return ffaManager; }
+    public TierManager getTierManager() { return tierManager; }
     public SMPGuiManager getSmpGuiManager() { return smpGuiManager; }
     public BannedItemManager getBannedItemManager() { return bannedItemManager; }
     public StatsManager getStatsManager() { return statsManager; }
@@ -289,6 +290,12 @@ public class MoneySMP extends JavaPlugin {
             saveConfig();
             getLogger().info("Updated config.yml: KOTH is 5 minutes, pays 125/100/75/50/25, and gives Knockback II swords.");
         }
+        if (getConfig().getInt("config-version", 1) < 6) {
+            if (!getConfig().isSet("ffa.kill-bonus")) getConfig().set("ffa.kill-bonus", 20);
+            if (!getConfig().isSet("ffa.bounty-bonus")) getConfig().set("ffa.bounty-bonus", 20);
+            if (!getConfig().isSet("ffa.bounty-rotate-seconds")) getConfig().set("ffa.bounty-rotate-seconds", 240);
+            if (!getConfig().isSet("ffa.bounty-order")) getConfig().set("ffa.bounty-order", java.util.List.of("CAPTAIN", "C", "A", "B"));
+        }
         if (getConfig().getInt("config-version", 1) < 5) {
             if (!getConfig().isSet("rewards.ffa.1st")) {
                 getConfig().set("rewards.ffa.1st", 125);
@@ -300,6 +307,11 @@ public class MoneySMP extends JavaPlugin {
             getConfig().set("config-version", 5);
             saveConfig();
             getLogger().info("Updated config.yml: added Free For All rewards (125/100/75/50/25).");
+        }
+        if (getConfig().getInt("config-version", 1) < 6) {
+            getConfig().set("config-version", 6);
+            saveConfig();
+            getLogger().info("Updated config.yml: Team Deathmatch kill bonus +20, bounty tier +20 rotating every 4 minutes.");
         }
     }
 
