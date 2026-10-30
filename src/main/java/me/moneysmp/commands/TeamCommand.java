@@ -197,6 +197,8 @@ public class TeamCommand implements CommandExecutor {
                 sender.sendMessage("§aSuccessfully removed " + target.getName() + " from " + team.getName() + "!");
             }
             triggerCloudSync();
+        } else if (sub.equals("sub") || sub.equals("swap") || sub.equals("substitute")) {
+            substitute(sender, args);
         } else if (sub.equals("disband")) {
             if (args.length < 2) {
                 sender.sendMessage("§cUsage: /team disband <teamName>");
@@ -219,6 +221,109 @@ public class TeamCommand implements CommandExecutor {
         return true;
     }
 
+    /**
+     * /team sub <oldPlayer> <newPlayer>
+     * The new player takes the old player's exact spot: same team, tier, Game Credits, kills and deaths
+     * (and captain role + draft purse if the old player was captain). The old player is removed completely.
+     * Works while the old player is offline. Team totals don't change. Saves straight away.
+     */
+    private void substitute(CommandSender sender, String[] args) {
+        if (args.length < 3) {
+            sender.sendMessage("§cUsage: /team sub <player leaving> <player coming in>");
+            sender.sendMessage("§7The new player keeps the old player's team, tier, credits, kills and deaths. Works if the old player is offline.");
+            return;
+        }
+        if (plugin instanceof me.moneysmp.MoneySMP smpCheck && smpCheck.getFfaManager() != null && smpCheck.getFfaManager().isActive()) {
+            sender.sendMessage("§cYou can't sub players during the Team Deathmatch - do it before or after.");
+            return;
+        }
+
+        // Old player: look them up among team members by name, so it works when they're offline.
+        UUID oldId = null;
+        String oldName = args[1];
+        for (Team t : teamManager.getTeams()) {
+            for (UUID m : t.getMembers()) {
+                String n = Bukkit.getOfflinePlayer(m).getName();
+                if (n != null && n.equalsIgnoreCase(args[1])) { oldId = m; oldName = n; }
+            }
+        }
+        if (oldId == null) {
+            sender.sendMessage("§c" + args[1] + " isn't on any team. Check the spelling with /team info <team>.");
+            return;
+        }
+
+        // New player: must be online, or have joined this server before (so we know their real UUID).
+        UUID newId;
+        String newName;
+        Player onlineNew = Bukkit.getPlayerExact(args[2]);
+        if (onlineNew != null) {
+            newId = onlineNew.getUniqueId();
+            newName = onlineNew.getName();
+        } else {
+            org.bukkit.OfflinePlayer cached = Bukkit.getOfflinePlayerIfCached(args[2]);
+            if (cached == null || !cached.hasPlayedBefore()) {
+                sender.sendMessage("§c" + args[2] + " has never joined this server. Get them to log in once (or be online), then run this again.");
+                return;
+            }
+            newId = cached.getUniqueId();
+            newName = cached.getName() != null ? cached.getName() : args[2];
+        }
+
+        if (newId.equals(oldId)) { sender.sendMessage("§cThat's the same player."); return; }
+        Team newCurrent = teamManager.getTeamByPlayer(newId);
+        if (newCurrent != null) {
+            sender.sendMessage("§c" + newName + " is already on " + newCurrent.getName() + ". Remove them first.");
+            return;
+        }
+
+        Team team = teamManager.getTeamByPlayer(oldId);
+        boolean wasCaptain = team.isCaptain(oldId);
+        PlayerTier tier = tierManager.getTier(oldId);
+        int game = creditManager.getGameCredits(oldId);
+        int draft = creditManager.getDraftCredits(oldId);
+        int replacedCredits = creditManager.hasGameCreditsEntry(newId) ? creditManager.getGameCredits(newId) : -1;
+        boolean eliminated = eliminationManager != null && eliminationManager.isEliminated(oldId);
+        int kills = 0, deaths = 0;
+        me.moneysmp.managers.StatsManager stats = (plugin instanceof me.moneysmp.MoneySMP smpS) ? smpS.getStatsManager() : null;
+        if (stats != null) { kills = stats.getKills(oldId); deaths = stats.getDeaths(oldId); }
+
+        // Put the new player in.
+        teamManager.addPlayerToTeam(team, newId);
+        if (wasCaptain) team.setCaptain(newId);
+        tierManager.setTier(newId, tier);
+        creditManager.setGameCredits(newId, game);
+        if (wasCaptain) creditManager.setDraftCredits(newId, draft);
+        if (stats != null) {
+            stats.clearPlayer(newId);
+            if (kills > 0) stats.setKills(newId, kills);
+            if (deaths > 0) stats.setDeaths(newId, deaths);
+        }
+        if (eliminationManager != null) eliminationManager.setEliminated(newId, eliminated);
+
+        // Take the old player out completely.
+        teamManager.removePlayerFromTeam(oldId);
+        tierManager.removeTier(oldId);
+        creditManager.clearPlayer(oldId);
+        if (stats != null) stats.clearPlayer(oldId);
+        if (eliminationManager != null) eliminationManager.setEliminated(oldId, false);
+
+        // Save right away so nothing is lost if the server stops.
+        if (plugin instanceof me.moneysmp.MoneySMP smp && smp.getDataManager() != null) smp.getDataManager().saveData();
+        triggerCloudSync();
+
+        Bukkit.broadcastMessage("§6§l[SUB] " + team.getColorCode() + newName + " §ereplaces " + team.getColorCode() + oldName
+                + " §eon " + team.getColorCode() + team.getName() + (wasCaptain ? " §6as Captain" : "") + "§e!");
+        sender.sendMessage("§aDone. " + newName + " now has " + oldName + "'s spot: tier " + tier.name() + ", " + game
+                + " Game Credits, " + kills + " kills, " + deaths + " deaths" + (wasCaptain ? ", captain + " + draft + " draft purse" : "") + ".");
+        if (replacedCredits >= 0) {
+            sender.sendMessage("§7(" + newName + " had " + replacedCredits + " credits of their own from before - those were replaced, so the team total stays the same.)");
+        }
+        Player oldOnline = Bukkit.getPlayer(oldId);
+        if (oldOnline != null) oldOnline.sendMessage("§eYou've been subbed out of " + team.getName() + " by an admin.");
+        Player newOnline = Bukkit.getPlayer(newId);
+        if (newOnline != null) newOnline.sendMessage("§aYou've been subbed into " + team.getColorCode() + team.getName() + "§a! You take over " + oldName + "'s spot.");
+    }
+
     private void triggerCloudSync() {
         if (plugin instanceof me.moneysmp.MoneySMP smp && smp.getWebServerManager() != null) {
             smp.getWebServerManager().requestPush();
@@ -233,6 +338,7 @@ public class TeamCommand implements CommandExecutor {
         if (sender.hasPermission("moneysmp.admin")) {
             sender.sendMessage("§c/team create <name> <captain> §7- Create new team");
             sender.sendMessage("§c/team remove <player> §7- Remove member or disband if captain");
+            sender.sendMessage("§c/team sub <old> <new> §7- Swap a player out (works offline); new player keeps their spot, credits and stats");
             sender.sendMessage("§c/team disband <name> §7- Disband an existing team");
         }
     }

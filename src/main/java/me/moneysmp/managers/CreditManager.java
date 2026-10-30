@@ -41,6 +41,10 @@ public class CreditManager {
         return true;
     }
 
+    /** Removes every credit entry for this player (used when they're subbed out). */
+    public void clearPlayer(UUID uuid) { draftCredits.remove(uuid); gameCredits.remove(uuid); }
+    public boolean hasGameCreditsEntry(UUID uuid) { return gameCredits.containsKey(uuid); }
+
     public Map<UUID, Integer> getAllDraftCredits() { return java.util.Collections.unmodifiableMap(draftCredits); }
     public Map<UUID, Integer> getAllGameCredits() { return java.util.Collections.unmodifiableMap(gameCredits); }
 

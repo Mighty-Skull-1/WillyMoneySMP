@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class Team {
     private String name;
-    private final UUID captain;
+    private UUID captain;
     private final Set<UUID> members = new HashSet<>();
 
     public Team(String name, UUID captain) {
@@ -19,6 +19,7 @@ public class Team {
     public String getName() { return name; }
     public void setName(String newName) { this.name = newName; }
     public UUID getCaptain() { return captain; }
+    public void setCaptain(UUID newCaptain) { if (newCaptain != null) { this.captain = newCaptain; this.members.add(newCaptain); } }
     public Set<UUID> getMembers() { return members; }
 
     public boolean addMember(UUID uuid) { return members.add(uuid); }

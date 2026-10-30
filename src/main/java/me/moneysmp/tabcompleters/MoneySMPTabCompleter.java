@@ -108,7 +108,18 @@ public class MoneySMPTabCompleter implements TabCompleter {
             if (args.length == 1) {
                 candidates.addAll(Arrays.asList("list", "info", "rename"));
                 if (sender.hasPermission("moneysmp.admin")) {
-                    candidates.addAll(Arrays.asList("create", "remove", "disband"));
+                    candidates.addAll(Arrays.asList("create", "remove", "disband", "sub"));
+                }
+            } else if (args.length == 2 && args[0].equalsIgnoreCase("sub")) {
+                for (Team team : teamManager.getTeams()) {
+                    for (java.util.UUID m : team.getMembers()) {
+                        String n = Bukkit.getOfflinePlayer(m).getName();
+                        if (n != null) candidates.add(n);
+                    }
+                }
+            } else if (args.length == 3 && args[0].equalsIgnoreCase("sub")) {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    if (teamManager.getTeamByPlayer(player.getUniqueId()) == null) candidates.add(player.getName());
                 }
             } else if (args.length == 2 && args[0].equalsIgnoreCase("info")) {
                 for (Team team : teamManager.getTeams()) {

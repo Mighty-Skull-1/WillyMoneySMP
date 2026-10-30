@@ -258,6 +258,7 @@ After running tests, you can completely reset everything to the beginning:
 | `/credits take <player> <amt> [game\|draft]` | — | Deduct credits from a player. |
 | `/credits set <player> <amt> [game\|draft]` | — | Set a player's credit balance. |
 | `/credits balance <player>` | — | Check credit balances of a player. |
+| `/team sub <old> <new>` | — | Sub a player out (works while they're offline). The new player gets their team, tier, credits, kills and deaths (and captain + purse if they were captain). Saves instantly. |
 | `/koth start` / `/koth stop` | — | Start or stop King of the Hill at your position. |
 | `/ffa start` | — | Team Deathmatch: last team standing wins, bounty tier glows (also `status`, `out <player>`, `end`, `stop`). |
 | `/freefall start [minutes] [size]` | — | Finale: shrink the world border (also `center`, `status`, `stop`, `end`, `reset`). |

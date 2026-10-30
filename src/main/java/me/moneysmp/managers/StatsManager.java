@@ -21,6 +21,8 @@ public class StatsManager {
     public void setKills(UUID uuid, int amount) { kills.put(uuid, amount); }
     public void setDeaths(UUID uuid, int amount) { deaths.put(uuid, amount); }
 
+    public void clearPlayer(UUID uuid) { kills.remove(uuid); deaths.remove(uuid); }
+
     public Map<UUID, Integer> getAllKills() { return Collections.unmodifiableMap(kills); }
     public Map<UUID, Integer> getAllDeaths() { return Collections.unmodifiableMap(deaths); }
 
