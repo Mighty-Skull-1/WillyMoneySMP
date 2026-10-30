@@ -177,25 +177,45 @@ public class TeamCommand implements CommandExecutor {
                 return true;
             }
 
-            Player target = Bukkit.getPlayer(args[1]);
-            if (target == null) {
-                sender.sendMessage("§cPlayer not found!");
+            // Works for offline players too: find them among team members by name.
+            UUID targetId = null;
+            String targetName = args[1];
+            Player online = Bukkit.getPlayerExact(args[1]);
+            if (online != null) { targetId = online.getUniqueId(); targetName = online.getName(); }
+            else {
+                for (Team t : teamManager.getTeams()) {
+                    for (UUID m : t.getMembers()) {
+                        String n = Bukkit.getOfflinePlayer(m).getName();
+                        if (n != null && n.equalsIgnoreCase(args[1])) { targetId = m; targetName = n; }
+                    }
+                }
+            }
+            if (targetId == null) {
+                sender.sendMessage("§c" + args[1] + " isn't on any team. Check the spelling with /team info <team>.");
                 return true;
             }
 
-            Team team = teamManager.getTeamByPlayer(target.getUniqueId());
+            Team team = teamManager.getTeamByPlayer(targetId);
             if (team == null) {
-                sender.sendMessage("§c" + target.getName() + " is not currently in any team.");
+                sender.sendMessage("§c" + targetName + " is not currently in any team.");
                 return true;
             }
 
-            if (team.isCaptain(target.getUniqueId())) {
+            if (team.isCaptain(targetId)) {
+                if (args.length < 3 || !args[2].equalsIgnoreCase("confirm")) {
+                    sender.sendMessage("§c" + targetName + " is the captain of " + team.getName() + " - removing them DISBANDS the whole team.");
+                    sender.sendMessage("§7To replace a captain use §e/team sub " + targetName + " <newPlayer>§7. To really disband, type §c/team remove " + targetName + " confirm");
+                    return true;
+                }
                 teamManager.disbandTeam(team);
-                sender.sendMessage("§aCaptain " + target.getName() + " removed. Team " + team.getName() + " was disbanded.");
+                sender.sendMessage("§aCaptain " + targetName + " removed. Team " + team.getName() + " was disbanded.");
             } else {
-                teamManager.removePlayerFromTeam(target.getUniqueId());
-                sender.sendMessage("§aSuccessfully removed " + target.getName() + " from " + team.getName() + "!");
+                teamManager.removePlayerFromTeam(targetId);
+                tierManager.removeTier(targetId);
+                sender.sendMessage("§aRemoved " + targetName + " from " + team.getName() + (online == null ? " §7(they were offline)" : "") + "§a!");
+                sender.sendMessage("§7Their credits no longer count for " + team.getName() + ". To keep them for the team, use §e/team sub§7 instead.");
             }
+            if (plugin instanceof me.moneysmp.MoneySMP smp && smp.getDataManager() != null) smp.getDataManager().saveData();
             triggerCloudSync();
         } else if (sub.equals("sub") || sub.equals("swap") || sub.equals("substitute")) {
             substitute(sender, args);
