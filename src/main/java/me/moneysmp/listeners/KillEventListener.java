@@ -96,11 +96,12 @@ public class KillEventListener implements Listener {
         boolean tdmBounty = ffaDeath && ffa.isBounty(victim.getUniqueId());
         if (ffaDeath) ffa.knockOut(victim.getUniqueId(), null);
 
-        // Free Fall (FINALE) is always permadeath. During PVP, eliminations follow config (elimination.enabled).
+        // The final fight (Team Deathmatch) handles its own knock-outs above. Otherwise permanent
+        // elimination only happens if elimination.enabled is turned on in config.yml.
         if (eliminationManager != null && !ffaDeath) {
             SMPPhase phase = phaseManager.getCurrentPhase();
-            boolean permadeath = phase == SMPPhase.FINALE
-                    || (phase == SMPPhase.PVP && plugin.getConfig().getBoolean("elimination.enabled", false));
+            boolean permadeath = (phase == SMPPhase.PVP || phase == SMPPhase.FINALE)
+                    && plugin.getConfig().getBoolean("elimination.enabled", false);
             if (permadeath) eliminationManager.eliminate(victim, victimTeam);
         }
 
@@ -169,7 +170,7 @@ public class KillEventListener implements Listener {
             Bukkit.getScheduler().runTask(plugin, () -> {
                 player.setGameMode(GameMode.SPECTATOR);
                 player.sendMessage(phaseManager.getCurrentPhase() == SMPPhase.FINALE
-                        ? "§c§l[ELIMINATED] §eFree Fall is permadeath - you're spectating for the rest of the tournament."
+                        ? "§c§l[ELIMINATED] §eYou're spectating for the rest of the tournament."
                         : "§c§l[ELIMINATED] §eYou are in Spectator mode for the remainder of the phase!");
             });
         }

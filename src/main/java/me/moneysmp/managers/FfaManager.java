@@ -14,7 +14,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.*;
 
 /**
- * PvP Free-For-All event (separate from the Free Fall finale).
+ * Team Deathmatch - the FINAL FIGHT of the tournament (/tdm start switches to the Finale phase).
+ * When it ends, placings are paid and the team on top of the leaderboard wins the tournament.
  *
  * - Everyone on a team who is online (and not a spectator) when /ffa start runs takes part.
  * - Dying (or logging out) knocks you out of the deathmatch only: you spectate until the FFA ends,
@@ -77,10 +78,10 @@ public class FfaManager {
         active = true;
 
         for (Player p : Bukkit.getOnlinePlayers()) {
-            p.sendTitle("§c§lTEAM DEATHMATCH", "§eLast team standing wins!", 10, 70, 20);
+            p.sendTitle("§4§lFINAL FIGHT", "§eTeam Deathmatch - last team standing wins!", 10, 70, 20);
             p.playSound(p.getLocation(), Sound.EVENT_RAID_HORN, 1.0f, 1.0f);
         }
-        Bukkit.broadcastMessage("§c§l[TDM] §eThe Team Deathmatch has started! §7(" + startingTeams.size() + " teams, " + alive.size() + " players)");
+        Bukkit.broadcastMessage("§4§l[FINAL FIGHT] §eThe Team Deathmatch has started! §7(" + startingTeams.size() + " teams, " + alive.size() + " players)");
         Bukkit.broadcastMessage("§7 - Die and you're out of the deathmatch (spectate until it ends, then you're back).");
         Bukkit.broadcastMessage("§7 - When your whole team is out, your team is out. First team out = last place.");
         Bukkit.broadcastMessage("§7 - Fight whoever you want, but §cdon't focus one team the whole deathmatch§7 - that gets a fine.");
@@ -88,6 +89,7 @@ public class FfaManager {
         Bukkit.broadcastMessage("§6 Kills are worth §a+" + killBonus() + " §6extra during the deathmatch. Every "
                 + (rotateSeconds() / 60) + " min a tier glows and is worth another §a+" + bountyBonus() + "§6.");
         Bukkit.broadcastMessage("§6 Placings: " + rewardsLine());
+        Bukkit.broadcastMessage("§6 When it ends, the team with the most Game Credits wins Willy Money SMP!");
         bountyIndex = -1;
         nextBounty();
         long ticks = rotateSeconds() * 20L;
@@ -178,6 +180,35 @@ public class FfaManager {
             }
         }
         cleanup();
+        // This is the final fight: once placings are paid, crown the tournament winner (most Game Credits).
+        Bukkit.getScheduler().runTaskLater(plugin, this::crownTournament, 100L);
+    }
+
+    /** The tournament winner is the team with the most combined Game Credits (the website's #1). */
+    public void crownTournament() {
+        List<Team> ranked = new ArrayList<>(teamManager.getTeams());
+        ranked.sort((a, c) -> {
+            int diff = Integer.compare(teamCredits(c.getName()), teamCredits(a.getName()));
+            return diff != 0 ? diff : a.getName().compareToIgnoreCase(c.getName());
+        });
+        if (ranked.isEmpty()) return;
+        Team winner = ranked.get(0);
+        String winName = winner.getColorCode() + winner.getName();
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            p.sendTitle(winName + " §6§lWINS!", "§e" + teamCredits(winner.getName()) + " Game Credits - Willy Money SMP champions", 10, 140, 30);
+            p.playSound(p.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, 1.0f);
+            p.playSound(p.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_TWINKLE, 1.0f, 1.0f);
+        }
+        Bukkit.broadcastMessage("§6§m------------------------------------------");
+        Bukkit.broadcastMessage("§6§l  WILLY MONEY SMP - FINAL STANDINGS");
+        String[] medals = {"§6§l1st", "§f§l2nd", "§c§l3rd"};
+        for (int i = 0; i < ranked.size(); i++) {
+            Team t = ranked.get(i);
+            String place = i < 3 ? medals[i] : "§7" + (i + 1) + "th";
+            Bukkit.broadcastMessage("  " + place + " §r" + t.getColorCode() + t.getName() + " §8- §e" + teamCredits(t.getName()) + " Credits");
+        }
+        Bukkit.broadcastMessage("§6§m------------------------------------------");
+        Bukkit.broadcastMessage("§e" + winName + " §ewins Willy Money SMP! §7Final standings are on the website.");
     }
 
     /** Cancels the FFA with no rewards and brings everyone back. */

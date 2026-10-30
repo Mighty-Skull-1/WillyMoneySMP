@@ -56,7 +56,8 @@ The global game phase is controlled by server admins via `/smp phase <phase>` or
   - **Tier B Kill**: `+10 Game Credits`
   - **Tier C Kill**: `+10 Game Credits`
 
-### Team Deathmatch (`/tdm start` or `/ffa start`)
+### 4. Final Fight: Team Deathmatch (`/tdm start` or `/ffa start`)
+- This is the finale. `/tdm start` switches to the Finale phase. When it ends (last team standing, or `/tdm end`), placings are paid and the team with the most Game Credits wins the tournament.
 - PvP event during the PvP phase. Everyone on a team who is online when it starts takes part.
 - Die (or log out) and you're out of the FFA only: you spectate until it ends, then you're put back in Survival at your respawn point. Nothing in the tournament is reset.
 - When nobody on a team is left standing, that team is out. First team out = 5th, next = 4th... last team standing = 1st.
@@ -65,9 +66,9 @@ The global game phase is controlled by server admins via `/smp phase <phase>` or
 - Rule: fight whoever you want, but no focusing one team for the whole deathmatch (fine).
 - Admin: `/ffa status`, `/ffa out <player>` (AFK players), `/ffa end` (end now and pay; teams still in ranked by credits), `/ffa stop` (cancel, no rewards).
 
-### 4. Finale Showdown: Free Fall (`/freefall start`)
+### Optional: shrinking border (`/freefall start`)
 - **PvP Status**: High-stakes endgame combat.
-- **Free Fall**: The world border shrinks in (default 1000 → 50 blocks over 20 minutes), forcing every team into the middle. Being outside the border hurts. **Permadeath:** die and you are out for good (spectator). When an admin runs `/freefall end`, the team on top of the leaderboard (most Game Credits) wins the tournament.
+- **Free Fall**: The world border shrinks in (default 1000 → 50 blocks over 20 minutes), forcing every team into the middle. Being outside the border hurts. Use it during the final fight to push teams together if you want.
 
 ---
 

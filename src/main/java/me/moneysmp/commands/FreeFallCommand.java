@@ -137,10 +137,9 @@ public class FreeFallCommand implements CommandExecutor {
             p.sendTitle("§4§lFREE FALL", "§eThe border is closing in!", 10, 80, 20);
             p.playSound(p.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0f, 0.8f);
         }
-        Bukkit.broadcastMessage("§4§l[FREE FALL] §eThe Finale Showdown has begun! The border shrinks from §f" + startSize
+        Bukkit.broadcastMessage("§4§l[FREE FALL] §eThe border is closing in! It shrinks from §f" + startSize
                 + " §eto §f" + finalSize + " blocks §eover §f" + minutes + " minutes§e, centred on §f" + (int) cx + ", " + (int) cz + "§e.");
-        Bukkit.broadcastMessage("§c§lPERMADEATH: §7die now and you're out for good. Stay inside the border - it hurts outside.");
-        Bukkit.broadcastMessage("§6The team on top of the leaderboard when Free Fall ends wins the tournament!");
+        Bukkit.broadcastMessage("§7Stay inside the border - it hurts outside.");
 
         cancelAnnouncements();
         announceTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
@@ -160,6 +159,11 @@ public class FreeFallCommand implements CommandExecutor {
         b.setSize(b.getSize());
         cancelAnnouncements();
         endsAtMillis = 0L;
+        // If the final fight is running, end it properly (pays placings, then crowns the winner).
+        if (plugin instanceof me.moneysmp.MoneySMP smp && smp.getFfaManager() != null && smp.getFfaManager().isActive()) {
+            smp.getFfaManager().finish();
+            return;
+        }
 
         List<Team> ranked = new ArrayList<>(teamManager.getTeams());
         ranked.sort((a, c) -> {

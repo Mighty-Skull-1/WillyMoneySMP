@@ -36,10 +36,10 @@ commands:
     description: Spawn supply drop crates
     permission: moneysmp.admin
   freefall:
-    description: "Finale Showdown: shrink the world border (start, center, status, stop, end, reset)"
+    description: "Optional shrinking world border to push teams together (start, center, status, stop, end, reset)"
     permission: moneysmp.admin
   ffa:
-    description: "Team Deathmatch event: last team standing wins, bounty tier glows (start, status, out, end, stop)"
+    description: "FINAL FIGHT - Team Deathmatch: last team standing wins, bounty tier glows, then the tournament winner is crowned (start, status, out, end, stop)"
     aliases: [tdm, deathmatch]
     permission: moneysmp.admin
   bingo:
